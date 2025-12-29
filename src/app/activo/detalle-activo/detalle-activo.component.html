@@ -1,0 +1,418 @@
+<main>
+  <div class="container">
+    <div class="container2">
+      <section class="container-activo">
+        <!-- Detalles principales del activo -->
+        <div class="container-activo-detalles-1">
+          <div class="parte-1">
+            <div class="container-inputs">
+              <label for="id-activo" class="label-detalles">ID:</label>
+              <input
+                type="text"
+                id="id-activo"
+                class="input-detalles"
+                value="{{ activo.id }}"
+                readonly
+              />
+            </div>
+
+            <div class="container-inputs">
+              <label for="nombre-activo" class="label-detalles">Nombre:</label>
+              <input
+                type="text"
+                id="nombre-activo"
+                class="input-detalles"
+                value="{{ activo.nombre }}"
+                readonly
+              />
+            </div>
+
+            <div class="container-inputs">
+              <label for="tipo-activo" class="label-detalles">Tipo:</label>
+              <input
+                type="text"
+                id="tipo-activo"
+                class="input-detalles"
+                value="{{ activo.tipo?.nombre }}"
+                readonly
+              />
+            </div>
+
+            <div class="container-inputs">
+              <label for="estado-activo" class="label-detalles">Estado:</label>
+              <input
+                type="text"
+                id="estado-activo"
+                class="input-detalles"
+                value="{{ activo.estado }}"
+                readonly
+              />
+            </div>
+          </div>
+
+          <div class="parte-2">
+            <button class="btn color-main" (click)="editarActivo()">Editar</button>
+            <button class="btn" (click)="darDeBaja()">Dar de baja</button>
+            <button class="btn" (click)="verHistorial()">Historial</button>
+          </div>
+
+          <div class="parte-3">
+            <div class="container-img">
+              <img
+              [src]="'http://localhost:3000' + activo.fotoUrl" 
+                alt="imagen del activo"
+                id="imagen-activo"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Detalles adicionales del activo -->
+        <div class="container-activo-detalles-2">
+          <h3>Detalles</h3>
+
+          <div class="container-inputs-2">
+            <label for="dueno" class="label-detalles-2">Dueño:</label>
+            <input
+              type="text"
+              id="dueno"
+              class="input-detalles-2"
+              value="{{ activo.dueno.nombre }}"
+              readonly
+            />
+          </div>
+
+
+          <div class="container-inputs-2">
+            <label for="fecha-adquisicion" class="label-detalles-2"
+              >Fecha de adquisición:</label
+            >
+            <input
+              type="text"
+              id="fecha-adquisicion"
+              class="input-detalles-2"
+              value="{{ activo.fechaAdquisicion | date : 'dd/MM/yyyy' }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="valor-compra" class="label-detalles-2"
+              >Valor de compra:</label
+            >
+            <input
+              type="text"
+              id="valor-compra"
+              class="input-detalles-2"
+              value="{{ activo.valorCompra }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="modelo" class="label-detalles-2">Modelo:</label>
+            <input
+              type="text"
+              id="modelo"
+              class="input-detalles-2"
+              value="{{ activo.modelo }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="proveedor" class="label-detalles-2">Proveedor:</label>
+            <input
+              type="text"
+              id="proveedor"
+              class="input-detalles-2"
+              value="{{ activo.proveedor?.nombre }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="version-software" class="label-detalles-2"
+              >Versión de software:</label
+            >
+            <input
+              type="text"
+              id="version-software"
+              class="input-detalles-2"
+              value="{{ activo.versionSoftware }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="tipo-licencia" class="label-detalles-2"
+              >Tipo de licencia:</label
+            >
+            <input
+              type="text"
+              id="tipo-licencia"
+              class="input-detalles-2"
+              value="{{ activo.tipoLicencia }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="fecha-vencimiento" class="label-detalles-2"
+              >Fecha de vencimiento:</label
+            >
+            <input
+              type="text"
+              id="fecha-vencimiento"
+              class="input-detalles-2"
+              value="{{
+                activo.fechaVencimientoLicencia | date : 'dd/MM/yyyy'
+              }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="costo-mensual" class="label-detalles-2"
+              >Costo mensual:</label
+            >
+            <input
+              type="text"
+              id="costo-mensual"
+              class="input-detalles-2"
+              value="{{ activo.costoMensual }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="recursos-asignados" class="label-detalles-2"
+              >Recursos asignados:</label
+            >
+            <input
+              type="text"
+              id="recursos-asignados"
+              class="input-detalles-2"
+              value="{{ activo.recursosAsignados }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="asignado-a" class="label-detalles-2">Asignado a:</label>
+            <input
+              type="text"
+              id="asignado-a"
+              class="input-detalles-2"
+              value="{{ activo.dueno?.nombre }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="condicion-fisica" class="label-detalles-2"
+              >Condición física:</label
+            >
+            <input
+              type="text"
+              id="condicion-fisica"
+              class="input-detalles-2"
+              value="{{ activo.condicionFisica }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="etiqueta-serial" class="label-detalles-2"
+              >Etiqueta/Serial:</label
+            >
+            <input
+              type="text"
+              id="etiqueta-serial"
+              class="input-detalles-2"
+              value="{{ activo.etiquetaSerial }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="descripcion" class="label-detalles-2"
+              >Descripción:</label
+            >
+            <input
+              type="text"
+              id="descripcion"
+              class="input-detalles-2"
+              value="{{ activo.descripcion }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="ubicacion" class="label-detalles-2">Ubicación:</label>
+            <input
+              type="text"
+              id="ubicacion"
+              class="input-detalles-2"
+              value="{{ activo.ubicacion?.nombre }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="fecha-registro" class="label-detalles-2"
+              >Fecha de registro:</label
+            >
+            <input
+              type="text"
+              id="fecha-registro"
+              class="input-detalles-2"
+              value="{{ activo.fechaRegistro | date : 'dd/MM/yyyy' }}"
+              readonly
+            />
+          </div>
+
+          <div class="container-inputs-2">
+            <label for="fecha-salida" class="label-detalles-2"
+              >Fecha de salida:</label
+            >
+            <input
+              type="text"
+              id="fecha-salida"
+              class="input-detalles-2"
+              value="{{ activo.fechaSalida | date : 'dd/MM/yyyy' }}"
+              readonly
+            />
+          </div>
+        </div>
+
+        <!-- Detalles de la garantía -->
+        <div class="container-activo-detalles-3">
+          <h3>Garantía</h3>
+
+          <!-- Verificar si hay garantías asociadas -->
+          <div
+            *ngIf="
+              activo.garantia && activo.garantia.length > 0;
+              else noGarantia
+            "
+          >
+            <!-- Iterar sobre las garantías (en este caso, solo mostramos la primera) -->
+            <div *ngFor="let garantia of activo.garantia">
+              <!-- Nombre de la Garantía -->
+              <div class="container-inputs-2">
+                <label for="nombre-garantia" class="label-detalles-2"
+                  >Nombre de garantía:</label
+                >
+                <input
+                  type="text"
+                  id="nombre-garantia"
+                  class="input-detalles-2"
+                  [value]="garantia.nombre"
+                  readonly
+                />
+              </div>
+
+              <!-- Proveedor de la Garantía -->
+              <div class="container-inputs-2">
+                <label for="proveedor-garantia" class="label-detalles-2"
+                  >Proveedor de garantía:</label
+                >
+                <input
+                  type="text"
+                  id="proveedor-garantia"
+                  class="input-detalles-2"
+                  [value]="garantia.proveedor?.nombre"
+                  readonly
+                />
+              </div>
+
+              <!-- Fecha de Inicio -->
+              <div class="container-inputs-2">
+                <label for="fecha-inicio-garantia" class="label-detalles-2"
+                  >Fecha de inicio:</label
+                >
+                <input
+                  type="text"
+                  id="fecha-inicio-garantia"
+                  class="input-detalles-2"
+                  [value]="garantia.fechaInicio | date : 'dd/MM/yyyy'"
+                  readonly
+                />
+              </div>
+
+              <!-- Fecha de Fin -->
+              <div class="container-inputs-2">
+                <label for="fecha-fin-garantia" class="label-detalles-2"
+                  >Fecha de fin:</label
+                >
+                <input
+                  type="text"
+                  id="fecha-fin-garantia"
+                  class="input-detalles-2"
+                  [value]="garantia.fechaFin | date : 'dd/MM/yyyy'"
+                  readonly
+                />
+              </div>
+
+              <!-- Costo -->
+              <div class="container-inputs-2">
+                <label for="costo" class="label-detalles-2">Costo:</label>
+                <input
+                  type="text"
+                  id="costo"
+                  class="input-detalles-2"
+                  [value]="garantia.costo"
+                  readonly
+                />
+              </div>
+
+              <!-- Condiciones -->
+              <div class="container-inputs-2">
+                <label for="Condiciones" class="label-detalles-2"
+                  >Condiciones:</label
+                >
+                <input
+                  type="text"
+                  id="Condiciones"
+                  class="input-detalles-2"
+                  [value]="garantia.condiciones"
+                  readonly
+                />
+              </div>
+
+              <!-- Estado de la Garantía -->
+              <div class="container-inputs-2">
+                <label for="estado-garantia" class="label-detalles-2"
+                  >Estado de la garantía:</label
+                >
+                <input
+                  type="text"
+                  id="estado-garantia"
+                  class="input-detalles-2"
+                  [value]="garantia.estado"
+                  readonly
+                />
+              </div>
+
+              <!-- Descripción de la Garantía -->
+              <div class="container-inputs-2">
+                <label for="descripcion-garantia" class="label-detalles-2"
+                  >Descripción:</label
+                >
+                <textarea id="descripcion-garantia" readonly>{{
+                  garantia.descripcion
+                }}</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mensaje si no hay garantías -->
+          <ng-template #noGarantia>
+            <p>No hay garantías asociadas a este activo.</p>
+          </ng-template>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>

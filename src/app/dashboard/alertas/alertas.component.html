@@ -1,0 +1,109 @@
+<section class="wrapper">
+  <div class="card">
+    <div class="card-container-status-color">
+      <div class="card--status-color naranja"></div>
+    </div>
+
+    <div class="card--logo">
+      <img
+        src="assets/icono-licencia-proxima-a-vencer.png"
+        alt="Licencias próximas a vencer"
+      />
+    </div>
+
+    <div class="card-info">
+      <h2 class="card-info--titulo">{{ licenciasProximasAVencer }}</h2>
+      <p class="card-info--descripcion">Licencias próximas a vencer</p>
+    </div>
+
+    <div class="card--boton">
+      <button
+        class="card--btn"
+        [disabled]="licenciasProximasAVencer === 0"
+        (click)="navegarAFiltro('licencia_proxima')"
+      >
+        Ver licencias
+      </button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-container-status-color">
+      <div class="card--status-color amarillo"></div>
+    </div>
+
+    <div class="card--logo">
+      <img
+        src="/assets/icono-garantias-proxximas-a-expirar.png"
+        alt="Licencias próximas a vencer"
+      />
+    </div>
+
+    <div class="card-info">
+      <h2 class="card-info--titulo">{{ garantiasProximasAExpirar }}</h2>
+      <p class="card-info--descripcion">Garantías próximas a expirar</p>
+    </div>
+
+    <div class="card--boton">
+      <button
+        class="card--btn"
+        [disabled]="garantiasProximasAExpirar === 0"
+        (click)="navegarAFiltro('garantia_proxima')"
+      >
+        Ver garantías
+      </button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-container-status-color">
+      <div class="card--status-color gris"></div>
+    </div>
+
+    <div class="card--logo">
+      <img
+        src="/assets/icono-activos-en-mantenimiento.png"
+        alt="Licencias próximas a vencer"
+      />
+    </div>
+
+    <div class="card-info">
+      <h2 class="card-info--titulo">{{ activosEnMantenimiento }}</h2>
+      <p class="card-info--descripcion">Activos en mantenimiento</p>
+    </div>
+
+    <div class="card--boton">
+      <button
+        class="card--btn"
+        [disabled]="activosEnMantenimiento === 0"
+        (click)="navegarAFiltro('estado')"
+      >
+        Ver activos en mantenimiento
+      </button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-container-status-color">
+      <div class="card--status-color verde"></div>
+    </div>
+
+    <div class="card--logo">
+      <img
+        src="/assets/icono-activos-proximos-a-devolver.png"
+        alt="Licencias próximas a vencer"
+      />
+    </div>
+
+    <div class="card-info">
+      <h2 class="card-info--titulo">{{ activosProximosADevolver }}</h2>
+      <p class="card-info--descripcion">Activos próximos a devolver</p>
+    </div>
+
+    <div class="card--boton">
+      <button
+      class="card--btn"
+      [disabled]="activosProximosADevolver === 0"
+      (click)="navegarAFiltro('fecha_devolucion_proxima')">
+      Ver activos próximos a devolver
+    </button>
+    </div>
+  </div>
+</section>

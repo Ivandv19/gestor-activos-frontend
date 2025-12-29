@@ -1,0 +1,11 @@
+<a
+  [routerLink]="route"
+  [routerLinkActive]="routerLinkActive"
+  class="nav-button" 
+>
+  <!-- Muestra el ícono si existe -->
+  <img *ngIf="icon" [src]="icon" alt="Icono" class="nav-button-icon" />
+
+  <!-- Muestra el texto del enlace -->
+  <p>{{ label }}</p>
+</a>

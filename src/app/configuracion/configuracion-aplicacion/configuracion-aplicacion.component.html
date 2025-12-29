@@ -1,0 +1,193 @@
+<main>
+  <div class="container">
+    <div class="container-2">
+      <!-- Primer Formulario: Ajustes Generales -->
+      <div class="ajustes-generales">
+        <div class="container-titulo">
+          <h3>Ajustes generales</h3>
+        </div>
+
+        <div class="container-form">
+          <form [formGroup]="configuracionForm">
+            <!-- Idioma -->
+            <div class="form-group">
+              <label for="idioma">Idioma</label>
+              <ng-select
+                id="idioma"
+                formControlName="idioma"
+                [items]="idiomasDisponibles"
+                bindLabel="nombre"
+                bindValue="codigo"
+                placeholder="Selecciona un idioma"
+              ></ng-select>
+            </div>
+
+            <!-- Zona Horaria -->
+            <div class="form-group">
+              <label for="zona_horaria">Zona horaria</label>
+              <ng-select
+                id="zona_horaria"
+                formControlName="zona_horaria"
+                [items]="zonasHorariasDisponibles"
+                bindLabel="nombre"
+                bindValue="codigo"
+                placeholder="Selecciona una zona horaria"
+              ></ng-select>
+            </div>
+
+            <!-- Formato de Fecha -->
+            <div class="form-group">
+              <label for="formato_fecha">Formato de fecha</label>
+              <ng-select
+                type="text"
+                id="formato_fecha"
+                formControlName="formato_fecha"
+                [items]="formatosFechaDisponibles"
+                bindLabel="nombre"
+                bindValue="codigo"
+                placeholder="Ej. DD/MM/YYYY"
+              />
+            </div>
+
+            <!-- Moneda -->
+            <div class="form-group">
+              <label for="formato_moneda">Moneda</label>
+              <ng-select
+                id="formato_moneda"
+                formControlName="formato_moneda"
+                [items]="monedasDisponibles"
+                bindLabel="nombre"
+                bindValue="codigo"
+                placeholder="Selecciona una moneda"
+              ></ng-select>
+            </div>
+
+            <!-- Botones -->
+            <div class="form-buttons">
+              <button class="btn-guardar" (click)="guardarConfiguracion()">
+                Guardar
+              </button>
+              <button class="btn-cancelar" (click)="cancelarConfiguracion()">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Segundo Formulario: Configuración de Perfil -->
+      <div class="configuracion-perfil">
+        <div class="container-titulo">
+          <h3>Configuración de perfil</h3>
+        </div>
+        <div class="container-form">
+          <form [formGroup]="perfilForm">
+            <div class="contenido">
+              <div class="section-1">
+                <!-- Nombre -->
+                <div class="form-group">
+                  <label for="nombre">Nombre</label>
+                  <input
+                    type="text"
+                    id="nombre"
+                    formControlName="nombre"
+                    placeholder="Ingresa tu nombre"
+                  />
+                </div>
+
+                <!-- Correo Electrónico -->
+                <div class="form-group">
+                  <label for="email">Correo electrónico</label>
+                  <input
+                    type="email"
+                    id="email"
+                    formControlName="email"
+                    placeholder="Ingresa tu correo"
+                  />
+                </div>
+
+                <!-- Departamento -->
+                <div class="form-group">
+                  <label for="departamento">Departamento</label>
+                  <input
+                    type="text"
+                    id="departamento"
+                    formControlName="departamento"
+                    placeholder="Ingresa tu departamento"
+                  />
+                </div>
+
+                <!-- Contraseña Actual -->
+                <div class="form-group">
+                  <label for="contrasena_actual">Contraseña actual</label>
+                  <input
+                    type="password"
+                    id="contrasena_actual"
+                    formControlName="contrasena_actual"
+                    placeholder="Ingresa tu contraseña actual"
+                  />
+                </div>
+
+                <!-- Nueva Contraseña -->
+                <div class="form-group">
+                  <label for="nueva_contrasena">Nueva contraseña</label>
+                  <input
+                    type="password"
+                    id="nueva_contrasena"
+                    formControlName="nueva_contrasena"
+                    placeholder="Ingresa tu nueva contraseña"
+                  />
+                </div>
+
+                <!-- Confirmar Nueva Contraseña -->
+                <div class="form-group">
+                  <label for="confirmar_nueva_contrasena"
+                    >Confirmar nueva contraseña</label
+                  >
+                  <input
+                    type="password"
+                    id="confirmar_nueva_contrasena"
+                    formControlName="confirmar_nueva_contrasena"
+                    placeholder="Confirma tu nueva contraseña"
+                  />
+                </div>
+              </div>
+
+              <div class="section-2">
+                <div class="container-img">
+                  <!-- Foto de Perfil -->
+                  <div class="form-group-img">
+                    <label for="foto">Foto de perfil</label>
+                    <input
+                      type="file"
+                      id="imagen"
+                      formControlName="foto_url"
+                      accept="image/*"
+                      (change)="onFileSelected($event)"
+                    />
+                    <img
+                      [src]="previewUrl"
+                      *ngIf="previewUrl"
+                      alt="Vista previa de la imagen"
+                      class="preview-img"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="form-buttons">
+              <button class="btn-guardar" (click)="guardarPerfil()">
+                Guardar
+              </button>
+              <button class="btn-cancelar" (click)="cancelarPerfil()">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

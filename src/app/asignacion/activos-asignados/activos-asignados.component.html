@@ -1,0 +1,193 @@
+<main>
+  <!-- Sección de búsqueda y filtros -->
+  <section class="busqueda">
+    <!-- Barra de búsqueda -->
+    <div class="barra-de-busqueda">
+      <div class="barra-busqueda">
+        <div>
+          <p>Activos asignados</p>
+        </div>
+        <input
+          type="text"
+          id="busqueda2"
+          placeholder="Ingresa activo a buscar..."
+          (input)="onSearchInput($event)"
+        />
+      </div>
+      <!-- Contenedor de filtros y opciones -->
+      <div class="container-filtros">
+        <!-- Selector de filtros principales -->
+        <div class="filtros">
+          <p>Filtro</p>
+          <select
+            name="filtro"
+            id="filtro2"
+            (change)="cargarOpcionesFiltro($event)"
+          >
+            <option value="">Selecciona un filtro</option>
+            <option value="tipo">Tipo</option>
+            <option value="ubicacion">Ubicación</option>
+            <option value="usuario_asignado">Usuario asignado</option>
+          </select>
+        </div>
+
+        <!-- Selector de opciones dinámicas -->
+        <div class="opciones">
+          <p>Opciones</p>
+          <select
+            name="opciones"
+            id="opciones2"
+            (change)="aplicarFiltro($event)"
+          >
+            <option value="">Todos</option>
+          </select>
+        </div>
+
+        <!-- Selector de dirección de ordenamiento -->
+        <div class="direccion">
+          <p>Dirección</p>
+          <select
+            name="direccion"
+            id="direccion2"
+            (change)="aplicarOrden($event)"
+          >
+            <option value="asc">Ascendente (A-Z)</option>
+            <option value="desc">Descendente (Z-A)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+
+    <button class="btn-limpiar" (click)="limpiarFiltros()">
+      Limpiar Filtros
+      <img src="assets/reiniciar-filtros.png" alt="Limpiar" />
+    </button>
+  </section>
+
+  <!-- Tabla de activos -->
+  <section class="tabla-activos">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Imagen</th>
+          <th>Nombre</th>
+          <th>Tipo</th>
+          <th>Estado</th>
+          <th>Asignado a</th>
+          <th>Ubicacion</th>
+          <th>Fecha de asignacion</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let activo of listaAsignaciones">
+          <!-- Itera sobre la lista de activos -->
+          <td>{{ activo.id }}</td>
+          <td>
+            <!-- Si hay foto_url, muestra la imagen -->
+            <img
+              *ngIf="activo.foto_url"
+              [src]="'http://localhost:3000' + activo.foto_url"
+              alt="Imagen del activo"
+              class="imagen-circular"
+            />
+
+            <!-- Si NO hay foto_url, muestra "N/A" -->
+            <div *ngIf="!activo.foto_url" class="texto-na">
+              N/A
+            </div>
+          </td>
+          <td>
+            <span *ngFor="let parte of dividirTexto(activo.activo)">
+              <!-- Divide el texto para resaltar coincidencias -->
+              <span [class.highlight]="esParteResaltada(parte)">{{
+                parte
+              }}</span>
+              <!-- Aplica clase 'highlight' si coincide -->
+            </span>
+          </td>
+          <td>{{ activo.tipo_activo }}</td>
+          <td>{{ activo.estado_activo }}</td>
+          <td>{{ activo.usuario }}</td>
+          <td>{{ activo.ubicacion }}</td>
+          <td>{{ activo.fecha_asignacion | date : "dd/MM/yyyy" }}</td>
+          <td>
+            <div class="container-boton">
+              <button class="btn-ver-detalles" (click)="editar(activo.id)">
+                Editar
+              </button>
+            </div>
+            <!-- Navega a detalles del activo -->
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Sección de paginación -->
+  <section class="container-paginacion">
+    <section class="pagination-info" *ngIf="pagination.total > 0">
+      <p>
+        Mostrando {{ primerActivoMostrado }}-{{ ultimoActivoMostrado }} de
+        {{ pagination.total }} activos
+        <!-- Muestra información de la paginación -->
+      </p>
+    </section>
+
+    <!-- Paginación avanzada -->
+    <section class="pagination" *ngIf="pagination.totalPages > 1">
+      <!-- Botones Primera página / Anterior -->
+      <button (click)="cambiarPagina(1)" [disabled]="paginaActual === 1">
+        « Primera |
+      </button>
+      <!-- Va a la primera página -->
+      <button
+        (click)="cambiarPagina(paginaActual - 1)"
+        [disabled]="paginaActual === 1"
+      >
+        « Anterior |
+      </button>
+      <!-- Va a la página anterior -->
+
+      <!-- Números de página -->
+      <span *ngFor="let pagina of paginasVisibles">
+        <button
+          (click)="cambiarPagina(pagina)"
+          [class.active]="pagina === paginaActual"
+        >
+          <!-- Resalta la página actual -->
+          {{ pagina }}
+        </button>
+      </span>
+
+      <!-- Botones Siguiente / Última página -->
+      <button
+        (click)="cambiarPagina(paginaActual + 1)"
+        [disabled]="paginaActual === pagination.totalPages"
+      >
+        <!-- Deshabilita si estás en la última página -->
+        | Siguiente »
+      </button>
+      <button
+        (click)="cambiarPagina(pagination.totalPages)"
+        [disabled]="paginaActual === pagination.totalPages"
+      >
+        <!-- Deshabilita si estás en la última página -->
+        | Última »
+      </button>
+    </section>
+
+    <!-- Selector de límite por página -->
+    <section class="limite-pagina">
+      <p>Mostrar:</p>
+      <select (change)="onLimitChange($event)">
+        <!-- Cambia el número de elementos por página -->
+        <option value="10" [selected]="limitePorPagina === 10">10</option>
+        <option value="20" [selected]="limitePorPagina === 20">20</option>
+        <option value="50" [selected]="limitePorPagina === 50">50</option>
+      </select>
+    </section>
+  </section>
+</main>

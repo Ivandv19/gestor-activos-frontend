@@ -1,0 +1,43 @@
+.nav-button {
+  width: 97px;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  color: black;
+  font-size: 16px;
+  background-color: white;
+  transition: background-color 0.3s ease;
+  filter: brightness(1);
+  transition: filter 0.3s ease;
+
+}
+.nav-button p {
+  text-align: center;
+
+}
+
+.nav-button:hover {
+  filter: brightness(1.2);
+
+}
+
+.nav-button-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.active {
+    background-color: #141B4D;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    color: white;
+    border-radius: 10px
+}
+
+.active img {
+    filter: invert(1);
+}

@@ -1,0 +1,76 @@
+<main>
+  <!-- Contenedor principal del formulario de inicio de sesión -->
+  <div class="container-login">
+    <div class="container-titulo">
+      <h1>Iniciar sesión</h1>
+    </div>
+
+    <!-- Formulario de inicio de sesión -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Campo para el email -->
+      <div class="container-inputs">
+        <label for="email">Email:</label>
+        <div class="input-email">
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="Ingresa tu correo..."
+          />
+        </div>
+      </div>
+
+      <!-- Campo para la contraseña -->
+      <div class="container-inputs">
+        <label for="password">Contraseña:</label>
+        <div class="input-password">
+          <input
+            #passwordInput
+            id="password"
+            [type]="isPasswordVisible ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Ingresa tu contraseña..."
+            autocomplete="off"
+          />
+
+          <!-- Botón para mostrar/ocultar la contraseña -->
+          <button
+            class="btn-password"
+            type="button"
+            (click)="togglePasswordVisibility()"
+            aria-label="Mostrar u ocultar contraseña"
+          >
+            <img
+              [src]="
+                isPasswordVisible
+                  ? '/assets/contrasena-visible.png'
+                  : '/assets/contrasena-oculta.png'
+              "
+              alt="Mostrar contraseña"
+              aria-hidden="true"
+              style="cursor: pointer; width: 24px; height: 24px"
+            />
+          </button>
+        </div>
+
+        <!-- Mensaje de error general (si existe) -->
+        @if (errorMessage) {
+        <div class="error-message">
+          <img src="/assets/advertencia.png" alt="error" />
+          <small>{{ errorMessage }}</small>
+        </div>
+        }
+      </div>
+
+      <!-- Botón de envío del formulario -->
+      <button
+        class="btn-login"
+        type="submit"
+        [disabled]="loginForm.invalid || isLoading"
+      >
+        <span *ngIf="isLoading">Cargando...</span>
+        <span *ngIf="!isLoading">Iniciar Sesión</span>
+      </button>
+    </form>
+  </div>
+</main>

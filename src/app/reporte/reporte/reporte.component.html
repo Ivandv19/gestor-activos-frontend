@@ -1,0 +1,194 @@
+<main>
+  <div class="container">
+    <div class="container-2">
+      <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
+        <div class="container-inputs">
+          <!-- Selector de Tipo de Reporte -->
+          <div class="form-group">
+            <label for="tipoReporte">Tipo de Reporte</label>
+            <ng-select
+              formControlName="tipoReporte"
+              [items]="tiposReporte"
+              bindLabel="nombre"
+              bindValue="id"
+              placeholder="Selecciona un tipo de reporte"
+            >
+            </ng-select>
+          </div>
+
+          <!-- Descripción -->
+          <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea
+              type="text"
+              formControlName="descripcion"
+              placeholder="Ingresa una descripción"
+              readonly
+            >
+            </textarea>
+          </div>
+
+          <!-- Filtro por Tipo de Activo -->
+          <div class="form-group">
+            <label for="tipoActivo">Filtro por Tipo de Activo</label>
+            <ng-select
+              formControlName="tipoActivo"
+              [items]="tiposActivo"
+              bindLabel="nombre"
+              bindValue="id"
+              placeholder="Selecciona un tipo de activo"
+            >
+            </ng-select>
+          </div>
+
+          <!-- Filtro por Fecha (Inicio) -->
+          <div class="form-group">
+            <label>Filtro por Fecha</label>
+            <div class="date-range">
+              <input
+                type="date"
+                formControlName="fechaInicio"
+                placeholder="Fecha de inicio"
+              />
+            </div>
+          </div>
+
+          <!-- Filtro por Fecha ( Fin) -->
+          <div class="form-group">
+            <label>Filtro por Fecha</label>
+            <div class="date-range">
+              <input
+                type="date"
+                formControlName="fechaFin"
+                placeholder="Fecha de fin"
+              />
+            </div>
+          </div>
+
+          <!-- Filtro por Usuario -->
+          <div class="form-group">
+            <label for="usuario">Filtro por Usuario</label>
+            <ng-select
+              formControlName="usuario"
+              [items]="usuarios"
+              bindLabel="nombre"
+              bindValue="id"
+              placeholder="Selecciona un usuario"
+            >
+            </ng-select>
+          </div>
+
+          <!-- Filtro por Ubicación -->
+          <div class="form-group">
+            <label for="ubicacion">Filtro por Ubicación</label>
+            <ng-select
+              formControlName="ubicacion"
+              [items]="ubicaciones"
+              bindLabel="nombre"
+              bindValue="id"
+              placeholder="Selecciona una ubicación"
+            >
+            </ng-select>
+          </div>
+
+          <!-- Filtro por Proveedor -->
+          <div class="form-group">
+            <label for="proveedor">Filtro por Proveedor</label>
+            <ng-select
+              formControlName="proveedor"
+              [items]="proveedores"
+              bindLabel="nombre"
+              bindValue="id"
+              placeholder="Selecciona un proveedor"
+            >
+            </ng-select>
+          </div>
+        </div>
+        <!-- Segunda Sección: Botones -->
+        <div class="seccion-2">
+          <button type="submit" class="btn-generar">Generar</button>
+          <button type="button" class="btn-limpiar" (click)="onLimpiar()">
+            Limpiar campos
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Contenedor Estático para Mostrar los Resultados del Reporte -->
+    <div class="contenedor-reporte">
+      <div id="pdf-export-content" class="pdf-content">
+        <div class="container-resultados">
+          <h2>Resultados del Reporte</h2>
+          <p><strong>Tipo de Reporte:</strong> {{ reporte.tipo_reporte }}</p>
+          <p><strong>Descripción:</strong> {{ reporte.descripcion }}</p>
+
+          <div class="container-filtros">
+            <!-- Filtros Aplicados -->
+            <h2>Filtros Aplicados</h2>
+            <ul>
+              <li>
+                <strong>Tipo de Activo:</strong>
+                {{ reporte.filtros.tipo_activo }}
+              </li>
+              <li><strong>Usuario:</strong> {{ reporte.filtros.usuario }}</li>
+              <li>
+                <strong>Ubicación:</strong> {{ reporte.filtros.ubicacion }}
+              </li>
+              <li>
+                <strong>Proveedor:</strong> {{ reporte.filtros.proveedor }}
+              </li>
+              <li>
+                <strong>Fecha de Inicio:</strong>
+                {{ reporte.filtros.fecha_inicio || "No especificada" }}
+              </li>
+              <li>
+                <strong>Fecha de Fin:</strong>
+                {{ reporte.filtros.fecha_fin || "No especificada" }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="container-graficos">
+          <!-- Gráficos -->
+          <h3>Gráficos</h3>
+          <div class="graficos">
+            <!-- Gráfica de Pastel -->
+            <div class="grafica-pastel">
+              <canvas #graficaPastel></canvas>
+            </div>
+            <!-- Gráfica de Barras -->
+            <div class="grafica-barras">
+              <canvas #graficaBarras></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-tabla">
+          <!-- Tabla Detallada -->
+          <h2>Tabla Detallada</h2>
+          <table>
+            <thead>
+              <tr>
+                <th *ngFor="let columna of getColumnas()">{{ columna }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let fila of reporte.resultados.detalles">
+                <td *ngFor="let columna of getColumnas()">
+                  {{ fila[columna] }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="container-botones">
+        <!-- Botón para Exportar -->
+        <button class="btn-exportar" (click)="exportToPDF()">
+          <i class="fas fa-file-pdf"></i> Exportar a PDF
+        </button>
+      </div>
+    </div>
+  </div>
+</main>

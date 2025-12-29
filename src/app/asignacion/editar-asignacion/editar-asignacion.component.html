@@ -1,0 +1,103 @@
+<main>
+  <div class="container">
+    <div class="container-2">
+      <form [formGroup]="asignacionForm" (ngSubmit)="onSubmit()">
+        <!-- Primera Sección -->
+        <div class="seccion-1">
+          <!-- Parte 1: Nombre del Activo, Usuarios y Ubicación -->
+          <div class="form-parte-1">
+            <!-- Nombre del Activo -->
+            <div class="form-group">
+              <label for="nombre-activo">Nombre del Activo</label>
+              <input
+                type="text"
+                id="nombreActivo"
+                formControlName="nombreActivo"
+                placeholder="Nombre del activo"
+                readonly
+              />
+            </div>
+
+            <!-- Usuario a Asignar -->
+            <div class="form-group">
+              <label for="usuario-asignar">Usuario a Asignar</label>
+              <ng-select
+                id="usuario-asignar"
+                formControlName="usuarioAsignar"
+                [items]="usuarios"
+                bindLabel="nombre"
+                bindValue="id"
+                placeholder="Selecciona un usuario"
+              >
+              </ng-select>
+            </div>
+
+            <!-- Ubicación -->
+            <div class="form-group">
+              <label for="ubicacion">Ubicación</label>
+              <ng-select
+                id="ubicacion"
+                formControlName="ubicacion"
+                [items]="ubicaciones"
+                bindLabel="nombre"
+                bindValue="id"
+                placeholder="Selecciona una ubicación"
+              >
+              </ng-select>
+            </div>
+          </div>
+
+          <!-- Parte 2: Fechas y Comentarios -->
+          <div class="form-parte-2">
+            <!-- Fecha de Asignación -->
+            <div class="form-group">
+              <label for="fecha-asignacion">Fecha de Asignación</label>
+              <input
+                type="date"
+                id="fecha-asignacion"
+                formControlName="fechaAsignacion"
+              />
+            </div>
+
+            <!-- Fecha Estimada de Devolución -->
+            <div class="form-group">
+              <label for="fecha-devolucion">Fecha Estimada de Devolución</label>
+              <input
+                type="date"
+                id="fecha-devolucion"
+                formControlName="fechaDevolucion"
+              />
+            </div>
+
+            <!-- Comentarios -->
+            <div class="form-group">
+              <label for="comentarios">Comentarios</label>
+              <textarea
+                id="comentarios"
+                formControlName="comentarios"
+                rows="4"
+                placeholder="Escribe tus comentarios aquí..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Segunda Sección: Botones -->
+        <div class="seccion-2">
+          <button type="submit" class="btn-guardar">Guardar</button>
+          <!-- Botón para eliminar la asignación -->
+          <button (click)="eliminarAsignacion()" class="btn-eliminar">
+            Eliminar Asignación
+          </button>
+          <button
+            type="button"
+            class="btn-cancelar"
+            (click)="cancelarEdicion()"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,76 @@
+import { Component, OnInit } from '@angular/core';
+import { DashboardService } from '../services/dashboard.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-alertas',
+  standalone: false,
+  templateUrl: './alertas.component.html',
+  styleUrl: './alertas.component.css',
+})
+export class AlertasComponent implements OnInit {
+  // Variables para almacenar los datos de las alertas
+  licenciasProximasAVencer: number = 0;
+  garantiasProximasAExpirar: number = 0;
+  activosEnMantenimiento: number = 0;
+  activosProximosADevolver: number = 0;
+  errorMessage = '';
+
+  constructor(
+    private dashboardService: DashboardService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarDatosBackend(); // Cargar datos al inicializar el componente
+  }
+
+  /**
+   * Función para cargar los datos del backend.
+   * Realiza una llamada al servicio `DashboardService` y asigna los datos recibidos a las variables correspondientes.
+   */
+  
+  private cargarDatosBackend(): void {
+    this.dashboardService.getAlertas().subscribe({
+      next: (response) => {
+        console.log('Datos recibidos del backend:', response); // Log para verificar los datos
+
+        // Asignar los datos recibidos a las variables
+        this.licenciasProximasAVencer = response.licencias_proximas_a_vencer || 0;
+        this.garantiasProximasAExpirar = response.garantias_proximas_a_expirar || 0;
+        this.activosEnMantenimiento = response.activos_en_mantenimiento || 0;
+        this.activosProximosADevolver = response.activos_proximos_a_devolver || 0;
+
+        // Log para confirmar que los datos se han asignado correctamente
+        console.log('Datos asignados:', {
+          licenciasProximasAVencer: this.licenciasProximasAVencer,
+          garantiasProximasAExpirar: this.garantiasProximasAExpirar,
+          activosEnMantenimiento: this.activosEnMantenimiento,
+          activosProximosADevolver: this.activosProximosADevolver,
+        });
+      },
+      error: (error) => {
+        // Ejem. Si el backend devuelve { mensaje: "Error al actualizar la asignación" }
+        const errorMessage =
+          error.error?.mensaje || 'Error al actualizar la asignación';
+
+        // Mostrar el mensaje
+        this.errorMessage = errorMessage;
+        console.error('Error del backend:', errorMessage);
+        alert(errorMessage);
+      },
+    });
+  }
+  //Funcion para navegar a la vista de gestión de activos con un filtro específico
+  navegarAFiltro(filtro: string): void {
+    if (filtro === 'licencia_proxima') {
+      this.router.navigate(['/gestion-activos'], { queryParams: { licencia_proxima: 'true' } });
+    } else if (filtro === 'garantia_proxima') {
+      this.router.navigate(['/gestion-activos'], { queryParams: { garantia_proxima: 'true' } });
+    } else if (filtro === 'estado') {
+      this.router.navigate(['/gestion-activos'], { queryParams: { estado: 'En mantenimiento' } });
+    } else if (filtro === 'fecha_devolucion_proxima') {
+      this.router.navigate(['/gestion-activos'], { queryParams: { fecha_devolucion_proxima: 'true' } });
+    }
+  }
+}

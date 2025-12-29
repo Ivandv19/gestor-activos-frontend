@@ -1,59 +1,75 @@
-# GestorActivosFrontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.3.
+#  Gestor de Activos IT - Frontend
 
-## Development server
+> Sistema para la gestión de activos tecnológicos (Hardware, Software, Licencias, etc.) 
 
-To start a local development server, run:
+##  Descripción
+
+Este proyecto forma parte de una aplicación de **gestión de activos IT**, permitiendo a los usuarios administrar, rastrear y optimizar recursos tecnológicos dentro de una organización. El frontend está construido con **Angular + TypeScript** y consume una API RESTful desarrollada en Node.js/Express.
+
+---
+
+### ✅ Funcionalidades Principales
+
+- Inicio de sesión seguro con JWT.
+- Dashboard con resumen visual y alertas tempranas.
+- Registro, edición y eliminación de activos.
+- Asignación de activos a usuarios o ubicaciones.
+- Generación de reportes personalizados.
+- Configuración de perfil y ajustes globales.
+- Subida de imágenes de activos.
+
+---
+
+##  Tecnologías Utilizadas
+
+- **Angular**: Es el framework principal con el que se construye la aplicación frontend.
+- **TypeScript**: Se utiliza como lenguaje de programación para aprovechar sus características tipadas y mejorar la calidad del código.
+- **Node.js**: Se usa en el backend para el desarrollo del servidor y el manejo de la lógica de negocio.
+- **npm**: Es el gestor de paquetes utilizado para instalar dependencias y ejecutar scripts en el proyecto.
+- **Chart.js**: Biblioteca utilizada para la visualización de datos en gráficos dentro de la aplicación.
+- **html2canvas**: Herramienta empleada para capturar componentes visuales o secciones de la interfaz como imágenes.
+- **jsPDF**: Librería que permite generar documentos PDF directamente desde el navegador.
+- **@ng-select/ng-select**: Componente personalizado para crear selectores estilizados y más avanzados que los elementos nativos `<select>`.
+
+---
+
+
+##  Instalación
+
+### Requisitos previos
+
+- [Node.js](https://nodejs.org) instalado (v22.12.0)
+- [npm](https://www.npmjs.com/) (incluido con Node.js)
+
+### Pasos
 
 ```bash
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/gestor-de-activos.git
+
+# Acceder al directorio del proyecto
+cd gestor-de-activos
+
+# Instalar dependencias
+npm install
+
+```
+
+
+## ▶️ Ejecutar el Proyecto
+
+```bash
+# Levantar servidor local (en modo desarrollo)
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+La aplicación se ejecutará en [http://localhost:4200](http://localhost:4200)
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-```bash
-ng generate component component-name
-```
+## 📎 Documentación Adicional
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+  
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

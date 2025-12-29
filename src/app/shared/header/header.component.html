@@ -1,0 +1,29 @@
+<header>
+  <div class="container-lytle">
+    <div class="container-logo">
+      <img class="logo" src="assets/logo.png" alt="logo" />
+    </div>
+    <h1>{{ getTitle() }}</h1>
+  </div>
+
+  @if (!isLoginRoute() && isLoggedIn()) {
+  <div class="header-actions">
+    <!-- Ícono de notificaciones -->
+    <img
+      src="/assets/icono-notificacion.png"
+      alt="Notificaciones"
+      class="icon-notification"
+    />
+
+    <!-- Foto de perfil con datos del usuario -->
+    <div class="profile-circle">
+      <img
+        [src]="'http://localhost:3000' + getUserPhoto()"
+        alt="Foto de perfil"
+        class="profile-image"
+      />
+    </div>
+  </div>
+  }
+</header>
+

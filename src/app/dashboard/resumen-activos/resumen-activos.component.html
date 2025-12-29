@@ -1,0 +1,54 @@
+<div class="wrapper">
+  <section class="seccion-1">
+    <div class="total-activos">
+      <div class="total-activos--titulo">
+        <h2>Total Activos</h2>
+      </div>
+      <div class="total-activos--numero">
+        <p>{{ totalActivos }}</p>
+      </div>
+    </div>
+
+    <div class="total-activos">
+      <div class="total-activos--titulo">
+        <h2>Activos asignados</h2>
+      </div>
+      <div class="total-activos--numero">
+        <p>{{ activosAsignados }}</p>
+      </div>
+    </div>
+
+    <div class="total-activos">
+      <div class="total-activos--titulo">
+        <h2>Activos disponibles</h2>
+      </div>
+      <div class="total-activos--numero">
+        <p>{{ activosDisponibles }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-2">
+    <div class="activos-vs-disponibles">
+      <div class="activos-vs-disponibles--titulo">
+        <h2>Asignados vs Disponibles</h2>
+      </div>
+
+      <div class="activos-vs-disponibles--grafico">
+        <canvas #activosVsDisponibles></canvas>
+      </div>
+    </div>
+
+    <div class="tendencia-mensual">
+      <div class="tendencia-mensual--titulo">
+        <h2>Tendencia Mensual</h2>
+      </div>
+
+      <div class="tendencia-mensual--grafico">
+        <canvas #tendenciaMensual></canvas>
+      </div>
+    </div>
+  </section>
+
+
+</div>

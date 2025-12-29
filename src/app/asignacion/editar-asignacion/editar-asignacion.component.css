@@ -1,0 +1,100 @@
+main {
+  padding: 50px 50px;
+
+}
+
+.container {
+  border: 0.5px solid rgba(0, 0, 0, 0.20);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+}
+
+.container-2 {
+  width: 100%;
+  height: 80vh;
+  padding: 50px 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-parte-1 {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-parte-2 {
+  display: flex;
+  flex-direction: column;
+}
+
+.seccion-1 {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+}
+
+.seccion-2 {
+  display: flex;
+  gap: 70px;
+  justify-content: center;
+  margin-top: 70px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  gap: 10px;
+}
+
+.form-group input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 320px;
+  height: 30px;
+}
+
+.form-group textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 320px;
+  height: 30px;
+}
+
+.btn-guardar{
+  width: 200PX;
+  height: 30px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.25);
+  background-color: #141B4D;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-eliminar{
+  width: 200PX;
+  height: 30px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.25);
+  background-color: #141B4D;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-cancelar{
+  width: 200PX;
+  height: 30px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.25);
+  background-color: #ffffff;
+  color: black;
+  cursor: pointer;
+}

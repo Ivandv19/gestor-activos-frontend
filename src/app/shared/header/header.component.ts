@@ -1,0 +1,80 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { AuthService } from '../../login/services/auth.service';
+import { Observable, Subject, takeUntil, throwError } from 'rxjs';
+
+@Component({
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css'],
+})
+export class HeaderComponent implements OnDestroy {
+
+  // Propiedades para manejar el estado de la aplicación
+  private userPhotoCache: string | null = null;
+  private destroy$ = new Subject<void>();
+  fotoUrl: string = '';
+
+  
+  constructor(private router: Router, private authService: AuthService) {
+    // Escuchar eventos de logout desde el AuthService
+    this.authService.onLogout()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.clearPhotoCache(); // Limpiar cache al hacer logout
+      });
+  }
+
+  isLoginRoute(): boolean {
+    return this.router.url === '/login';
+  }
+
+  // Nueva función para verificar autenticación
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
+
+  // Funcion para obtener la foto de usuario
+  getUserPhoto(): string {
+    if (this.userPhotoCache === null) {
+      const userData = this.authService.getUserData();
+      console.log('Datos del usuario (primer acceso)', userData);
+      this.userPhotoCache = userData?.foto_url || 'assets/default-profile.png';
+    }
+    return this.userPhotoCache || 'assets/default-profile.png';
+  }
+
+  private clearPhotoCache(): void {
+    this.userPhotoCache = null; // Resetear el cache
+    console.log("Cache de foto limpiado por logout");
+  }
+
+  ngOnDestroy(): void {
+    // Completar la limpieza de recursos al destruir el componente
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+
+  // Función para obtener el título según la ruta
+  getTitle(): string {
+    const currentRoute = this.router.url; // Obtiene la ruta actual directamente
+
+    switch (currentRoute) {
+      case '/login':
+        return 'Gestor de Activos';
+      case '/dashboard':
+        return 'Dashboard';
+      case '/gestion-activos':
+        return 'Gestión de Activos';
+      case '/asignaciones':
+        return 'Asignaciones';
+      case '/reportes':
+        return 'Reportes';
+      case '/configuracion':
+        return 'Configuración';
+      default:
+        return 'Gestor de Activos'; // Título predeterminado
+    }
+  }
+}
