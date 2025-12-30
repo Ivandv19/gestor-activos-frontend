@@ -46,7 +46,7 @@ Este proyecto forma parte de una aplicación de **gestión de activos IT**, perm
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tu-usuario/gestor-de-activos.git
+git clone https://github.com/Ivandv19/gestor-de-activos.git
 
 # Acceder al directorio del proyecto
 cd gestor-de-activos

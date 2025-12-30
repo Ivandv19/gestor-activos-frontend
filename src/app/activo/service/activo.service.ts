@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ActivoService {
-  private apiUrl = 'http://localhost:3000/gestion-activos';
+  private apiUrl = `${environment.apiUrl}/gestion-activos`;
 
   constructor(private http: HttpClient) {}
 

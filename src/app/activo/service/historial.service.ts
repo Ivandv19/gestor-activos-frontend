@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HistorialService {
-  private apiUrl = 'http://localhost:3000/historial'; // URL base del backend
+  private apiUrl = `${environment.apiUrl}/historial`; // URL base del backend
 
   constructor(private http: HttpClient) {}
 
