@@ -3,6 +3,8 @@ import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../login/services/auth.service';
 import { Observable, Subject, takeUntil, throwError } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
+
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -10,12 +12,14 @@ import { Observable, Subject, takeUntil, throwError } from 'rxjs';
 })
 export class HeaderComponent implements OnDestroy {
 
+  apiUrl = environment.apiUrl;
+
   // Propiedades para manejar el estado de la aplicación
   private userPhotoCache: string | null = null;
   private destroy$ = new Subject<void>();
   fotoUrl: string = '';
 
-  
+
   constructor(private router: Router, private authService: AuthService) {
     // Escuchar eventos de logout desde el AuthService
     this.authService.onLogout()
