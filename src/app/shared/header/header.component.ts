@@ -14,7 +14,6 @@ export class HeaderComponent implements OnDestroy {
 	apiUrl = environment.apiUrl;
 
 	// Propiedades para manejar el estado de la aplicación
-	private userPhotoCache: string | null = null;
 	private destroy$ = new Subject<void>();
 	fotoUrl: string = "";
 
@@ -22,12 +21,12 @@ export class HeaderComponent implements OnDestroy {
 		private router: Router,
 		private authService: AuthService,
 	) {
-		// Escuchar eventos de logout desde el AuthService
+		// Escuchar eventos de logout
 		this.authService
 			.onLogout()
 			.pipe(takeUntil(this.destroy$))
 			.subscribe(() => {
-				this.clearPhotoCache(); // Limpiar cache al hacer logout
+				// No hace falta limpiar cache porque lo eliminaremos
 			});
 	}
 
@@ -42,17 +41,17 @@ export class HeaderComponent implements OnDestroy {
 
 	// Funcion para obtener la foto de usuario
 	getUserPhoto(): string {
-		if (this.userPhotoCache === null) {
-			const userData = this.authService.getUserData();
-			console.log("Datos del usuario (primer acceso)", userData);
-			this.userPhotoCache = userData?.foto_url || "assets/default-profile.png";
-		}
-		return this.userPhotoCache || "assets/default-profile.png";
-	}
+		const userData = this.authService.getUserData();
 
-	private clearPhotoCache(): void {
-		this.userPhotoCache = null; // Resetear el cache
-		console.log("Cache de foto limpiado por logout");
+		if (userData && userData.foto_url) {
+			// Si la URL es completa (R2), usarla directo. Si no, usar apiUrl.
+			return userData.foto_url.startsWith("http")
+				? userData.foto_url
+				: `${this.apiUrl}${userData.foto_url}`;
+		}
+
+		// Imagen por defecto si no hay foto_url
+		return "assets/img-perfil.jpg";
 	}
 
 	ngOnDestroy(): void {
