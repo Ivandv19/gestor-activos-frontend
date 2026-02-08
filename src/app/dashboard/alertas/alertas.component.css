@@ -1,74 +1,70 @@
-.wrapper{
-  width: 100%;
-  padding: 100px 0 0 0;
-  display: flex;
-  flex-direction: row;
-  gap: 65px;
-  flex-wrap: wrap;
+.wrapper {
+	width: 100%;
+	padding: 100px 0 0 0;
+	display: flex;
+	flex-direction: row;
+	gap: 65px;
+	flex-wrap: wrap;
 }
 
-.card{
-  width: 360px;
-  height: 450px;
-   border: 0.5px solid rgba(0, 0, 0, 0.25);
-   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-   border-radius: 5px;
-   display: flex;
-   flex-direction: column;
-   padding: 20px;
-   align-items: center;
-
-
+.card {
+	width: 360px;
+	height: 450px;
+	border: 0.5px solid rgba(0, 0, 0, 0.25);
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	border-radius: 5px;
+	display: flex;
+	flex-direction: column;
+	padding: 20px;
+	align-items: center;
 }
-.card-container-status-color{
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
+.card-container-status-color {
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
 }
 
 .card--status-color {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 1px solid rgba(0, 0, 0, 0.25);
 }
-.naranja{
-  background-color: #FF8000; 
+.naranja {
+	background-color: #ff8000;
 }
-.amarillo{
-  background-color: #FFFF00;
+.amarillo {
+	background-color: #ffff00;
 }
-.gris{
-  background-color: #9B9B9B;
+.gris {
+	background-color: #9b9b9b;
 }
-.verde{
-  background-color: #00913F;
+.verde {
+	background-color: #00913f;
 }
-.card-info{
-  padding: 65px 0 0 0;
+.card-info {
+	padding: 65px 0 0 0;
 }
-.card-info--titulo{
-  text-align: center;
-  font-size: 40px;
-}
-
-.card-info--descripcion{
-  font-size: 22px;
-  padding: 35px 0 0 0;
-}
-.card--boton{
-  padding: 65px 0 0 0;
+.card-info--titulo {
+	text-align: center;
+	font-size: 40px;
 }
 
-.card--btn{
-  width: 167px;
-  height: 35px;
-  background-color: #141B4D;
-  border-radius: 5px;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
+.card-info--descripcion {
+	font-size: 22px;
+	padding: 35px 0 0 0;
+}
+.card--boton {
+	padding: 65px 0 0 0;
+}
 
+.card--btn {
+	width: 167px;
+	height: 35px;
+	background-color: #141b4d;
+	border-radius: 5px;
+	border: 1px solid rgba(0, 0, 0, 0.25);
+	color: white;
+	font-size: 16px;
+	cursor: pointer;
 }

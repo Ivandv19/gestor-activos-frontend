@@ -1,16 +1,16 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { DatosAuxiliaresService } from './datos-auxiliares.service';
+import { DatosAuxiliaresService } from "./datos-auxiliares.service";
 
-describe('DatosAuxiliaresService', () => {
-  let service: DatosAuxiliaresService;
+describe("DatosAuxiliaresService", () => {
+	let service: DatosAuxiliaresService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(DatosAuxiliaresService);
-  });
+	beforeEach(() => {
+		TestBed.configureTestingModule({});
+		service = TestBed.inject(DatosAuxiliaresService);
+	});
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+	it("should be created", () => {
+		expect(service).toBeTruthy();
+	});
 });

@@ -1,100 +1,98 @@
 main {
-  padding: 50px 50px;
-
+	padding: 50px 50px;
 }
 
 .container {
-  border: 0.5px solid rgba(0, 0, 0, 0.20);
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-  border-radius: 5px;
+	border: 0.5px solid rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	border-radius: 5px;
 }
 
 .container-2 {
-  width: 100%;
-  height: 80vh;
-  padding: 50px 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	width: 100%;
+	height: 80vh;
+	padding: 50px 50px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 form {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .form-parte-1 {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .form-parte-2 {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .seccion-1 {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
+	display: flex;
+	gap: 30px;
+	justify-content: center;
 }
 
 .seccion-2 {
-  display: flex;
-  gap: 70px;
-  justify-content: center;
-  margin-top: 70px;
+	display: flex;
+	gap: 70px;
+	justify-content: center;
+	margin-top: 70px;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  padding-top: 20px;
-  gap: 10px;
+	display: flex;
+	flex-direction: column;
+	padding-top: 20px;
+	gap: 10px;
 }
 
 .form-group input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 320px;
-  height: 30px;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	width: 320px;
+	height: 30px;
 }
 
 .form-group textarea {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 320px;
-  height: 30px;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	width: 320px;
+	height: 30px;
 }
 
-.btn-guardar{
-  width: 200PX;
-  height: 30px;
-  border-radius: 5px;
-  box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.25);
-  background-color: #141B4D;
-  color: white;
-  cursor: pointer;
+.btn-guardar {
+	width: 200px;
+	height: 30px;
+	border-radius: 5px;
+	box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.25);
+	background-color: #141b4d;
+	color: white;
+	cursor: pointer;
 }
 
-.btn-cancelar{
-  width: 200PX;
-  height: 30px;
-  border-radius: 5px;
-  box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.25);
-  background-color: #ffffff;
-  color: black;
-  cursor: pointer;
+.btn-cancelar {
+	width: 200px;
+	height: 30px;
+	border-radius: 5px;
+	box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.25);
+	background-color: #ffffff;
+	color: black;
+	cursor: pointer;
 }
-
 
 input:focus {
-  outline: 1px solid #141B4D; 
-  border-radius: 4px;
+	outline: 1px solid #141b4d;
+	border-radius: 4px;
 }
 select:focus {
-  outline: 1px solid #141B4D;
-  border-radius: 4px;
+	outline: 1px solid #141b4d;
+	border-radius: 4px;
 }

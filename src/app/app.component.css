@@ -1,44 +1,43 @@
 .main-grid {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  min-height: calc(100vh - 120px);
-  background-color: white;
+	display: grid;
+	grid-template-columns: 120px 1fr;
+	min-height: calc(100vh - 120px);
+	background-color: white;
 }
 
 .container {
-  background-color: aquamarine;
+	background-color: aquamarine;
 }
 
 .container-login {
-  display: flex;
-  width: 100%;
-  min-height: 100vh;
-  background-color: #ffffff;
+	display: flex;
+	width: 100%;
+	min-height: 100vh;
+	background-color: #ffffff;
 }
 
 .login-layout {
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .login-layout app-login {
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: white;
+	width: 100%;
+	max-width: 400px;
+	padding: 20px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	background-color: white;
 }
 
 .navbar-column {
-  width: 120px;
-  position: static;
-  z-index: 3;
+	width: 120px;
+	position: static;
+	z-index: 3;
 }
 
 .content-column {
-  background-color: white;
-  min-height: 100%;
-  overflow: hidden;
+	background-color: white;
+	min-height: 100%;
+	overflow: hidden;
 }
-
