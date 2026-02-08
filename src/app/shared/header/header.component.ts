@@ -51,7 +51,7 @@ export class HeaderComponent implements OnDestroy {
 		}
 
 		// Imagen por defecto si no hay foto_url
-		return "assets/img-perfil.jpg";
+		return "https://gestor-assets.mgdc.site/img-perfil.jpg";
 	}
 
 	ngOnDestroy(): void {

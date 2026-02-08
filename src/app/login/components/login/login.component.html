@@ -43,8 +43,8 @@
             <img
               [src]="
                 isPasswordVisible
-                  ? '/assets/contrasena-visible.png'
-                  : '/assets/contrasena-oculta.png'
+                  ? 'https://gestor-assets.mgdc.site/contrasena-visible.png'
+                  : 'https://gestor-assets.mgdc.site/contrasena-oculta.png'
               "
               alt="Mostrar contraseña"
               aria-hidden="true"
@@ -56,7 +56,7 @@
         <!-- Mensaje de error general (si existe) -->
         @if (errorMessage) {
         <div class="error-message">
-          <img src="/assets/advertencia.png" alt="error" />
+          <img src="https://gestor-assets.mgdc.site/advertencia.png" alt="error" />
           <small>{{ errorMessage }}</small>
         </div>
         }
