@@ -1,16 +1,16 @@
 import {
-	type AfterViewInit,
+	AfterViewInit,
 	Component,
-	type ElementRef,
-	type OnInit,
+	ElementRef,
+	OnInit,
 	ViewChild,
 } from "@angular/core";
-import { type FormBuilder, type FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Chart } from "chart.js/auto";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
-import type { DatosAuxiliaresService } from "../service/datos-auxiliares.service";
-import type { ReporteService } from "../service/reporte.service";
+import { DatosAuxiliaresService } from "../service/datos-auxiliares.service";
+import { ReporteService } from "../service/reporte.service";
 
 @Component({
 	selector: "app-reporte",
@@ -54,14 +54,14 @@ export class ReporteComponent implements OnInit, AfterViewInit {
 		private reporteService: ReporteService,
 		private datosAuxiliaresService: DatosAuxiliaresService,
 		private fb: FormBuilder,
-	) {}
+	) { }
 
 	ngOnInit(): void {
 		this.initForm();
 		this.fetchTiposReporte();
 		this.fetchDatosAuxiliares();
 	}
-	ngAfterViewInit(): void {}
+	ngAfterViewInit(): void { }
 
 	// Inicializar el formulario
 	initForm(): void {
@@ -308,7 +308,7 @@ export class ReporteComponent implements OnInit, AfterViewInit {
 			}
 
 			// 2. Renderizado con html2canvas (opciones clave)
-			const canvas = await html2canvas(element, {
+			const canvas = await (html2canvas as any)(element, {
 				scale: 1, // Calidad HD
 				logging: false,
 				useCORS: true,

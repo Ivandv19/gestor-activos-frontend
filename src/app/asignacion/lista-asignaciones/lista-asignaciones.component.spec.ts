@@ -1,4 +1,4 @@
-import { type ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ListaAsignacionesComponent } from "./lista-asignaciones.component";
 

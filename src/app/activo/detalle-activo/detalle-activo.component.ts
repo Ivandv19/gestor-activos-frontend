@@ -1,6 +1,6 @@
-import { Component, type OnInit } from "@angular/core";
-import type { ActivatedRoute, Router } from "@angular/router";
-import type { ActivoService } from "../service/activo.service";
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { ActivoService } from "../service/activo.service";
 
 @Component({
 	selector: "app-detalle-activo",

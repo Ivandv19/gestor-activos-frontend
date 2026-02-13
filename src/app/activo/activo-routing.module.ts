@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { RouterModule, type Routes } from "@angular/router";
+import { RouterModule, Routes } from "@angular/router";
 import { AgregarActivoComponent } from "./agregar-activo/agregar-activo.component"; // Componente para agregar un nuevo activo
 import { DetalleActivoComponent } from "./detalle-activo/detalle-activo.component"; // Componente para mostrar detalles de un activo
 import { EditarActivoComponent } from "./editar-activo/editar-activo.component"; // Componente para editar un activo existente

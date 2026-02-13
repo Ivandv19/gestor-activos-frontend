@@ -1,8 +1,8 @@
-import { Component, type OnInit } from "@angular/core";
-import type { ActivatedRoute } from "@angular/router";
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { Subject } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
-import type { HistorialService } from "../service/historial.service";
+import { HistorialService } from "../service/historial.service";
 
 @Component({
 	selector: "app-historial-activo",

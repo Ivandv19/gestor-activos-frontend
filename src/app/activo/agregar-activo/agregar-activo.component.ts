@@ -1,15 +1,15 @@
-import { Component, type OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import {
-	type AbstractControl,
-	type FormBuilder,
-	type FormGroup,
-	type ValidationErrors,
-	type ValidatorFn,
+	AbstractControl,
+	FormBuilder,
+	FormGroup,
+	ValidationErrors,
+	ValidatorFn,
 	Validators,
 } from "@angular/forms";
-import type { Router } from "@angular/router";
-import type { ActivoService } from "../service/activo.service";
-import type { DatosService } from "../service/datos.service";
+import { Router } from "@angular/router";
+import { ActivoService } from "../service/activo.service";
+import { DatosService } from "../service/datos.service";
 
 @Component({
 	selector: "app-agregar-activo",

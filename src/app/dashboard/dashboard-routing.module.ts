@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { RouterModule, type Routes } from "@angular/router";
+import { RouterModule, Routes } from "@angular/router";
 import { PanelControlComponent } from "./panel-control/panel-control.component";
 
 const routes: Routes = [

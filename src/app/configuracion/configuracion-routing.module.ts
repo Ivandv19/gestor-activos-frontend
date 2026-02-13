@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { RouterModule, type Routes } from "@angular/router";
+import { RouterModule, Routes } from "@angular/router";
 import { ConfiguracionAplicacionComponent } from "./configuracion-aplicacion/configuracion-aplicacion.component";
 
 const routes: Routes = [

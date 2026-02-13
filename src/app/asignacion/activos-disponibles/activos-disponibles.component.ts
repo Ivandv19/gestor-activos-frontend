@@ -1,9 +1,9 @@
-import { Component, type OnInit } from "@angular/core";
-import type { Router } from "@angular/router";
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
-import type { ActivosDisponiblesService } from "../services/activos-disponibles.service";
-import type { AuxiliaresService } from "../services/auxiliares.service";
+import { ActivosDisponiblesService } from "../services/activos-disponibles.service";
+import { AuxiliaresService } from "../services/auxiliares.service";
 
 @Component({
 	selector: "app-activos-disponibles",

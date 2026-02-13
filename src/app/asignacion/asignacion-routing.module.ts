@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { RouterModule, type Routes } from "@angular/router";
+import { RouterModule, Routes } from "@angular/router";
 import { ActivosAsignadosComponent } from "./activos-asignados/activos-asignados.component";
 import { ActivosDisponiblesComponent } from "./activos-disponibles/activos-disponibles.component";
 import { AsignarActivoComponent } from "./asignar-activo/asignar-activo.component";

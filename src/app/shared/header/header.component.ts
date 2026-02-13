@@ -1,8 +1,8 @@
-import { Component, type OnDestroy, OnInit } from "@angular/core";
-import { NavigationEnd, type Router } from "@angular/router";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { NavigationEnd, Router } from "@angular/router";
 import { Observable, Subject, takeUntil, throwError } from "rxjs";
 import { environment } from "../../../environments/environment";
-import type { AuthService } from "../../login/services/auth.service";
+import { AuthService } from "../../login/services/auth.service";
 
 @Component({
 	selector: "app-header",

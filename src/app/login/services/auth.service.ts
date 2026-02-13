@@ -1,7 +1,7 @@
-import type { HttpClient } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import type { Router } from "@angular/router";
-import { type Observable, Subject, throwError } from "rxjs";
+import { Router } from "@angular/router";
+import { Observable, Subject, throwError } from "rxjs";
 import { environment } from "../../../environments/environment";
 
 @Injectable({

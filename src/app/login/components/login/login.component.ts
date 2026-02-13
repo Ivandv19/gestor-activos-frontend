@@ -1,13 +1,13 @@
 import {
 	Component,
-	type ElementRef,
-	type OnDestroy,
-	type Renderer2,
+	ElementRef,
+	OnDestroy,
+	Renderer2,
 	ViewChild,
 } from "@angular/core";
-import { type FormBuilder, type FormGroup, Validators } from "@angular/forms";
-import type { Router } from "@angular/router";
-import type { AuthService } from "../../services/auth.service";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
 	selector: "app-login",
