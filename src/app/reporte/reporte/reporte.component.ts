@@ -1,16 +1,16 @@
-import { ReporteService } from "../service/reporte.service";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { DatosAuxiliaresService } from "../service/datos-auxiliares.service";
 import {
+	type AfterViewInit,
 	Component,
-	OnInit,
-	AfterViewInit,
+	type ElementRef,
+	type OnInit,
 	ViewChild,
-	ElementRef,
 } from "@angular/core";
+import { type FormBuilder, type FormGroup, Validators } from "@angular/forms";
 import { Chart } from "chart.js/auto";
-import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
+import type { DatosAuxiliaresService } from "../service/datos-auxiliares.service";
+import type { ReporteService } from "../service/reporte.service";
 
 @Component({
 	selector: "app-reporte",

@@ -1,10 +1,10 @@
 import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { ListaActivosComponent } from "./lista-activos/lista-activos.component"; // Componente para listar activos
-import { DetalleActivoComponent } from "./detalle-activo/detalle-activo.component"; // Componente para mostrar detalles de un activo
-import { HistorialActivoComponent } from "./historial-activo/historial-activo.component"; // Componente para mostrar historial de un activo
+import { RouterModule, type Routes } from "@angular/router";
 import { AgregarActivoComponent } from "./agregar-activo/agregar-activo.component"; // Componente para agregar un nuevo activo
+import { DetalleActivoComponent } from "./detalle-activo/detalle-activo.component"; // Componente para mostrar detalles de un activo
 import { EditarActivoComponent } from "./editar-activo/editar-activo.component"; // Componente para editar un activo existente
+import { HistorialActivoComponent } from "./historial-activo/historial-activo.component"; // Componente para mostrar historial de un activo
+import { ListaActivosComponent } from "./lista-activos/lista-activos.component"; // Componente para listar activos
 
 const routes: Routes = [
 	{ path: "", component: ListaActivosComponent }, // Página principal: lista de activos

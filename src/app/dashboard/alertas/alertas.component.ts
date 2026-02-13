@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
-import { DashboardService } from "../services/dashboard.service";
-import { Router } from "@angular/router";
+import { Component, type OnInit } from "@angular/core";
+import type { Router } from "@angular/router";
+import type { DashboardService } from "../services/dashboard.service";
 
 @Component({
 	selector: "app-alertas",

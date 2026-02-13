@@ -1,9 +1,9 @@
-import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { AuxiliaresService } from "../services/auxiliares.service";
-import { AsignacionService } from "../services/asignacion.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Location } from "@angular/common";
+import type { Location } from "@angular/common";
+import { Component, type OnInit } from "@angular/core";
+import { type FormBuilder, type FormGroup, Validators } from "@angular/forms";
+import type { ActivatedRoute, Router } from "@angular/router";
+import type { AsignacionService } from "../services/asignacion.service";
+import type { AuxiliaresService } from "../services/auxiliares.service";
 
 @Component({
 	selector: "app-editar-asignacion",

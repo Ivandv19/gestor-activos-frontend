@@ -1,10 +1,9 @@
-import { Component, OnInit } from "@angular/core";
-import { ActivosDisponiblesService } from "../services/activos-disponibles.service";
-import { Router } from "@angular/router";
+import { Component, type OnInit } from "@angular/core";
+import type { Router } from "@angular/router";
 import { Subject } from "rxjs";
-import { debounceTime } from "rxjs/operators";
-import { switchMap } from "rxjs/operators";
-import { AuxiliaresService } from "../services/auxiliares.service";
+import { debounceTime, switchMap } from "rxjs/operators";
+import type { ActivosDisponiblesService } from "../services/activos-disponibles.service";
+import type { AuxiliaresService } from "../services/auxiliares.service";
 
 @Component({
 	selector: "app-activos-disponibles",
@@ -208,7 +207,7 @@ export class ActivosDisponiblesComponent implements OnInit {
 		const totalPaginas = this.pagination.totalPages;
 		const rango = 5; // Máximo de páginas visibles
 		let inicio = Math.max(1, this.paginaActual - Math.floor(rango / 2));
-		let fin = Math.min(totalPaginas, inicio + rango - 1);
+		const fin = Math.min(totalPaginas, inicio + rango - 1);
 
 		if (fin - inicio + 1 < rango) {
 			inicio = Math.max(1, fin - rango + 1);

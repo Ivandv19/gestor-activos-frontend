@@ -1,9 +1,8 @@
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { HistorialService } from "../service/historial.service";
+import { Component, type OnInit } from "@angular/core";
+import type { ActivatedRoute } from "@angular/router";
 import { Subject } from "rxjs";
-import { debounceTime } from "rxjs/operators";
-import { switchMap } from "rxjs/operators";
+import { debounceTime, switchMap } from "rxjs/operators";
+import type { HistorialService } from "../service/historial.service";
 
 @Component({
 	selector: "app-historial-activo",
@@ -199,7 +198,7 @@ export class HistorialActivoComponent implements OnInit {
 		const totalPaginas = this.pagination.totalPages;
 		const rango = 5; // Máximo de páginas visibles
 		let inicio = Math.max(1, this.paginaActual - Math.floor(rango / 2));
-		let fin = Math.min(totalPaginas, inicio + rango - 1);
+		const fin = Math.min(totalPaginas, inicio + rango - 1);
 
 		if (fin - inicio + 1 < rango) {
 			inicio = Math.max(1, fin - rango + 1);

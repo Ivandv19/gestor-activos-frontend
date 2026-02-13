@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
-import { ConfiguracionService } from "../services/configuracion.service";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Component, type OnInit } from "@angular/core";
+import { type FormBuilder, type FormGroup, Validators } from "@angular/forms";
+import type { ConfiguracionService } from "../services/configuracion.service";
 
 @Component({
 	selector: "app-configuracion-aplicacion",

@@ -1,12 +1,11 @@
 import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-
-// Componentes del módulo
-import { ListaAsignacionesComponent } from "./lista-asignaciones/lista-asignaciones.component";
-import { ActivosDisponiblesComponent } from "./activos-disponibles/activos-disponibles.component";
+import { RouterModule, type Routes } from "@angular/router";
 import { ActivosAsignadosComponent } from "./activos-asignados/activos-asignados.component";
+import { ActivosDisponiblesComponent } from "./activos-disponibles/activos-disponibles.component";
 import { AsignarActivoComponent } from "./asignar-activo/asignar-activo.component";
 import { EditarAsignacionComponent } from "./editar-asignacion/editar-asignacion.component";
+// Componentes del módulo
+import { ListaAsignacionesComponent } from "./lista-asignaciones/lista-asignaciones.component";
 
 // Definición de las rutas
 const routes: Routes = [

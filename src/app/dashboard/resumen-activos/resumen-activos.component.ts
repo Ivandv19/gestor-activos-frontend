@@ -1,16 +1,21 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
-import { DashboardService } from "../services/dashboard.service";
 import {
-	Chart,
-	PieController,
-	BarController,
-	CategoryScale,
-	LinearScale,
+	Component,
+	type ElementRef,
+	type OnInit,
+	ViewChild,
+} from "@angular/core";
+import {
 	ArcElement,
-	Tooltip,
-	Legend,
+	BarController,
 	BarElement,
+	CategoryScale,
+	Chart,
+	Legend,
+	LinearScale,
+	PieController,
+	Tooltip,
 } from "chart.js";
+import type { DashboardService } from "../services/dashboard.service";
 
 // Registrar componentes necesarios de Chart.js
 Chart.register(

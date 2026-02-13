@@ -1,13 +1,13 @@
-import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { ActivoRoutingModule } from "./activo-routing.module";
-import { ListaActivosComponent } from "./lista-activos/lista-activos.component";
-import { DetalleActivoComponent } from "./detalle-activo/detalle-activo.component";
-import { HistorialActivoComponent } from "./historial-activo/historial-activo.component";
-import { AgregarActivoComponent } from "./agregar-activo/agregar-activo.component";
-import { EditarActivoComponent } from "./editar-activo/editar-activo.component";
 import { NgSelectModule } from "@ng-select/ng-select";
+import { ActivoRoutingModule } from "./activo-routing.module";
+import { AgregarActivoComponent } from "./agregar-activo/agregar-activo.component";
+import { DetalleActivoComponent } from "./detalle-activo/detalle-activo.component";
+import { EditarActivoComponent } from "./editar-activo/editar-activo.component";
+import { HistorialActivoComponent } from "./historial-activo/historial-activo.component";
+import { ListaActivosComponent } from "./lista-activos/lista-activos.component";
 
 @NgModule({
 	declarations: [

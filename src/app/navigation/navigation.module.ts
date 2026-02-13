@@ -1,8 +1,8 @@
-import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
+import { CajaNavComponent } from "./caja-nav/caja-nav.component";
 import { NavbarComponent } from "./navbar/navbar.component";
 import { NavigationRoutingModule } from "./navigation-routing.module";
-import { CajaNavComponent } from "./caja-nav/caja-nav.component";
 
 @NgModule({
 	declarations: [NavbarComponent, CajaNavComponent],

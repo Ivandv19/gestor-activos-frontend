@@ -1,8 +1,8 @@
 import { Component, OnDestroy } from "@angular/core";
-import { Router, NavigationEnd } from "@angular/router";
-import { filter, takeUntil } from "rxjs/operators";
+import { NavigationEnd, type Router } from "@angular/router";
 import { Subject } from "rxjs";
-import { AuthService } from "./login/services/auth.service";
+import { filter, takeUntil } from "rxjs/operators";
+import type { AuthService } from "./login/services/auth.service";
 
 @Component({
 	selector: "app-root",
