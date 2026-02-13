@@ -1,4 +1,4 @@
 export const environment = {
 	production: true,
-	apiUrl: "https://gestor-activos.mgdc.site",
+	apiUrl: "https://gestor-activos-backend.fluxdv.icu",
 };
