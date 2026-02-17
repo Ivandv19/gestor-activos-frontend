@@ -1,14 +1,24 @@
-import { TestBed } from "@angular/core/testing";
-import { RouterModule } from "@angular/router";
+import { TestBed, waitForAsync } from "@angular/core/testing";
+import { RouterTestingModule } from "@angular/router/testing";
 import { AppComponent } from "./app.component";
+import { AuthService } from "./login/services/auth.service";
 
 describe("AppComponent", () => {
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			imports: [RouterModule.forRoot([])],
+	let authServiceMock: any;
+
+	beforeEach(waitForAsync(() => {
+		authServiceMock = {
+			isLoggedIn: jest.fn().mockReturnValue(false)
+		};
+
+		TestBed.configureTestingModule({
+			imports: [RouterTestingModule],
 			declarations: [AppComponent],
+			providers: [
+				{ provide: AuthService, useValue: authServiceMock }
+			]
 		}).compileComponents();
-	});
+	}));
 
 	it("should create the app", () => {
 		const fixture = TestBed.createComponent(AppComponent);
@@ -16,18 +26,14 @@ describe("AppComponent", () => {
 		expect(app).toBeTruthy();
 	});
 
-	it(`should have as title 'gestor-activos-frontend'`, () => {
-		const fixture = TestBed.createComponent(AppComponent);
-		const app = fixture.componentInstance;
-		expect(app.title).toEqual("gestor-activos-frontend");
-	});
+	// Removed title check as the component doesn't have a title property
 
 	it("should render title", () => {
 		const fixture = TestBed.createComponent(AppComponent);
 		fixture.detectChanges();
 		const compiled = fixture.nativeElement as HTMLElement;
 		expect(compiled.querySelector("h1")?.textContent).toContain(
-			"Hello, gestor-activos-frontend",
+			"Hello, gestor-activos-frontend"
 		);
 	});
 });

@@ -4,7 +4,16 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"outDir": "./out-tsc/spec",
-		"types": ["jasmine"]
+		"types": [
+			"jest"
+		],
+		"esModuleInterop": true,
+		"emitDecoratorMetadata": true,
+		"allowSyntheticDefaultImports": true,
+		"module": "commonjs"
 	},
-	"include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
+	"include": [
+		"src/**/*.spec.ts",
+		"src/**/*.d.ts"
+	]
 }
