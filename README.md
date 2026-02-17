@@ -69,7 +69,13 @@ La aplicación se ejecutará en [http://localhost:4200](http://localhost:4200)
 ---
 
 
+
+##  Testing
+El proyecto utiliza **Jest** como motor de pruebas. Para más detalles, consulta:
+- [Diseño y Arquitectura (Testing)](docs/diseno-y-arquitectura.md)
+
 ## 📎 Documentación Adicional
+- [Wiki del Proyecto](https://github.com/Ivandv19/gestor-activos-frontend/wiki) *(Opcional)*
 
   
 
