@@ -26,14 +26,12 @@ describe("AppComponent", () => {
 		expect(app).toBeTruthy();
 	});
 
-	// Removed title check as the component doesn't have a title property
-
-	it("should render title", () => {
+	it("should render header and footer", () => {
 		const fixture = TestBed.createComponent(AppComponent);
 		fixture.detectChanges();
 		const compiled = fixture.nativeElement as HTMLElement;
-		expect(compiled.querySelector("h1")?.textContent).toContain(
-			"Hello, gestor-activos-frontend"
-		);
+		expect(compiled.querySelector("app-header")).toBeTruthy();
+		expect(compiled.querySelector("app-footer")).toBeTruthy();
 	});
+
 });
