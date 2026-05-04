@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { ActivosAsignadosComponent } from "./activos-asignados/activos-asignados.component";
-import { ActivosDisponiblesComponent } from "./activos-disponibles/activos-disponibles.component";
+import { RoleGuard } from "../services/role-guard.service";
 import { AsignarActivoComponent } from "./asignar-activo/asignar-activo.component";
 import { EditarAsignacionComponent } from "./editar-asignacion/editar-asignacion.component";
 // Componentes del módulo
@@ -10,8 +9,18 @@ import { ListaAsignacionesComponent } from "./lista-asignaciones/lista-asignacio
 // Definición de las rutas
 const routes: Routes = [
 	{ path: "", component: ListaAsignacionesComponent }, // Ruta principal (/asignaciones)
-	{ path: "asignar/:id", component: AsignarActivoComponent }, // Ruta independiente (/asignaciones/asignar)
-	{ path: "editar/:id", component: EditarAsignacionComponent }, // Ruta independiente (/asignaciones/editar/:id)
+	{
+		path: "asignar/:id",
+		component: AsignarActivoComponent,
+		canActivate: [RoleGuard],
+		data: { expectedRole: "Administrador" },
+	}, // Ruta independiente (/asignaciones/asignar)
+	{
+		path: "editar/:id",
+		component: EditarAsignacionComponent,
+		canActivate: [RoleGuard],
+		data: { expectedRole: "Administrador" },
+	}, // Ruta independiente (/asignaciones/editar/:id)
 ];
 
 @NgModule({

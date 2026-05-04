@@ -1,7 +1,9 @@
 import {
 	AfterViewInit,
+	ChangeDetectorRef,
 	Component,
 	ElementRef,
+	OnDestroy,
 	OnInit,
 	ViewChild,
 } from "@angular/core";
@@ -9,6 +11,15 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Chart } from "chart.js/auto";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { Subject, takeUntil } from "rxjs";
+import { SelectItem } from "../../models/datos-auxiliares.interface";
+import {
+	DatosAuxiliaresResponse,
+	ReporteFiltros,
+	ReporteResponse,
+	TipoReporte,
+	TiposReporteResponse,
+} from "../../models/reporte.interface";
 import { DatosAuxiliaresService } from "../service/datos-auxiliares.service";
 import { ReporteService } from "../service/reporte.service";
 
@@ -18,113 +29,114 @@ import { ReporteService } from "../service/reporte.service";
 	templateUrl: "./reporte.component.html",
 	styleUrl: "./reporte.component.css",
 })
-export class ReporteComponent implements OnInit, AfterViewInit {
+export class ReporteComponent implements OnInit, AfterViewInit, OnDestroy {
+	today: Date = new Date();
 	reportForm!: FormGroup;
 
-	// Variables para almacenar los datos auxiliares
-	tiposActivo: any[] = [];
-	usuarios: any[] = [];
-	ubicaciones: any[] = [];
-	proveedores: any[] = [];
-	reporte = {
-		tipo_reporte: "", // Tipo de reporte (inicialmente vacío)
-		descripcion: "", // Descripción del reporte (inicialmente vacía)
+	tiposActivo: SelectItem[] = [];
+	usuarios: SelectItem[] = [];
+	ubicaciones: SelectItem[] = [];
+	proveedores: SelectItem[] = [];
+	tiposReporte: TipoReporte[] = [];
+	errorMessage: string | null = null;
+	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+
+	reporte: ReporteResponse = {
+		success: false,
+		message: "",
+		tipo_reporte: "",
+		descripcion: "",
 		filtros: {
-			tipo_activo: "", // Filtro por tipo de activo (inicialmente vacío)
-			usuario: "", // Filtro por usuario (inicialmente vacío)
-			ubicacion: "", // Filtro por ubicación (inicialmente vacío)
-			proveedor: "", // Filtro por proveedor (inicialmente vacío)
-			fecha_inicio: null, // Fecha de inicio (inicialmente nula)
-			fecha_fin: null, // Fecha de fin (inicialmente nula)
+			tipo_activo: "",
+			usuario: "",
+			ubicacion: "",
+			proveedor: "",
+			fecha_inicio: null,
+			fecha_fin: null,
 		},
 		resultados: {
-			detalles: [], // Detalles del reporte (inicialmente un array vacío)
-			resumen: {}, // Resumen del reporte (inicialmente un objeto vacío)
+			detalles: [],
+			resumen: {},
 		},
 	};
-	errorMessage: string | null = null; // Mensaje de error (inicialmente nulo)
 
-	// Referencias a los elementos <canvas> usando @ViewChild
 	@ViewChild("graficaPastel") graficaPastel!: ElementRef;
 	@ViewChild("graficaBarras") graficaBarras!: ElementRef;
-
-	tiposReporte: any[] = []; // Almacena los tipos de reporte
 
 	constructor(
 		private reporteService: ReporteService,
 		private datosAuxiliaresService: DatosAuxiliaresService,
 		private fb: FormBuilder,
-	) { }
+		private cdr: ChangeDetectorRef,
+	) {}
 
 	ngOnInit(): void {
 		this.initForm();
 		this.fetchTiposReporte();
 		this.fetchDatosAuxiliares();
 	}
-	ngAfterViewInit(): void { }
+	ngAfterViewInit(): void {}
 
-	// Inicializar el formulario
 	initForm(): void {
 		this.reportForm = this.fb.group({
-			tipoReporte: ["", Validators.required], // Selector de tipo de reporte
-			descripcion: [{ value: "", disabled: false }], // Permite cambios dinámicos
-			tipoActivo: [""], // Selector de tipo de activo
-			fechaInicio: [""],
-			fechaFin: [""],
-			usuario: [""], // Selector de usuario
-			ubicacion: [""], // Selector de ubicación
-			proveedor: [""], // Selector de proveedor
+			tipo_reporte: ["", Validators.required],
+			descripcion: [{ value: "", disabled: false }],
+			tipo_activo_id: [""],
+			fecha_inicio: [""],
+			fecha_fin: [""],
+			usuario_id: [""],
+			ubicacion_id: [""],
+			proveedor_id: [""],
 		});
-		// Escucha cambios en 'tipoReporte' para actualizar 'descripcion'
-		this.reportForm.get("tipoReporte")?.valueChanges.subscribe((tipoId) => {
-			this.actualizarDescripcion(tipoId);
-		});
+		this.reportForm
+			.get("tipo_reporte")
+			?.valueChanges.pipe(takeUntil(this.destroy$))
+			.subscribe((tipoId) => {
+				this.actualizarDescripcion(tipoId);
+			});
 	}
 
-	// Método para cargar los tipos de reporte
 	fetchTiposReporte(): void {
-		this.reporteService.getTiposReporte().subscribe({
-			next: (response) => {
-				console.log("Respuesta cruda del servicio:", response); //
-				this.tiposReporte = response.tiposReporte; // Asignar los tipos de reporte a la variable
-				console.log("Tipos de reporte asignados:", this.tiposReporte);
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error al cargar los tipos de reporte." }
-				const errorMessage =
-					error.error?.error || "Error al cargar los tipos de reporte.";
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+		this.reporteService
+			.getTiposReporte()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response: TiposReporteResponse) => {
+					this.tiposReporte = response.tiposReporte || [];
+				},
+				error: (error) => {
+					const errorMessage =
+						error.error?.error || "Error al cargar los tipos de reporte.";
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					alert(errorMessage);
+				},
+			});
 	}
 
-	// Método para cargar los datos auxiliares
 	fetchDatosAuxiliares(): void {
-		this.datosAuxiliaresService.getDatosAuxiliares().subscribe({
-			next: (response) => {
-				console.log("[DEBUG] Datos auxiliares recibidos:", response);
+		this.datosAuxiliaresService
+			.getDatosAuxiliares()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response: DatosAuxiliaresResponse) => {
+					console.log("[DEBUG] Datos auxiliares recibidos:", response);
 
-				// Asignar los datos a las variables correspondientes
-				this.tiposActivo = response.tiposActivo;
-				this.usuarios = response.usuarios;
-				this.ubicaciones = response.ubicaciones;
-				this.proveedores = response.proveedores;
+					this.tiposActivo = response.tiposActivo || [];
+					this.usuarios = response.usuarios || [];
+					this.ubicaciones = response.ubicaciones || [];
+					this.proveedores = response.proveedores || [];
 
-				console.log("[INFO] Datos auxiliares asignados correctamente.");
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { message: "Error al cargar los tipos de reporte." }
-				const errorMessage =
-					error.error?.message || "Error al cargar los tipos de reporte.";
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+					console.log("[INFO] Datos auxiliares asignados correctamente.");
+				},
+				error: (error) => {
+					const errorMessage =
+						error.error?.message || "Error al cargar los tipos de reporte.";
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					alert(errorMessage);
+				},
+			});
 	}
 
 	actualizarDescripcion(tipoId: number): void {
@@ -141,53 +153,49 @@ export class ReporteComponent implements OnInit, AfterViewInit {
 		this.reportForm.get("descripcion")?.setValue(descripcion); // Asigna la descripción
 	}
 
-	generarReporte(tipo_id: number, filtros: any): void {
-		this.reporteService.generarReporte(tipo_id, filtros).subscribe({
-			next: (response: any) => {
-				console.log("[INFO] Datos del reporte generados:", response);
-				this.reporte = response;
-				console.log("xddd", this.reporte);
-				// Inicializar las gráficas
-				this.initGraficaPastel();
-				this.initGraficaBarras();
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error al generar el reporte." }
-				const errorMessage =
-					error.error?.error || "Error al generar el reporte.";
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+	generarReporte(tipo_id: number, filtros: ReporteFiltros): void {
+		this.reporteService
+			.generarReporte(tipo_id, filtros)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response: ReporteResponse) => {
+					console.log("[INFO] Datos del reporte generados:", response);
+					this.reporte = response;
+					this.cdr.detectChanges();
+					this.initGraficaPastel();
+					this.initGraficaBarras();
+				},
+				error: (error) => {
+					const errorMessage =
+						error.error?.error || "Error al generar el reporte.";
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					alert(errorMessage);
+				},
+			});
 	}
 	onLimpiar(): void {
 		this.reportForm.reset(); // Limpiar el formulario
 	}
 
-	// Método para manejar el envío del formulario
 	onSubmit(): void {
 		console.log("[DEBUG] Estado del formulario:", this.reportForm.status);
 		console.log("[DEBUG] Valores del formulario:", this.reportForm.value);
 
 		if (this.reportForm.valid) {
-			// Obtener los valores del formulario
 			const formValues = this.reportForm.value;
-			// Extraer los filtros dinámicamente
-			const filtros = {
-				tipo_activo_id: formValues.tipoActivo || null,
-				usuario_id: formValues.usuario || null, // ID del usuario
-				ubicacion_id: formValues.ubicacion || null, // ID de la ubicación
-				proveedor_id: formValues.proveedor || null, // ID del proveedor
-				fecha_inicio: formValues.fechaInicio || null, // Fecha de inicio
-				fecha_fin: formValues.fechaFin || null, // Fecha de fin
-			};
+			const { tipo_reporte, ...filtrosRaw } = formValues;
+
+			const filtros: ReporteFiltros & Record<string, unknown> = {};
+			for (const key in filtrosRaw) {
+				if (filtrosRaw[key] !== null && filtrosRaw[key] !== "") {
+					filtros[key] = filtrosRaw[key];
+				}
+			}
 
 			console.log("[DEBUG] Filtros generados:", filtros);
 
-			// Llamar al servicio para generar el reporte
-			this.generarReporte(formValues.tipoReporte, filtros);
+			this.generarReporte(tipo_reporte, filtros);
 		} else {
 			console.error("[ERROR] El formulario no es válido.");
 			console.log("[DEBUG] Errores del formulario:", this.reportForm.errors);
@@ -197,23 +205,31 @@ export class ReporteComponent implements OnInit, AfterViewInit {
 			);
 		}
 	}
-	// Método para obtener las columnas del reporte
-
 	getColumnas(): string[] {
-		if (this.reporte.resultados.detalles.length > 0) {
-			return Object.keys(this.reporte.resultados.detalles[0]);
+		const detalles = this.reporte.resultados?.detalles;
+		if (detalles && detalles.length > 0) {
+			return Object.keys(detalles[0]);
 		}
 		return [];
 	}
-	// Método para obtener los datos del reporte
-	getResumenEntries(): [string, number][] {
-		return Object.entries(this.reporte.resultados.resumen);
+
+	trackById(_index: number, item: Record<string, string | number>): number {
+		return Number(item["id"]);
 	}
 
-	private chartPastel: any;
-	private chartBarras: any;
+	trackByIndex(index: number): number {
+		return index;
+	}
+
+	getResumenEntries(): [string, number][] {
+		return Object.entries(this.reporte.resultados?.resumen || {});
+	}
+
+	private chartPastel: Chart<"pie"> | null = null;
+	private chartBarras: Chart<"bar"> | null = null;
 
 	initGraficaPastel(): void {
+		if (!this.graficaPastel?.nativeElement) return;
 		const canvas = this.graficaPastel.nativeElement;
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
@@ -254,6 +270,7 @@ export class ReporteComponent implements OnInit, AfterViewInit {
 	}
 
 	initGraficaBarras(): void {
+		if (!this.graficaBarras?.nativeElement) return;
 		const canvas = this.graficaBarras.nativeElement;
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
@@ -289,9 +306,8 @@ export class ReporteComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	// Método para exportar a PDF
 	async exportToPDF(): Promise<void> {
-		if (!this.reporte.resultados.detalles.length) {
+		if (!this.reporte.resultados?.detalles?.length) {
 			console.error("No hay datos para exportar");
 			return;
 		}
@@ -300,20 +316,18 @@ export class ReporteComponent implements OnInit, AfterViewInit {
 		const date = new Date().toLocaleDateString();
 
 		try {
-			// 1. Captura TODO el contenido del div
 			const element = document.getElementById("pdf-export-content");
 
 			if (!element) {
 				throw new Error("No se encontró el elemento a exportar");
 			}
 
-			// 2. Renderizado con html2canvas (opciones clave)
-			const canvas = await (html2canvas as any)(element, {
-				scale: 1, // Calidad HD
+			const canvas = await html2canvas(element, {
+				scale: 1,
 				logging: false,
 				useCORS: true,
 				allowTaint: true,
-				scrollY: -window.scrollY, // Evita cortes
+				scrollY: -window.scrollY,
 			});
 
 			// 3. Añade la imagen al PDF
@@ -328,5 +342,10 @@ export class ReporteComponent implements OnInit, AfterViewInit {
 		} catch (error) {
 			console.error("Error al generar PDF:", error);
 		}
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

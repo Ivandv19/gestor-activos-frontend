@@ -1,5 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { Subject, takeUntil } from "rxjs";
+import Swal from "sweetalert2";
 import { DashboardService } from "../services/dashboard.service";
 
 @Component({
@@ -8,13 +10,14 @@ import { DashboardService } from "../services/dashboard.service";
 	templateUrl: "./alertas.component.html",
 	styleUrl: "./alertas.component.css",
 })
-export class AlertasComponent implements OnInit {
+export class AlertasComponent implements OnInit, OnDestroy {
 	// Variables para almacenar los datos de las alertas
 	licenciasProximasAVencer: number = 0;
 	garantiasProximasAExpirar: number = 0;
 	activosEnMantenimiento: number = 0;
 	activosProximosADevolver: number = 0;
 	errorMessage = "";
+	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
 
 	constructor(
 		private dashboardService: DashboardService,
@@ -31,38 +34,45 @@ export class AlertasComponent implements OnInit {
 	 */
 
 	private cargarDatosBackend(): void {
-		this.dashboardService.getAlertas().subscribe({
-			next: (response) => {
-				console.log("Datos recibidos del backend:", response); // Log para verificar los datos
+		this.dashboardService
+			.getAlertas()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					console.log("Datos recibidos del backend:", response); // Log para verificar los datos
 
-				// Asignar los datos recibidos a las variables
-				this.licenciasProximasAVencer =
-					response.licencias_proximas_a_vencer || 0;
-				this.garantiasProximasAExpirar =
-					response.garantias_proximas_a_expirar || 0;
-				this.activosEnMantenimiento = response.activos_en_mantenimiento || 0;
-				this.activosProximosADevolver =
-					response.activos_proximos_a_devolver || 0;
+					// Asignar los datos recibidos a las variables
+					this.licenciasProximasAVencer =
+						response.licencias_proximas_a_vencer || 0;
+					this.garantiasProximasAExpirar =
+						response.garantias_proximas_a_expirar || 0;
+					this.activosEnMantenimiento = response.activos_en_mantenimiento || 0;
+					this.activosProximosADevolver =
+						response.activos_proximos_a_devolver || 0;
 
-				// Log para confirmar que los datos se han asignado correctamente
-				console.log("Datos asignados:", {
-					licenciasProximasAVencer: this.licenciasProximasAVencer,
-					garantiasProximasAExpirar: this.garantiasProximasAExpirar,
-					activosEnMantenimiento: this.activosEnMantenimiento,
-					activosProximosADevolver: this.activosProximosADevolver,
-				});
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { mensaje: "Error al actualizar la asignación" }
-				const errorMessage =
-					error.error?.mensaje || "Error al actualizar la asignación";
+					// Log para confirmar que los datos se han asignado correctamente
+					console.log("Datos asignados:", {
+						licenciasProximasAVencer: this.licenciasProximasAVencer,
+						garantiasProximasAExpirar: this.garantiasProximasAExpirar,
+						activosEnMantenimiento: this.activosEnMantenimiento,
+						activosProximosADevolver: this.activosProximosADevolver,
+					});
+				},
+				error: (error) => {
+					// Ejem. Si el backend devuelve { mensaje: "Error al actualizar la asignación" }
+					const errorMessage =
+						error.error?.mensaje || "Error al actualizar la asignación";
 
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+					// Mostrar el mensaje
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					Swal.fire({
+						icon: "error",
+						text: errorMessage,
+						confirmButtonColor: "#1e293b",
+					});
+				},
+			});
 	}
 	//Funcion para navegar a la vista de gestión de activos con un filtro específico
 	navegarAFiltro(filtro: string): void {
@@ -83,5 +93,10 @@ export class AlertasComponent implements OnInit {
 				queryParams: { fecha_devolucion_proxima: "true" },
 			});
 		}
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

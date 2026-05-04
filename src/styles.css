@@ -8,9 +8,8 @@
 }
 
 /*  Tipografías */
-body,
-label {
-	font-family: "Roboto", sans-serif;
+body {
+	font-family: "Inter", sans-serif;
 	line-height: 1.5;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -23,24 +22,42 @@ button,
 textarea,
 select {
 	font: inherit;
-	outline: none;
 	border: none;
 	background: none;
+}
+
+input:focus-visible,
+button:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+a:focus-visible {
+	outline: 2px solid #141b4d;
+	outline-offset: 2px;
 }
 
 /*  Estilos para encabezados */
 h1,
 h2,
 p {
-	font-family: "Roboto Condensed", sans-serif;
+	font-family: "Outfit", sans-serif;
 	font-weight: 400;
 }
 
 /*  Etiquetas comunes */
 label,
 button {
-	font-family: "Roboto Condensed", sans-serif;
+	font-family: "Outfit", sans-serif;
 	font-weight: 400;
+}
+
+:root {
+	--radius-sm: 8px;
+	--radius-md: 12px;
+	--radius-lg: 20px;
+	--shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
+	--shadow-md: 0 10px 30px rgba(0, 0, 0, 0.04);
+	--shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.06);
+	--color-label: #4a5568;
 }
 
 /*  Imágenes responsivas por defecto */
@@ -79,5 +96,103 @@ body {
 
 body {
 	margin: 0;
-	font-family: Roboto, "Helvetica Neue", sans-serif;
+	font-family: "Inter", "Helvetica Neue", sans-serif;
+}
+
+/* Custom SweetAlert2 Styles for a Premium Look (Global) */
+.premium-swal-popup {
+	border-radius: 20px !important;
+	padding: 2rem !important;
+	font-family: "Inter", sans-serif !important;
+}
+
+.premium-swal-title {
+	color: #141b4d !important;
+	font-size: 22px !important;
+	font-weight: 800 !important;
+}
+
+.premium-swal-html {
+	color: #4a5568 !important;
+	font-size: 14px !important;
+}
+
+.premium-swal-confirm {
+	background-color: #141b4d !important;
+	color: white !important;
+	border-radius: 12px !important;
+	padding: 12px 30px !important;
+	font-weight: 700 !important;
+	font-size: 14px !important;
+	margin: 10px !important;
+}
+
+.premium-swal-cancel {
+	background-color: #f7fafc !important;
+	color: #4a5568 !important;
+	border: 1px solid #e2e8f0 !important;
+	border-radius: 12px !important;
+	padding: 12px 30px !important;
+	font-weight: 600 !important;
+	font-size: 14px !important;
+	margin: 10px !important;
+}
+
+.swal2-actions {
+	gap: 10px !important;
+}
+
+.swal2-icon {
+	transform: scale(0.7) !important;
+	margin-top: 10px !important;
+}
+
+/* Animaciones Globales de Navegación */
+@keyframes pageFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(40px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Animación Universal para todas las páginas (basada en el Router de Angular) */
+router-outlet + * {
+	display: block !important;
+	animation: pageFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+/* Skip Link Styles */
+.skip-link {
+	position: absolute;
+	top: -40px;
+	left: 0;
+	background: #141b4d;
+	color: white;
+	padding: 8px 16px;
+	z-index: 10000;
+	text-decoration: none;
+	font-weight: 600;
+	border-radius: 0 0 8px 0;
+	transition: top 0.3s;
+}
+
+.skip-link:focus {
+	top: 0;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
 }

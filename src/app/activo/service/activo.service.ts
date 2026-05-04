@@ -2,6 +2,12 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
+import {
+	ActivoDetalleResponse,
+	ActivoListItem,
+	ActivoResponse,
+} from "../../models/activo.interface";
+import { Pagination } from "../../models/pagination.interface";
 
 @Injectable({
 	providedIn: "root",
@@ -19,7 +25,7 @@ export class ActivoService {
 		filtro?: string,
 		valorFiltro?: string,
 		orden?: string,
-	): Observable<any> {
+	): Observable<Pagination<ActivoListItem>> {
 		// Construir parámetros con logs detallados
 		let params = new HttpParams()
 			.set("page", page.toString())
@@ -44,27 +50,34 @@ export class ActivoService {
 		}
 
 		console.log("[SERVICE] Parámetros finales:", params.toString());
-		return this.http.get(`${this.apiUrl}/activos`, { params });
+		return this.http.get<Pagination<ActivoListItem>>(`${this.apiUrl}/activos`, {
+			params,
+		});
 	}
 
 	// Obtener un activo por ID
-	getActivoById(id: any): Observable<any> {
-		return this.http.get(`${this.apiUrl}/activos/${id}`);
+	getActivoById(id: number): Observable<ActivoDetalleResponse> {
+		return this.http.get<ActivoDetalleResponse>(`${this.apiUrl}/activos/${id}`);
 	}
 
 	// Crear un nuevo activo
-	createActivo(activo: any): Observable<any> {
-		return this.http.post(`${this.apiUrl}/activos`, activo);
+	createActivo(formData: FormData): Observable<ActivoResponse> {
+		return this.http.post<ActivoResponse>(`${this.apiUrl}/activos`, formData);
 	}
 
 	// Actualizar un activo existente
-	updateActivo(id: number, activo: any): Observable<any> {
-		return this.http.put(`${this.apiUrl}/activos/${id}`, activo);
+	updateActivo(id: number, formData: FormData): Observable<ActivoResponse> {
+		return this.http.put<ActivoResponse>(
+			`${this.apiUrl}/activos/${id}`,
+			formData,
+		);
 	}
 
 	// Eliminar un activo
-	deleteActivo(id: number): Observable<any> {
-		return this.http.delete(`${this.apiUrl}/activos/${id}`);
+	deleteActivo(id: number): Observable<{ message: string }> {
+		return this.http.delete<{ message: string }>(
+			`${this.apiUrl}/activos/${id}`,
+		);
 	}
 
 	darDeBajaActivo(
@@ -77,7 +90,12 @@ export class ActivoService {
 	}
 
 	//  método para subir imágenes
-	subirImagen(formData: FormData): Observable<any> {
-		return this.http.post(`${this.apiUrl}/upload`, formData);
+	subirImagen(
+		formData: FormData,
+	): Observable<{ url: string; filename: string }> {
+		return this.http.post<{ url: string; filename: string }>(
+			`${this.apiUrl}/upload`,
+			formData,
+		);
 	}
 }

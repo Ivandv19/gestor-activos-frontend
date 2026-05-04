@@ -1,8 +1,13 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { Observable, Subject, throwError } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { environment } from "../../../environments/environment";
+import {
+	LoginResponse,
+	TokenPayload,
+	UserData,
+} from "../../models/auth.interface";
 
 @Injectable({
 	providedIn: "root",
@@ -27,9 +32,9 @@ export class AuthService {
 	 * @param contrasena - Contraseña del usuario.
 	 * @returns Observable con la respuesta del backend.
 	 */
-	login(email: string, contrasena: string): Observable<any> {
+	login(email: string, contrasena: string): Observable<LoginResponse> {
 		const body = { email, contrasena };
-		return this.http.post<any>(`${this.apiUrl}/login`, body);
+		return this.http.post<LoginResponse>(`${this.apiUrl}/login`, body);
 	}
 
 	/**
@@ -37,7 +42,7 @@ export class AuthService {
 	 * @param token - Token JWT a guardar.
 	 * @param userData - Datos del usuario a guardar (opcional).
 	 */
-	saveToken(token: string, userData?: any): void {
+	saveToken(token: string, userData?: UserData): void {
 		if (!token) {
 			console.error("El token no puede ser nulo o vacío.");
 			return;
@@ -95,7 +100,7 @@ export class AuthService {
 	 * @returns El contenido del token decodificado.
 	 * @throws Error si el token es inválido o corrupto.
 	 */
-	private decodeToken(token: string): any {
+	private decodeToken(token: string): TokenPayload {
 		try {
 			const payload = token.split(".")[1]; // Extrae la parte del payload
 			return JSON.parse(atob(payload)); // Decodifica el payload
@@ -109,9 +114,28 @@ export class AuthService {
 	 * Obtiene los datos del usuario almacenados en localStorage.
 	 * @returns Los datos del usuario o `null` si no existen.
 	 */
-	getUserData(): any | null {
+	getUserData(): UserData | null {
 		const userData = localStorage.getItem(this.userKey);
 		return userData ? JSON.parse(userData) : null;
+	}
+
+	/**
+	 * Verifica si el usuario tiene un rol específico.
+	 * @param role - Rol a verificar.
+	 * @returns `true` si el usuario tiene el rol, `false` en caso contrario.
+	 */
+	hasRole(role: string): boolean {
+		const user = this.getUserData();
+		if (!user || !user.rol) return false;
+		return user.rol.toLowerCase() === role.toLowerCase();
+	}
+
+	/**
+	 * Verifica si el usuario es administrador.
+	 * @returns `true` si es administrador.
+	 */
+	isAdmin(): boolean {
+		return this.hasRole("Administrador");
 	}
 
 	/**

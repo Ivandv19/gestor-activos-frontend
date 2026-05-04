@@ -1,7 +1,15 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { Subject } from "rxjs";
+import { Subject, takeUntil } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
+import Swal from "sweetalert2";
+import { AuthService } from "../../login/services/auth.service";
+import { AsignacionResponse } from "../../models/asignacion.interface";
+import {
+	DatosAuxiliares,
+	SelectItem,
+} from "../../models/datos-auxiliares.interface";
+import { getCloudflareImage } from "../../utils/images";
 import { AsignacionService } from "../services/asignacion.service";
 import { AuxiliaresService } from "../services/auxiliares.service";
 
@@ -11,23 +19,30 @@ import { AuxiliaresService } from "../services/auxiliares.service";
 	templateUrl: "./activos-asignados.component.html",
 	styleUrl: "./activos-asignados.component.css",
 })
-export class ActivosAsignadosComponent implements OnInit {
+export class ActivosAsignadosComponent implements OnInit, OnDestroy {
 	filtroSeleccionado: string = "";
 	opcionSeleccionada: string = "";
 	ordenSeleccionado: string = "asc";
-	listaAsignaciones: any[] = [];
-	pagination: any = {};
+	listaAsignaciones: AsignacionResponse[] = [];
+	pagination: {
+		total: number;
+		totalPages: number;
+		page: number;
+		limit: number;
+	} = { total: 0, totalPages: 0, page: 1, limit: 10 };
 	limitePorPagina: number = 10;
 	paginaActual: number = 1;
 	private searchSubject = new Subject<string>();
+	private destroy$ = new Subject<void>();
 	terminoBusqueda: string = "";
-	datosAuxiliares: any = {};
+	datosAuxiliares: DatosAuxiliares | null = null;
 	errorMessage: string = "";
 
 	constructor(
 		private asignacionService: AsignacionService,
 		private enrutador: Router,
 		private auxiliaresService: AuxiliaresService,
+		private authService: AuthService,
 	) {}
 
 	ngOnInit(): void {
@@ -47,6 +62,7 @@ export class ActivosAsignadosComponent implements OnInit {
 						this.terminoBusqueda,
 					);
 				}),
+				takeUntil(this.destroy$),
 			)
 			.subscribe({
 				next: (response) => {
@@ -62,7 +78,18 @@ export class ActivosAsignadosComponent implements OnInit {
 					// Mostrar el mensaje
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
 				},
 			});
 	}
@@ -88,6 +115,7 @@ export class ActivosAsignadosComponent implements OnInit {
 				this.opcionSeleccionada,
 				this.ordenSeleccionado,
 			)
+			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
 					console.log("Respuesta del backend recibida:", response);
@@ -110,7 +138,18 @@ export class ActivosAsignadosComponent implements OnInit {
 					// Mostrar el mensaje
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
 				},
 			});
 	}
@@ -118,22 +157,36 @@ export class ActivosAsignadosComponent implements OnInit {
 	// Función para obtener los datos auxiliares
 	obtenerDatosAuxiliares(): void {
 		const idActivo = 1; // Supongamos que estamos buscando datos auxiliares para un activo con ID 1
-		this.auxiliaresService.getDatosAuxiliares(idActivo).subscribe({
-			next: (response) => {
-				console.log("Datos auxiliares recibidos:", response);
-				this.datosAuxiliares = response;
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error al obtener datos auxiliares" }
-				const errorMessage =
-					error.error?.error || "Error al obtener datos auxiliares";
+		this.auxiliaresService
+			.getDatosAuxiliares(idActivo)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					console.log("Datos auxiliares recibidos:", response);
+					this.datosAuxiliares = response;
+				},
+				error: (error) => {
+					// Ejem. Si el backend devuelve { error: "Error al obtener datos auxiliares" }
+					const errorMessage =
+						error.error?.error || "Error al obtener datos auxiliares";
 
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+					// Mostrar el mensaje
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
+				},
+			});
 	}
 
 	// Función para dividir el texto en partes (para resaltar coincidencias)
@@ -269,7 +322,7 @@ export class ActivosAsignadosComponent implements OnInit {
 		this.cargarAsignaciones();
 	}
 
-	cargarOpcionesFiltro(event: Event): void {
+	cargarOpcionesFiltro(_event: Event): void {
 		const filtroSelect = document.getElementById(
 			"filtro2",
 		) as HTMLSelectElement;
@@ -284,7 +337,7 @@ export class ActivosAsignadosComponent implements OnInit {
 			opcionesSelect.remove(1);
 		}
 
-		let opciones: any[] = [];
+		let opciones: SelectItem[] = [];
 
 		switch (this.filtroSeleccionado) {
 			case "tipo":
@@ -306,13 +359,13 @@ export class ActivosAsignadosComponent implements OnInit {
 		console.log("[FILTRO] Opciones cargadas:", opciones);
 		opciones.forEach((opcion) => {
 			const optionElement = document.createElement("option");
-			optionElement.value = opcion.id;
-			optionElement.textContent = opcion.nombre || opcion.descripcion;
+			optionElement.value = String(opcion.id);
+			optionElement.textContent = opcion.nombre || opcion.descripcion || null;
 			opcionesSelect.appendChild(optionElement);
 		});
 	}
 
-	aplicarFiltro(event: Event): void {
+	aplicarFiltro(_event: Event): void {
 		const opcionesSelect = document.getElementById(
 			"opciones2",
 		) as HTMLSelectElement;
@@ -332,7 +385,7 @@ export class ActivosAsignadosComponent implements OnInit {
 		}
 	}
 
-	aplicarOrden(event: Event): void {
+	aplicarOrden(_event: Event): void {
 		const ordenSelect = document.getElementById(
 			"direccion2",
 		) as HTMLSelectElement;
@@ -346,5 +399,26 @@ export class ActivosAsignadosComponent implements OnInit {
 		} else {
 			console.error('[ERROR] No se encontró el elemento con ID "orden2".');
 		}
+	}
+
+	isAdmin(): boolean {
+		return this.authService.isAdmin();
+	}
+
+	getAssetPhoto(fotoUrl: string): string {
+		return getCloudflareImage(fotoUrl, { width: 150 });
+	}
+
+	trackById(_index: number, item: AsignacionResponse): number {
+		return item.id;
+	}
+
+	trackByIndex(index: number): number {
+		return index;
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

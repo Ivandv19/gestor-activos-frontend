@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { ActivatedRoute } from "@angular/router";
+import { of } from "rxjs";
 
 import { ListaActivosComponent } from "./lista-activos.component";
 
@@ -9,6 +12,16 @@ describe("ListaActivosComponent", () => {
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
 			declarations: [ListaActivosComponent],
+			imports: [HttpClientTestingModule],
+			providers: [
+				{
+					provide: ActivatedRoute,
+					useValue: {
+						queryParams: of({}),
+						params: of({}),
+					},
+				},
+			],
 		}).compileComponents();
 
 		fixture = TestBed.createComponent(ListaActivosComponent);

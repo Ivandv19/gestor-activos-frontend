@@ -2,6 +2,8 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
+import { DatosAuxiliaresResponse } from "../../models/reporte.interface";
+
 @Injectable({
 	providedIn: "root",
 })
@@ -10,11 +12,7 @@ export class DatosAuxiliaresService {
 
 	constructor(private http: HttpClient) {}
 
-	// Método para obtener los datos auxiliares
-	getDatosAuxiliares(): Observable<any> {
-		console.log(
-			"[SERVICE] Llamando al backend para obtener datos auxiliares...",
-		);
+	getDatosAuxiliares(): Observable<DatosAuxiliaresResponse> {
 		return this.http.get(this.apiUrl);
 	}
 }

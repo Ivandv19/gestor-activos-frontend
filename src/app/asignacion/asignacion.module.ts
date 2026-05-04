@@ -1,6 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { HttpClientModule } from "@angular/common/http";
-import { NgModule } from "@angular/core";
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { ActivosAsignadosComponent } from "./activos-asignados/activos-asignados.component";
@@ -21,9 +20,9 @@ import { ListaAsignacionesComponent } from "./lista-asignaciones/lista-asignacio
 	imports: [
 		CommonModule,
 		AsignacionRoutingModule,
-		HttpClientModule,
 		NgSelectModule,
 		ReactiveFormsModule,
 	],
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AsignacionModule {}

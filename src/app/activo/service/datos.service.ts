@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
+import { DatosAuxiliares } from "../../models/datos-auxiliares.interface";
 
 @Injectable({
 	providedIn: "root",
@@ -11,15 +12,18 @@ export class DatosService {
 
 	constructor(private http: HttpClient) {}
 
-	// Método para obtener datos auxiliares
-	obtenerDatosAuxiliares(): Observable<any> {
-		return this.http.get(`${this.apiUrl}/datos-auxiliares`);
+	obtenerDatosAuxiliares(): Observable<DatosAuxiliares> {
+		return this.http.get<DatosAuxiliares>(`${this.apiUrl}/datos-auxiliares`);
 	}
 
-	// Método para obtener datos de activos
-	validarEtiquetaSerial(etiquetaSerial: string) {
-		return this.http.post(`${this.apiUrl}/validar-etiqueta-serial`, {
-			etiqueta_serial: etiquetaSerial,
-		});
+	validarEtiquetaSerial(
+		etiquetaSerial: string,
+	): Observable<{ disponible: boolean; message?: string }> {
+		return this.http.post<{ disponible: boolean; message?: string }>(
+			`${this.apiUrl}/validar-etiqueta-serial`,
+			{
+				etiqueta_serial: etiquetaSerial,
+			},
+		);
 	}
 }

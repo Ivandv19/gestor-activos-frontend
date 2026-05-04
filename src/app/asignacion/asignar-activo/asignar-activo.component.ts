@@ -1,7 +1,12 @@
 import { Location } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
+import { Subject, takeUntil } from "rxjs";
+import Swal from "sweetalert2";
+import { AsignacionPayload } from "../../models/asignacion.interface";
+import { SelectItem } from "../../models/datos-auxiliares.interface";
+import { getCloudflareImage } from "../../utils/images";
 import { AsignacionService } from "../services/asignacion.service";
 import { AuxiliaresService } from "../services/auxiliares.service";
 
@@ -11,17 +16,19 @@ import { AuxiliaresService } from "../services/auxiliares.service";
 	templateUrl: "./asignar-activo.component.html",
 	styleUrl: "./asignar-activo.component.css",
 })
-export class AsignarActivoComponent implements OnInit {
+export class AsignarActivoComponent implements OnInit, OnDestroy {
 	// Variables para almacenar datos auxiliares
 	id: number | null = null;
-	usuarios: any[] = [];
-	ubicaciones: any[] = [];
+	usuarios: SelectItem[] = [];
+	ubicaciones: SelectItem[] = [];
 
 	// FormGroup para el formulario
 	asignacionForm!: FormGroup;
 
 	// Variable para manejar mensajes de error
 	errorMessage: string = "";
+	foto_url: string | null = null;
+	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
 
 	constructor(
 		private route: ActivatedRoute,
@@ -33,105 +40,178 @@ export class AsignarActivoComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		// Inicializar el formulario
-		this.asignacionForm = this.fb.group({
-			nombreActivo: [{ value: "", disabled: true }, Validators.required], // Solo lectura
-			usuarioAsignar: ["", Validators.required],
-			ubicacion: ["", Validators.required],
-			fechaAsignacion: ["", Validators.required],
-			fechaDevolucion: [""],
-			comentarios: [""],
-		});
+		this.inicializarFormulario();
 
-		// Obtener el ID del activo de los parámetros de la ruta
-		this.route.params.subscribe((params) => {
-			this.id = +params["id"]; // Convertir el ID a número
+		this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+			this.id = +params["id"];
 			console.log("ID recibido:", this.id);
 
-			// Cargar los datos auxiliares si el ID está presente
 			if (this.id) {
 				this.cargarDatosAuxiliares(this.id);
 			}
 		});
 	}
 
-	// Método para cargar los datos auxiliares
-	cargarDatosAuxiliares(id: number): void {
-		this.auxiliaresService.getDatosAuxiliares(id).subscribe({
-			next: (response) => {
-				this.usuarios = response.usuarios; // Guardar los usuarios
-				this.ubicaciones = response.ubicaciones; // Guardar las ubicaciones
-
-				// Actualizar el valor del campo "nombreActivo" en el formulario
-				const nombreActivo = response.nombreActivo || "Nombre no disponible";
-				this.asignacionForm.get("nombreActivo")?.setValue(nombreActivo);
-
-				console.log("Datos cargados:", response);
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error  al cargar datos auxiliares" }
-				const errorMessage =
-					error.error?.error || "Error  al cargar datos auxiliares";
-
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
+	inicializarFormulario(): void {
+		this.asignacionForm = this.fb.group({
+			nombre: [{ value: "", disabled: true }, Validators.required],
+			usuario_id: ["", Validators.required],
+			ubicacion_id: ["", Validators.required],
+			fecha_asignacion: ["", Validators.required],
+			fecha_devolucion: [""],
+			comentarios: [""],
 		});
+	}
+
+	cargarDatosAuxiliares(id: number): void {
+		this.auxiliaresService
+			.getDatosAuxiliares(id)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					this.usuarios = response.usuarios || [];
+					this.ubicaciones = response.ubicaciones || [];
+					this.foto_url = response.foto_url || null;
+
+					const nombre = response.nombre || "Nombre no disponible";
+					this.asignacionForm.get("nombre")?.setValue(nombre);
+
+					console.log("Datos cargados:", response);
+				},
+				error: (error) => {
+					const errorMessage =
+						error.error?.error || "Error al cargar datos auxiliares";
+
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
+				},
+			});
 	}
 
 	onSubmit(): void {
 		if (this.asignacionForm.valid) {
-			const formData = this.asignacionForm.value;
+			const formValue = this.asignacionForm.value;
 
-			// Mapear los nombres de los campos al formato esperado por el backend
-			const datosParaBackend = {
-				activo_id: this.id,
-				usuario_id: formData.usuarioAsignar,
-				ubicacion_id: formData.ubicacion,
-				fecha_asignacion: formData.fechaAsignacion,
-				fecha_devolucion: formData.fechaDevolucion || null,
-				comentarios: formData.comentarios || "",
-			};
+			const payload: AsignacionPayload = {};
+			for (const key in formValue) {
+				if (formValue[key] !== null && formValue[key] !== "") {
+					payload[key as keyof AsignacionPayload] = formValue[key];
+				}
+			}
 
-			console.log("Datos enviados al backend:", datosParaBackend);
+			payload.activo_id = this.id || undefined;
 
-			// Enviar los datos al backend usando el servicio
-			this.asignacionService.createAsignacion(datosParaBackend).subscribe({
-				next: (response) => {
-					console.log("Asignación creada exitosamente:", response);
-					alert("Asignación creada correctamente.");
-					// Redirigir al usuario a la ruta '/asignaciones'
-					this.router.navigate(["/asignaciones"]);
-				},
-				error: (error) => {
-					// Ejem. Si el backend devuelve { error: "Error al crear la asignación" }
-					const errorMessage =
-						error.error?.error || "Error al crear la asignación";
+			console.log("Datos enviados al backend:", payload);
 
-					// Mostrar el mensaje
-					this.errorMessage = errorMessage;
-					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
-				},
-			});
+			this.asignacionService
+				.createAsignacion(payload)
+				.pipe(takeUntil(this.destroy$))
+				.subscribe({
+					next: (response) => {
+						console.log("Asignación creada exitosamente:", response);
+						Swal.fire({
+							title: "¡Éxito!",
+							text: "Asignación creada correctamente.",
+							icon: "success",
+							timer: 2000,
+							timerProgressBar: true,
+							buttonsStyling: false,
+							customClass: {
+								popup: "premium-swal-popup",
+								title: "premium-swal-title",
+								htmlContainer: "premium-swal-html",
+								confirmButton: "premium-swal-confirm",
+							},
+						}).then(() => {
+							this.router.navigate(["/asignaciones"]);
+						});
+					},
+					error: (error) => {
+						const errorMessage =
+							error.error?.error || "Error al crear la asignación";
+
+						this.errorMessage = errorMessage;
+						console.error("Error del backend:", errorMessage);
+						Swal.fire({
+							title: "Error",
+							text: errorMessage,
+							icon: "error",
+							buttonsStyling: false,
+							customClass: {
+								popup: "premium-swal-popup",
+								title: "premium-swal-title",
+								htmlContainer: "premium-swal-html",
+								confirmButton: "premium-swal-confirm",
+							},
+						});
+					},
+				});
 		} else {
 			console.error("El formulario no es válido.");
-			alert("Por favor, completa todos los campos requeridos.");
+			Swal.fire({
+				title: "Formulario Invalido",
+				text: "Por favor, completa todos los campos requeridos.",
+				icon: "warning",
+				buttonsStyling: false,
+				customClass: {
+					popup: "premium-swal-popup",
+					title: "premium-swal-title",
+					htmlContainer: "premium-swal-html",
+					confirmButton: "premium-swal-confirm",
+				},
+			});
 		}
 	}
 
 	cancelarEdicion(showAlert: boolean = true): void {
-		// 1. Limpiar el formulario
-		this.asignacionForm.reset();
-
-		// 2. Mostrar alerta de cancelación si es necesario
 		if (showAlert) {
-			alert("Acción cancelada. El formulario ha sido limpiado.");
+			Swal.fire({
+				title: "¿Cancelar?",
+				text: "¿Estás seguro de que deseas cancelar? Se perderán los datos ingresados.",
+				icon: "question",
+				showCancelButton: true,
+				confirmButtonText: "Sí, cancelar",
+				cancelButtonText: "No, continuar",
+				reverseButtons: true,
+				buttonsStyling: false,
+				customClass: {
+					popup: "premium-swal-popup",
+					title: "premium-swal-title",
+					htmlContainer: "premium-swal-html",
+					confirmButton: "premium-swal-confirm",
+					cancelButton: "premium-swal-cancel",
+				},
+			}).then((result) => {
+				if (result.isConfirmed) {
+					this.asignacionForm.reset();
+					this.location.back();
+				}
+			});
+		} else {
+			this.asignacionForm.reset();
+			this.location.back();
 		}
+	}
 
-		// 3. Regresar a la ruta anterior
-		this.location.back();
+	getAssetPhoto(fotoUrl: string | null | undefined): string {
+		if (!fotoUrl) return "";
+		return getCloudflareImage(fotoUrl, { width: 150 });
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

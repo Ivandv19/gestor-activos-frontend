@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 import { ActivosDisponiblesComponent } from "./activos-disponibles.component";
 
@@ -9,6 +10,7 @@ describe("ActivosDisponiblesComponent", () => {
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
 			declarations: [ActivosDisponiblesComponent],
+			imports: [HttpClientTestingModule],
 		}).compileComponents();
 
 		fixture = TestBed.createComponent(ActivosDisponiblesComponent);

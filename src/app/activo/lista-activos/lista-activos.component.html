@@ -1,81 +1,54 @@
 <main>
   <!-- Sección de búsqueda y filtros -->
   <section class="busqueda">
-    <!-- Barra de búsqueda -->
-    <div class="barra-de-busqueda">
-      <div class="barra-busqueda">
-        <div>
-          <p>Buscar Activo</p>
-        </div>
+    <div class="toolbar-container">
+      <!-- Búsqueda -->
+      <div class="search-box">
         <input
           type="text"
-          placeholder="Ingresa activo a buscar..."
+          placeholder="Buscar activo por nombre..."
           (input)="onSearchInput($event)"
         />
       </div>
-      <!-- Contenedor de filtros y opciones -->
-      <div class="container-filtros">
-        <!-- Selector de filtros principales -->
-        <div class="filtros">
-          <p>Filtro</p>
-          <select
-            name="filtro"
-            id="filtro"
-            (change)="cargarOpcionesFiltro($event)"
-          >
-            <option value="">Selecciona un filtro</option>
-            <option value="estado">Estado</option>
-            <option value="tipo">Tipo</option>
-            <option value="ubicacion">Ubicación</option>
-            <option value="usuario_asignado">Usuario asignado</option>
-          </select>
-        </div>
 
-        <!-- Selector de opciones dinámicas -->
-        <div class="opciones">
-          <p>Opciones</p>
-          <select
-            name="opciones"
-            id="opciones"
-            (change)="aplicarFiltro($event)"
-          >
-            <option value="">Todos</option>
-            <!-- Las opciones se llenarán dinámicamente según el filtro elegido -->
-          </select>
-        </div>
+      <!-- Filtros -->
+      <div class="filters-group">
+        <select (change)="cargarOpcionesFiltro($event)">
+          <option value="">Filtro: Seleccionar</option>
+          <option value="estado">Estado</option>
+          <option value="tipo">Tipo</option>
+          <option value="ubicacion">Ubicación</option>
+          <option value="usuario_asignado">Usuario asignado</option>
+        </select>
 
-        <!-- Selector de dirección (asc/desc) -->
-        <div class="direccion">
-          <p>Dirección</p>
-          <select
-            name="direccion"
-            id="direccion"
-            (change)="aplicarOrden($event)"
-          >
-            <option value="asc">Ascendente (A-Z)</option>
-            <option value="desc">Descendente (Z-A)</option>
-          </select>
-        </div>
+        <select id="opciones" (change)="aplicarFiltro($event)">
+          <option value="">Opciones: Todas</option>
+        </select>
+
+        <select (change)="aplicarOrden($event)">
+          <option value="asc">Orden: A-Z</option>
+          <option value="desc">Orden: Z-A</option>
+        </select>
       </div>
-    </div>
 
-    <div class="container-botones">
-      <!-- Dentro de tu section.busqueda, después de container-filtros -->
-      <button class="btn-limpiar" (click)="limpiarFiltros()">
-        Limpiar Filtros
-        <img src="https://gestor-assets.mgdc.site/reiniciar-filtros.png" alt="Limpiar" />
-      </button>
+      <!-- Botones -->
+      <div class="actions-group">
+        <button class="btn-secondary" (click)="limpiarFiltros()" title="Limpiar Filtros">
+          <img src="https://gestor-assets.mgdc.site/reiniciar-filtros.png" alt="" />
+          Limpiar
+        </button>
 
-      <button class="btn-agregar" routerLink="agregar">
-        Agregar activo
-        <img src="https://gestor-assets.mgdc.site/icono-agregar.png" alt="" />
-      </button>
+        <button class="btn-primary" routerLink="agregar" *ngIf="isAdmin()">
+          <img src="https://gestor-assets.mgdc.site/icono-agregar.png" alt="" />
+          Nuevo Activo
+        </button>
+      </div>
     </div>
   </section>
 
   <!-- Tabla de activos -->
   <section class="tabla-activos">
-    <table>
+    <table aria-label="Lista de activos">
       <thead>
         <tr>
           <th>ID</th>
@@ -89,14 +62,19 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let activo of activos">
+        <tr *ngIf="!activos || activos.length === 0">
+          <td colspan="8" style="text-align: center; padding: 40px;">
+            <p>No hay activos para mostrar</p>
+          </td>
+        </tr>
+        <tr *ngFor="let activo of activos; trackBy: trackById">
           <!-- Itera sobre la lista de activos -->
           <td>{{ activo.id }}</td>
           <td>
             <!-- Si hay foto_url, muestra la imagen -->
             <img
               *ngIf="activo.foto_url"
-              [src]="'http://localhost:3000' + activo.foto_url"
+              [src]="getAssetPhoto(activo.foto_url)"
               alt="Imagen del activo"
               class="imagen-circular"
             />
@@ -116,15 +94,25 @@
             </span>
           </td>
           <td>{{ activo.tipo }}</td>
-          <td>{{ activo.estado }}</td>
+          <td>
+            <span
+              class="status-badge"
+              [ngClass]="{
+                'status-disponible': activo.estado === 'Disponible',
+                'status-asignado': activo.estado === 'Asignado',
+                'status-mantenimiento': activo.estado === 'En mantenimiento',
+                'status-baja': activo.estado === 'Dado de baja'
+              }"
+            >
+              {{ activo.estado }}
+            </span>
+          </td>
           <td>{{ activo.ubicacion }}</td>
           <td>{{ activo.usuario_asignado }}</td>
           <td>
-            <div class="container-boton">
-              <button class="btn-ver-detalles" (click)="verDetalles(activo.id)">
-                Ver Detalles
-              </button>
-            </div>
+            <button class="btn-ver-detalles" (click)="verDetalles(activo.id)">
+              Ver Detalles
+            </button>
           </td>
         </tr>
       </tbody>
@@ -144,23 +132,26 @@
     <!-- Paginación avanzada -->
     <section class="pagination" *ngIf="pagination.totalPages > 1">
       <!-- Botones Primera página / Anterior -->
-      <button (click)="cambiarPagina(1)" [disabled]="paginaActual === 1">
+      <button (click)="cambiarPagina(1)" [disabled]="paginaActual === 1" aria-label="Ir a la primera página">
         « Primera |
       </button>
       <!-- Va a la primera página -->
       <button
         (click)="cambiarPagina(paginaActual - 1)"
         [disabled]="paginaActual === 1"
+        aria-label="Ir a la página anterior"
       >
         « Anterior |
       </button>
       <!-- Va a la página anterior -->
 
       <!-- Números de página -->
-      <span *ngFor="let pagina of paginasVisibles">
+      <span *ngFor="let pagina of paginasVisibles; trackBy: trackByIndex">
         <button
           (click)="cambiarPagina(pagina)"
           [class.active]="pagina === paginaActual"
+          [attr.aria-label]="'Ir a la página ' + pagina"
+          [attr.aria-current]="pagina === paginaActual ? 'page' : null"
         >
           <!-- Resalta la página actual -->
           {{ pagina }}
@@ -171,6 +162,7 @@
       <button
         (click)="cambiarPagina(paginaActual + 1)"
         [disabled]="paginaActual === pagination.totalPages"
+        aria-label="Ir a la página siguiente"
       >
         <!-- Deshabilita si estás en la última página -->
         | Siguiente »
@@ -178,6 +170,7 @@
       <button
         (click)="cambiarPagina(pagination.totalPages)"
         [disabled]="paginaActual === pagination.totalPages"
+        aria-label="Ir a la última página"
       >
         <!-- Deshabilita si estás en la última página -->
         | Última »

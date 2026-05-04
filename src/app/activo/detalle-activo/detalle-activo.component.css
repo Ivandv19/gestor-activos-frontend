@@ -1,116 +1,199 @@
 main {
-	margin: 50px 50px;
+	padding: 30px;
+	background-color: #f8f9fa;
+	min-height: calc(100vh - 70px);
 }
 
 .container {
-	border: 0.5px solid rgba(0, 0, 0, 0.2);
-	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-	border-radius: 5px;
+	max-width: 1200px;
+	margin: 0 auto;
 }
 
-.container2 {
-	padding: 50px 50px;
-}
-
-.container-inputs {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	padding-top: 15px;
-}
-
-.container-inputs-2 {
-	display: flex;
-	flex-direction: row;
-	gap: 10px;
-	padding-top: 15px;
-}
-
-.input-detalles-2 {
-	width: 100%;
-	height: 30px;
-	padding: 8px;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-}
-
-.label-detalles-2 {
-	width: 200px;
+/* Hero Section */
+.asset-hero {
+	background: white;
+	border-radius: 20px;
+	padding: 30px;
 	display: flex;
 	align-items: center;
+	gap: 40px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+	margin-bottom: 30px;
+	border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.input-detalles {
-	width: 320px;
-	height: 30px;
-	padding: 8px;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-}
-
-.container-activo-detalles-1 {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.parte-2 {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-}
-
-.btn {
+.hero-image-container {
 	width: 200px;
-	height: 30px;
-	border-radius: 5px;
-	box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.25);
-	cursor: pointer;
+	height: 200px;
+	background: #f1f5f9;
+	border-radius: 15px;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #e2e8f0;
 }
 
-.color-main {
-	background-color: #141b4d;
-	color: white;
-}
-
-.container-img {
-	width: 250px;
-	height: 250px;
-	border-radius: 5px;
-	box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.25);
-}
-
-.container-img img {
+.hero-image-container img {
 	width: 100%;
 	height: 100%;
-	border-radius: 5px;
+	object-fit: cover;
 }
 
-textarea {
-	padding: 8px;
-	border: 1px solid #ccc;
-	border-radius: 5px;
+.hero-content {
+	flex: 1;
 }
 
-#descripcion-garantia {
-	width: 100%;
+.hero-content .asset-type {
+	font-size: 12px;
+	font-weight: 700;
+	color: #a0aec0;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+	margin-bottom: 5px;
+	display: block;
 }
 
-.container-activo-detalles-2 {
-	padding-top: 50px;
+.hero-content h1 {
+	font-size: 32px;
+	font-weight: 800;
+	color: #141b4d;
+	margin: 0 0 15px 0;
 }
 
-.container-activo-detalles-2 h3 {
-	font-size: 20px;
-	text-align: center;
+.hero-badges {
+	display: flex;
+	gap: 12px;
+	margin-bottom: 25px;
 }
 
-.container-activo-detalles-3 {
-	padding-top: 50px;
+.badge {
+	padding: 6px 16px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
 }
 
-.container-activo-detalles-3 h3 {
-	font-size: 20px;
-	text-align: center;
+.badge-status {
+	background: #ebf8ff;
+	color: #3182ce;
+}
+
+.badge-id {
+	background: #f7fafc;
+	color: #4a5568;
+	border: 1px solid #e2e8f0;
+}
+
+.hero-actions {
+	display: flex;
+	gap: 10px;
+}
+
+/* Botones Premium */
+.btn-action {
+	padding: 10px 20px;
+	border-radius: 10px;
+	font-size: 13px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	border: 1px solid #e2e8f0;
+	background: white;
+	color: #4a5568;
+}
+
+.btn-action:hover {
+	background: #f8f9fa;
+	transform: translateY(-2px);
+}
+
+.btn-edit {
+	background: #141b4d;
+	color: white;
+	border: none;
+}
+
+.btn-edit:hover {
+	background: #1a2366;
+	box-shadow: 0 4px 12px rgba(20, 27, 77, 0.2);
+}
+
+/* Grid de Información */
+.details-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+	gap: 25px;
+}
+
+.detail-card {
+	background: white;
+	border-radius: 20px;
+	padding: 25px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+	border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 20px;
+	padding-bottom: 15px;
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.card-header h3 {
+	font-size: 16px;
+	font-weight: 800;
+	color: #141b4d;
+	margin: 0;
+}
+
+.info-row {
+	display: flex;
+	justify-content: space-between;
+	padding: 12px 0;
+	border-bottom: 1px solid #f8fafc;
+}
+
+.info-row:last-child {
+	border-bottom: none;
+}
+
+.info-label {
+	font-size: 13px;
+	font-weight: 600;
+	color: #718096;
+}
+
+.info-value {
+	font-size: 13px;
+	font-weight: 700;
+	color: #2d3748;
+	text-align: right;
+}
+
+/* Estilo especial para Garantía */
+.warranty-active {
+	background: #f0fff4;
+	border-color: #c6f6d5;
+}
+
+.warranty-header {
+	color: #2f855a;
+}
+
+.description-box {
+	background: #f8fafc;
+	padding: 15px;
+	border-radius: 12px;
+	margin-top: 10px;
+	font-size: 13px;
+	line-height: 1.6;
+	color: #4a5568;
 }

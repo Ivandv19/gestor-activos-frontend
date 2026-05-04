@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import {
+	Component,
+	ElementRef,
+	OnDestroy,
+	OnInit,
+	ViewChild,
+} from "@angular/core";
 import {
 	ArcElement,
 	BarController,
@@ -10,6 +16,7 @@ import {
 	PieController,
 	Tooltip,
 } from "chart.js";
+import { Subject, takeUntil } from "rxjs";
 import { DashboardService } from "../services/dashboard.service";
 
 // Registrar componentes necesarios de Chart.js
@@ -30,93 +37,84 @@ Chart.register(
 	templateUrl: "./resumen-activos.component.html",
 	styleUrl: "./resumen-activos.component.css",
 })
-export class ResumenActivosComponent implements OnInit {
+export class ResumenActivosComponent implements OnInit, OnDestroy {
 	totalActivos: number = 0; // Total de activos registrados
 	activosAsignados: number = 0; // Activos asignados
 	activosDisponibles: number = 0; // Activos disponibles
+	activosEnMantenimiento: number = 0; // Activos en mantenimiento
+	activosDadosDeBaja: number = 0; // Activos dados de baja
 	tendenciaMensualData: { labels: string[]; data: number[] } = {
 		labels: [],
 		data: [],
 	}; // Datos de la tendencia mensual
 	anoTendencia: number = new Date().getFullYear(); // Año que abarca la tendencia
 	errorMessage = ""; // Mensaje de error en caso de fallo
+	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
 
-	@ViewChild("activosVsDisponibles") activosVsDisponibles!: ElementRef; // Referencia al gráfico de activos vs disponibles
-	@ViewChild("tendenciaMensual") tendenciaMensual!: ElementRef; // Referencia al gráfico de tendencia mensual
+	@ViewChild("activosVsDisponibles") activosVsDisponibles!: ElementRef;
+	@ViewChild("tendenciaMensual") tendenciaMensual!: ElementRef;
+
+	private chartPie: Chart | undefined;
+	private chartBar: Chart | undefined;
 
 	constructor(private dashboardService: DashboardService) {}
 
 	ngOnInit(): void {
-		this.cargarDatosBackend(); // Cargar datos desde el backend al inicializar
+		this.cargarDatosBackend();
 	}
 
-	/**
-	 * Obtiene los datos del backend y actualiza las propiedades del componente.
-	 */
 	private cargarDatosBackend(): void {
-		this.dashboardService.getResumen().subscribe({
-			next: (response) => {
-				console.log("Datos recibidos del backend:", response); // Log para verificar los datos
+		this.dashboardService
+			.getResumen()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					this.totalActivos = Number(response.total_activos) || 0;
+					this.activosAsignados = Number(response.activos_asignados) || 0;
+					this.activosDisponibles = Number(response.activos_disponibles) || 0;
+					this.activosEnMantenimiento =
+						Number(response.activos_en_mantenimiento) || 0;
+					this.activosDadosDeBaja = Number(response.activos_dados_de_baja) || 0;
 
-				// Asignar estadísticas generales
-				this.totalActivos = Number(response.total_activos) || 0;
-				this.activosAsignados = Number(response.activos_asignados) || 0;
-				this.activosDisponibles = Number(response.activos_disponibles) || 0;
+					if (response.tendencia_mensual) {
+						this.tendenciaMensualData = {
+							labels: response.tendencia_mensual.labels || [],
+							data: response.tendencia_mensual.data || [],
+						};
+					}
 
-				// Asignar datos de tendencia mensual
-				if (response.tendencia_mensual) {
-					this.tendenciaMensualData = {
-						labels: response.tendencia_mensual.labels || [],
-						data: response.tendencia_mensual.data || [],
-					};
-					console.log(
-						"Datos de tendencia mensual cargados:",
-						this.tendenciaMensualData,
-					);
-				}
+					this.anoTendencia =
+						response.ano_tendencia || new Date().getFullYear();
 
-				// Asignar el año de la tendencia
-				this.anoTendencia = response.ano_tendencia || new Date().getFullYear();
-				console.log(`Año de la tendencia: ${this.anoTendencia}`); // Log para verificar el año
-
-				// Inicializar gráficas
-				this.initGraficoActivosVsDisponibles();
-				this.initGraficoTendenciaMensual();
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { mensaje: "Error al actualizar la asignación" }
-				const errorMessage =
-					error.error?.mensaje || "Error al actualizar la asignación";
-
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+					// Inicializar o actualizar gráficas
+					this.initGraficoActivosVsDisponibles();
+					this.initGraficoTendenciaMensual();
+				},
+				error: (error) => {
+					const errorMessage =
+						error.error?.mensaje || "Error al cargar datos del dashboard";
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+				},
+			});
 	}
 
-	/**
-	 * Inicializa el gráfico de pastel para comparar activos asignados vs disponibles.
-	 */
 	private initGraficoActivosVsDisponibles(): void {
 		const canvas = this.activosVsDisponibles.nativeElement;
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
 
-		// Forzar dimensiones del canvas
-		canvas.width = 515;
-		canvas.height = 300;
+		// Destruir instancia previa si existe
+		if (this.chartPie) {
+			this.chartPie.destroy();
+		}
 
-		// Calcular porcentajes
 		const porcentajeAsignados =
-			((this.activosAsignados / this.totalActivos) * 100).toFixed(2) || "0.00";
+			((this.activosAsignados / this.totalActivos) * 100).toFixed(1) || "0.0";
 		const porcentajeDisponibles =
-			((this.activosDisponibles / this.totalActivos) * 100).toFixed(2) ||
-			"0.00";
+			((this.activosDisponibles / this.totalActivos) * 100).toFixed(1) || "0.0";
 
-		// Crear gráfico de pastel
-		new Chart(ctx, {
+		this.chartPie = new Chart(ctx, {
 			type: "pie",
 			data: {
 				labels: [
@@ -125,11 +123,10 @@ export class ResumenActivosComponent implements OnInit {
 				],
 				datasets: [
 					{
-						label: "Cantidad",
 						data: [this.activosAsignados, this.activosDisponibles],
-						backgroundColor: ["#36A2EB", "#FF6384"],
-						borderColor: ["#36A2EB", "#FF6384"],
-						borderWidth: 1,
+						backgroundColor: ["#3182ce", "#38a169"],
+						borderColor: ["#ffffff", "#ffffff"],
+						borderWidth: 2,
 					},
 				],
 			},
@@ -137,72 +134,62 @@ export class ResumenActivosComponent implements OnInit {
 				responsive: true,
 				maintainAspectRatio: false,
 				plugins: {
-					legend: { display: true },
-					tooltip: {
-						callbacks: {
-							label: (context: any) => {
-								const label = context.label || "";
-								const value = context.raw || 0;
-								return `${label}: ${value}`;
-							},
-						},
+					legend: {
+						position: "bottom",
+						labels: { boxWidth: 12, padding: 20, font: { size: 11 } },
 					},
+					tooltip: { padding: 12, bodyFont: { size: 13 } },
 				},
 			},
 		});
 	}
 
-	/**
-	 * Inicializa el gráfico de barras para mostrar la tendencia mensual de activos.
-	 */
 	private initGraficoTendenciaMensual(): void {
-		const ctx = this.tendenciaMensual.nativeElement.getContext("2d");
+		const canvas = this.tendenciaMensual.nativeElement;
+		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
 
-		// Crear gráfico de barras
-		new Chart(ctx, {
+		// Destruir instancia previa si existe
+		if (this.chartBar) {
+			this.chartBar.destroy();
+		}
+
+		this.chartBar = new Chart(ctx, {
 			type: "bar",
 			data: {
 				labels: this.tendenciaMensualData.labels,
 				datasets: [
 					{
-						label: "Activos registrados",
+						label: "Activos Registrados",
 						data: this.tendenciaMensualData.data,
-						backgroundColor: "rgba(54, 162, 235, 0.6)",
-						borderColor: "#36A2EB",
+						backgroundColor: "rgba(49, 130, 206, 0.7)",
+						borderColor: "#3182ce",
 						borderWidth: 1,
+						borderRadius: 4,
 					},
 				],
 			},
 			options: {
 				responsive: true,
+				maintainAspectRatio: false,
 				plugins: {
-					title: {
-						display: true,
-						text: `Tendencia Mensual de Activos (Últimos 12 meses)`,
-						font: {
-							size: 16,
-						},
-					},
-					tooltip: {
-						callbacks: {
-							label: (context: any) => {
-								const label = context.label || "";
-								const value = context.raw || 0;
-								return `${label}: ${value} activos`;
-							},
-						},
-					},
-					legend: {
-						display: true,
-					},
+					legend: { display: false },
+					tooltip: { padding: 12 },
 				},
 				scales: {
 					y: {
 						beginAtZero: true,
+						grid: { display: true, color: "#edf2f7" },
+						ticks: { stepSize: 1 },
 					},
+					x: { grid: { display: false } },
 				},
 			},
 		});
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

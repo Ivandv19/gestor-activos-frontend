@@ -1,7 +1,15 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Subject } from "rxjs";
+import { Subject, takeUntil } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
+import Swal from "sweetalert2";
+import { AuthService } from "../../login/services/auth.service";
+import { ActivoListItem } from "../../models/activo.interface";
+import {
+	DatosAuxiliares,
+	SelectItem,
+} from "../../models/datos-auxiliares.interface";
+import { getCloudflareImage } from "../../utils/images";
 import { ActivoService } from "../service/activo.service";
 import { DatosService } from "../service/datos.service";
 
@@ -11,56 +19,64 @@ import { DatosService } from "../service/datos.service";
 	templateUrl: "./lista-activos.component.html",
 	styleUrl: "./lista-activos.component.css",
 })
-export class ListaActivosComponent implements OnInit {
+export class ListaActivosComponent implements OnInit, OnDestroy {
 	// Variables para los filtros
 	filtroSeleccionado: string = "";
 	opcionSeleccionada: string = "";
 	ordenSeleccionado: string = "asc";
-	// Variables generales
-	activos: any[] = []; // Lista de activos mostrados en la tabla
-	pagination: any = {}; // Metadatos de paginación (total, páginas, etc.)
-	limitePorPagina: number = 10; // Número de activos por página
-	paginaActual: number = 1; // Página actual
-	searchTerm: string = ""; // Término de búsqueda
-	private searchSubject = new Subject<string>(); // Sujeto para manejar el debounce
-	datosAuxiliares: any; // Almacenará tipos, ubicaciones, usuarios, etc.
-	errorMessage: string = ""; // Mensaje de error para mostrar al usuario
+	activos: ActivoListItem[] = [];
+	pagination: {
+		total: number;
+		totalPages: number;
+		page: number;
+		limit: number;
+	} = { total: 0, totalPages: 0, page: 1, limit: 10 };
+	limitePorPagina: number = 10;
+	paginaActual: number = 1;
+	searchTerm: string = "";
+	private searchSubject = new Subject<string>();
+	private destroy$ = new Subject<void>();
+	datosAuxiliares: DatosAuxiliares | null = null;
+	errorMessage: string = "";
 
 	constructor(
 		private activoService: ActivoService,
 		private router: Router,
 		private datosService: DatosService,
 		private route: ActivatedRoute,
+		private authService: AuthService,
 	) {}
 
 	ngOnInit(): void {
 		// Leer los query params de la URL
-		this.route.queryParams.subscribe((params) => {
-			console.log("Query params recibidos:", params);
+		this.route.queryParams
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((params) => {
+				console.log("Query params recibidos:", params);
 
-			// Mapear los query params a las propiedades del componente
-			if (params["licencia_proxima"]) {
-				this.filtroSeleccionado = "licencia_proxima";
-				this.opcionSeleccionada = "true";
-			} else if (params["garantia_proxima"]) {
-				this.filtroSeleccionado = "garantia_proxima";
-				this.opcionSeleccionada = "true";
-			} else if (params["estado"]) {
-				this.filtroSeleccionado = "estado";
-				this.opcionSeleccionada = params["estado"];
-			} else if (params["fecha_devolucion_proxima"]) {
-				this.filtroSeleccionado = "fecha_devolucion_proxima";
-				this.opcionSeleccionada = "true";
-			}
+				// Mapear los query params a las propiedades del componente
+				if (params["licencia_proxima"]) {
+					this.filtroSeleccionado = "licencia_proxima";
+					this.opcionSeleccionada = "true";
+				} else if (params["garantia_proxima"]) {
+					this.filtroSeleccionado = "garantia_proxima";
+					this.opcionSeleccionada = "true";
+				} else if (params["estado"]) {
+					this.filtroSeleccionado = "estado";
+					this.opcionSeleccionada = params["estado"];
+				} else if (params["fecha_devolucion_proxima"]) {
+					this.filtroSeleccionado = "fecha_devolucion_proxima";
+					this.opcionSeleccionada = "true";
+				}
 
-			// Aplicar orden si está presente
-			if (params["orden"]) {
-				this.ordenSeleccionado = params["orden"];
-			}
+				// Aplicar orden si está presente
+				if (params["orden"]) {
+					this.ordenSeleccionado = params["orden"];
+				}
 
-			// Cargar los datos con los filtros aplicados
-			this.cargarActivos();
-		});
+				// Cargar los datos con los filtros aplicados
+				this.cargarActivos();
+			});
 
 		this.cargarDatosAuxiliares();
 
@@ -78,6 +94,7 @@ export class ListaActivosComponent implements OnInit {
 						this.searchTerm,
 					);
 				}),
+				takeUntil(this.destroy$),
 			)
 			.subscribe({
 				next: (response) => {
@@ -92,7 +109,18 @@ export class ListaActivosComponent implements OnInit {
 					// Mostrar el mensaje
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
 				},
 			});
 	}
@@ -119,6 +147,7 @@ export class ListaActivosComponent implements OnInit {
 				this.opcionSeleccionada,
 				this.ordenSeleccionado,
 			)
+			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
 					console.log("Respuesta del backend:", response);
@@ -133,7 +162,18 @@ export class ListaActivosComponent implements OnInit {
 					// Mostrar el mensaje
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
 				},
 			});
 	}
@@ -142,21 +182,35 @@ export class ListaActivosComponent implements OnInit {
 	 * Carga los datos auxiliares
 	 */
 	cargarDatosAuxiliares(): void {
-		this.datosService.obtenerDatosAuxiliares().subscribe({
-			next: (response) => {
-				console.log("Datos auxiliares cargados:", response);
-				this.datosAuxiliares = response;
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error al cargar datos auxiliares" }
-				const errorMessage =
-					error.error?.error || "Error al cargar datos auxiliares";
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+		this.datosService
+			.obtenerDatosAuxiliares()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					console.log("Datos auxiliares cargados:", response);
+					this.datosAuxiliares = response;
+				},
+				error: (error) => {
+					// Ejem. Si el backend devuelve { error: "Error al cargar datos auxiliares" }
+					const errorMessage =
+						error.error?.error || "Error al cargar datos auxiliares";
+					// Mostrar el mensaje
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
+				},
+			});
 	}
 
 	/**
@@ -291,7 +345,7 @@ export class ListaActivosComponent implements OnInit {
 			opcionesSelect.remove(1);
 		}
 
-		let opciones: any[] = [];
+		let opciones: SelectItem[] = [];
 
 		switch (
 			this.filtroSeleccionado // Usamos la variable guardada
@@ -315,8 +369,8 @@ export class ListaActivosComponent implements OnInit {
 		console.log("[FILTRO] Opciones cargadas:", opciones);
 		opciones.forEach((opcion) => {
 			const optionElement = document.createElement("option");
-			optionElement.value = opcion.id;
-			optionElement.textContent = opcion.nombre || opcion.descripcion;
+			optionElement.value = String(opcion.id);
+			optionElement.textContent = opcion.nombre || opcion.descripcion || null;
 			opcionesSelect.appendChild(optionElement);
 		});
 	}
@@ -370,5 +424,26 @@ export class ListaActivosComponent implements OnInit {
 	aplicarOrden(event: Event): void {
 		this.ordenSeleccionado = (event.target as HTMLSelectElement).value;
 		this.cargarActivos();
+	}
+
+	isAdmin(): boolean {
+		return this.authService.isAdmin();
+	}
+
+	getAssetPhoto(fotoUrl: string): string {
+		return getCloudflareImage(fotoUrl, { width: 150 });
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
+
+	trackById(_index: number, item: ActivoListItem): number {
+		return item.id;
+	}
+
+	trackByIndex(index: number): number {
+		return index;
 	}
 }

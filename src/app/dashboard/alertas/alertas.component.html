@@ -1,109 +1,101 @@
 <section class="wrapper">
-  <div class="card">
-    <div class="card-container-status-color">
-      <div class="card--status-color naranja"></div>
+  <!-- Alerta 1: Licencias -->
+  <div class="alert-row">
+    <div class="alert-left-section">
+      <div class="alert-icon-container">
+        <img src="https://gestor-assets.mgdc.site/icono-licencia-proxima-a-vencer.png" alt="Licencia" />
+      </div>
+      <div class="alert-info">
+        <span class="alert-description">Licencias próximas a vencer</span>
+        <span class="alert-status-text text-naranja">Atención Requerida</span>
+      </div>
     </div>
-
-    <div class="card--logo">
-      <img
-        src="https://gestor-assets.mgdc.site/icono-licencia-proxima-a-vencer.png"
-        alt="Licencias próximas a vencer"
-      />
-    </div>
-
-    <div class="card-info">
-      <h2 class="card-info--titulo">{{ licenciasProximasAVencer }}</h2>
-      <p class="card-info--descripcion">Licencias próximas a vencer</p>
-    </div>
-
-    <div class="card--boton">
-      <button
-        class="card--btn"
+    <div class="alert-right-section">
+      <div class="count-badge" [class.has-items]="licenciasProximasAVencer > 0">
+        {{ licenciasProximasAVencer }}
+      </div>
+      <button 
+        class="btn-alert-action"
         [disabled]="licenciasProximasAVencer === 0"
         (click)="navegarAFiltro('licencia_proxima')"
       >
-        Ver licencias
+        Gestionar
       </button>
     </div>
   </div>
-  <div class="card">
-    <div class="card-container-status-color">
-      <div class="card--status-color amarillo"></div>
-    </div>
 
-    <div class="card--logo">
-      <img
-        src="https://gestor-assets.mgdc.site/icono-garantias-proxximas-a-expirar.png"
-        alt="Licencias próximas a vencer"
-      />
+  <!-- Alerta 2: Garantías -->
+  <div class="alert-row">
+    <div class="alert-left-section">
+      <div class="alert-icon-container">
+        <img src="https://gestor-assets.mgdc.site/icono-garantias-proxximas-a-expirar.png" alt="Garantía" />
+      </div>
+      <div class="alert-info">
+        <span class="alert-description">Garantías próximas a expirar</span>
+        <span class="alert-status-text text-amarillo">Próximo Vencimiento</span>
+      </div>
     </div>
-
-    <div class="card-info">
-      <h2 class="card-info--titulo">{{ garantiasProximasAExpirar }}</h2>
-      <p class="card-info--descripcion">Garantías próximas a expirar</p>
-    </div>
-
-    <div class="card--boton">
-      <button
-        class="card--btn"
+    <div class="alert-right-section">
+      <div class="count-badge" [class.has-items]="garantiasProximasAExpirar > 0">
+        {{ garantiasProximasAExpirar }}
+      </div>
+      <button 
+        class="btn-alert-action"
         [disabled]="garantiasProximasAExpirar === 0"
         (click)="navegarAFiltro('garantia_proxima')"
       >
-        Ver garantías
+        Gestionar
       </button>
     </div>
   </div>
-  <div class="card">
-    <div class="card-container-status-color">
-      <div class="card--status-color gris"></div>
-    </div>
 
-    <div class="card--logo">
-      <img
-        src="https://gestor-assets.mgdc.site/icono-activos-en-mantenimiento.png"
-        alt="Licencias próximas a vencer"
-      />
+  <!-- Alerta 3: Mantenimiento -->
+  <div class="alert-row">
+    <div class="alert-left-section">
+      <div class="alert-icon-container">
+        <img src="https://gestor-assets.mgdc.site/icono-activos-en-mantenimiento.png" alt="Mantenimiento" />
+      </div>
+      <div class="alert-info">
+        <span class="alert-description">Activos en mantenimiento</span>
+        <span class="alert-status-text text-gris">En Proceso</span>
+      </div>
     </div>
-
-    <div class="card-info">
-      <h2 class="card-info--titulo">{{ activosEnMantenimiento }}</h2>
-      <p class="card-info--descripcion">Activos en mantenimiento</p>
-    </div>
-
-    <div class="card--boton">
-      <button
-        class="card--btn"
+    <div class="alert-right-section">
+      <div class="count-badge" [class.has-items]="activosEnMantenimiento > 0">
+        {{ activosEnMantenimiento }}
+      </div>
+      <button 
+        class="btn-alert-action"
         [disabled]="activosEnMantenimiento === 0"
         (click)="navegarAFiltro('estado')"
       >
-        Ver activos en mantenimiento
+        Ver Estado
       </button>
     </div>
   </div>
-  <div class="card">
-    <div class="card-container-status-color">
-      <div class="card--status-color verde"></div>
-    </div>
 
-    <div class="card--logo">
-      <img
-        src="https://gestor-assets.mgdc.site/icono-activos-proximos-a-devolver.png"
-        alt="Licencias próximas a vencer"
-      />
+  <!-- Alerta 4: Devoluciones -->
+  <div class="alert-row">
+    <div class="alert-left-section">
+      <div class="alert-icon-container">
+        <img src="https://gestor-assets.mgdc.site/icono-activos-proximos-a-devolver.png" alt="Devolución" />
+      </div>
+      <div class="alert-info">
+        <span class="alert-description">Activos próximos a devolver</span>
+        <span class="alert-status-text text-verde">Por Devolver</span>
+      </div>
     </div>
-
-    <div class="card-info">
-      <h2 class="card-info--titulo">{{ activosProximosADevolver }}</h2>
-      <p class="card-info--descripcion">Activos próximos a devolver</p>
-    </div>
-
-    <div class="card--boton">
-      <button
-      class="card--btn"
-      [disabled]="activosProximosADevolver === 0"
-      (click)="navegarAFiltro('fecha_devolucion_proxima')">
-      Ver activos próximos a devolver
-    </button>
+    <div class="alert-right-section">
+      <div class="count-badge" [class.has-items]="activosProximosADevolver > 0">
+        {{ activosProximosADevolver }}
+      </div>
+      <button 
+        class="btn-alert-action"
+        [disabled]="activosProximosADevolver === 0"
+        (click)="navegarAFiltro('fecha_devolucion_proxima')"
+      >
+        Ver Detalles
+      </button>
     </div>
   </div>
 </section>

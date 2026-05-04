@@ -1,5 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Subject, takeUntil } from "rxjs";
+import Swal from "sweetalert2";
+import { AuthService } from "../../login/services/auth.service";
+import { getCloudflareImage } from "../../utils/images";
 import { ConfiguracionService } from "../services/configuracion.service";
 
 @Component({
@@ -8,7 +12,7 @@ import { ConfiguracionService } from "../services/configuracion.service";
 	templateUrl: "./configuracion-aplicacion.component.html",
 	styleUrl: "./configuracion-aplicacion.component.css",
 })
-export class ConfiguracionAplicacionComponent implements OnInit {
+export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 	configuracionForm!: FormGroup;
 	perfilForm!: FormGroup;
 	errorMessage: string = "";
@@ -16,6 +20,8 @@ export class ConfiguracionAplicacionComponent implements OnInit {
 	public previewUrl: string | null = null; // Vista previa de la nueva imagen
 	imagenActual: string | null = null; // URL de la imagen actual del activo
 	imagenLocalStorageKey: string | null = null; // Clave de la imagen en localStorage
+	isUploading = false;
+	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
 
 	// Datos para NgSelect
 	idiomasDisponibles = [
@@ -45,6 +51,7 @@ export class ConfiguracionAplicacionComponent implements OnInit {
 	constructor(
 		private fb: FormBuilder,
 		private configuracionService: ConfiguracionService,
+		private authService: AuthService,
 	) {}
 
 	ngOnInit(): void {
@@ -84,57 +91,96 @@ export class ConfiguracionAplicacionComponent implements OnInit {
 	}
 
 	obtenerConfiguracion(): void {
-		this.configuracionService.getConfiguracionAplicacion().subscribe({
-			next: (response) => {
-				this.configuracionForm.patchValue(response);
-				console.log("Configuración cargada:", response);
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error al obtener la configuración." }
-				const errorMessage =
-					error.error?.error || "Error al obtener la configuración.";
+		this.configuracionService
+			.getConfiguracionAplicacion()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					this.configuracionForm.patchValue(response);
+					console.log("Configuración cargada:", response);
+				},
+				error: (error) => {
+					// Ejem. Si el backend devuelve { error: "Error al obtener la configuración." }
+					const errorMessage =
+						error.error?.error || "Error al obtener la configuración.";
 
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+					// Mostrar el mensaje
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
+				},
+			});
 	}
 
 	obtenerPerfilUsuario(): void {
-		this.configuracionService.getPerfilUsuario().subscribe({
-			next: (response) => {
-				// Guarda la imagen actual del activo
-				this.imagenActual = response.foto_url || undefined;
-				// Si hay imagen actual, prepara la vista previa
-				if (this.imagenActual) {
-					this.previewUrl = "http://localhost:3000" + this.imagenActual;
-				}
-				const perfilData = {
-					nombre: response.nombre,
-					email: response.email,
-					departamento: response.departamento,
-				};
-				this.perfilForm.patchValue(perfilData);
-				console.log("Perfil de usuario cargado:", perfilData);
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error al obtener la configuración." }
-				const errorMessage =
-					error.error?.error || "Error al obtener la configuración.";
+		// Primero intentar obtener datos de la sesión local (AuthService)
+		const localUserData = this.authService.getUserData();
 
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+		this.configuracionService
+			.getPerfilUsuario()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					// Priorizar datos locales si existen, de lo contrario usar los del backend
+					const nombre = localUserData?.nombre || response.nombre;
+					const email = localUserData?.email || response.email;
+					const departamento =
+						localUserData?.departamento || response.departamento;
+					const foto = localUserData?.foto_url || response.foto_url;
+
+					this.imagenActual = foto || "";
+
+					// Usar la lógica global robusta (150px para el perfil de configuración)
+					this.previewUrl =
+						getCloudflareImage(this.imagenActual, { width: 150 }) ||
+						"https://gestor-assets.mgdc.site/img-perfil.jpg";
+
+					const perfilData = {
+						nombre: nombre,
+						email: email,
+						departamento: departamento,
+					};
+					this.perfilForm.patchValue(perfilData);
+				},
+				error: (error) => {
+					// Ejem. Si el backend devuelve { error: "Error al obtener la configuración." }
+					const errorMessage =
+						error.error?.error || "Error al obtener la configuración.";
+
+					// Mostrar el mensaje
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
+				},
+			});
 	}
 
-	onFileSelected(event: any): void {
-		const file: File = event.target.files[0];
-		if (file && file.type.startsWith("image/")) {
+	onFileSelected(event: Event): void {
+		const input = event.target as HTMLInputElement;
+		const file = input.files?.[0];
+		if (file?.type.startsWith("image/")) {
 			// Vista previa local
 			const reader = new FileReader();
 			reader.onload = () => {
@@ -147,7 +193,18 @@ export class ConfiguracionAplicacionComponent implements OnInit {
 			};
 			reader.readAsDataURL(file);
 		} else {
-			alert("Por favor selecciona una imagen válida (JPEG, PNG, GIF).");
+			Swal.fire({
+				title: "Imagen Inválida",
+				text: "Por favor selecciona una imagen válida (JPEG, PNG, GIF).",
+				icon: "warning",
+				buttonsStyling: false,
+				customClass: {
+					popup: "premium-swal-popup",
+					title: "premium-swal-title",
+					htmlContainer: "premium-swal-html",
+					confirmButton: "premium-swal-confirm",
+				},
+			});
 		}
 	}
 
@@ -170,8 +227,9 @@ export class ConfiguracionAplicacionComponent implements OnInit {
 	/**
 	 * Maneja la selección de un archivo para la foto de perfil.
 	 */
-	onFileChange(event: any): void {
-		const file = event.target.files[0];
+	onFileChange(event: Event): void {
+		const input = event.target as HTMLInputElement;
+		const file = input.files?.[0];
 		if (file) {
 			this.perfilForm.patchValue({ foto: file });
 		}
@@ -195,70 +253,132 @@ export class ConfiguracionAplicacionComponent implements OnInit {
 			Object.entries(configuracionData).filter(([_, v]) => v !== undefined),
 		);
 
-		this.configuracionService.updateConfiguracionAplicacion(payload).subscribe({
-			next: (response) => {
-				console.log("[SUCCESS] Configuración guardada:", response);
-
-				// 1. Mostrar feedback al usuario
-				alert("Configuración guardada correctamente");
-
-				// 2. Resetear y recargar datos
-				this.configuracionForm.reset();
-
-				// 3. Obtener configuración actualizada
-				this.obtenerConfiguracion();
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error al obtener la configuración." }
-				const errorMessage =
-					error.error?.error || "Error al obtener la configuración.";
-
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+		this.configuracionService
+			.updateConfiguracionAplicacion(payload)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (_response) => {
+					Swal.fire({
+						title: "¡Configuración Guardada!",
+						text: "Los ajustes del sistema se han actualizado correctamente.",
+						icon: "success",
+						timer: 2000,
+						showConfirmButton: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+						},
+					});
+					this.obtenerConfiguracion();
+				},
+				error: (error) => {
+					const errorMessage =
+						error.error?.error || "Error al guardar la configuración.";
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+						},
+					});
+				},
+			});
 	}
 
 	guardarPerfil(): void {
-		// 1. Primero verificar si el formulario es válido
 		if (!this.perfilForm.valid) {
-			alert("Por favor completa correctamente todos los campos requeridos");
-			this.perfilForm.markAllAsTouched(); // Marcar campos como tocados para mostrar errores
-			return; // Detener la ejecución si el formulario no es válido
+			Swal.fire({
+				title: "Formulario Incompleto",
+				text: "Por favor completa correctamente todos los campos requeridos.",
+				icon: "warning",
+				buttonsStyling: false,
+				customClass: {
+					popup: "premium-swal-popup",
+					title: "premium-swal-title",
+					htmlContainer: "premium-swal-html",
+					confirmButton: "premium-swal-confirm",
+				},
+			});
+			this.perfilForm.markAllAsTouched();
+			return;
 		}
 
-		// 2. Si el formulario es válido, proceder con la lógica de la imagen
+		const formData = new FormData();
+		const fv = this.perfilForm.value;
+
+		if (fv.nombre) formData.append("nombre", fv.nombre);
+		if (fv.email) formData.append("email", fv.email);
+		if (fv.departamento) formData.append("departamento", fv.departamento);
+		if (fv.contrasena_actual)
+			formData.append("contrasena_actual", fv.contrasena_actual);
+		if (fv.nueva_contrasena)
+			formData.append("nueva_contrasena", fv.nueva_contrasena);
+		if (fv.confirmar_nueva_contrasena)
+			formData.append(
+				"confirmar_nueva_contrasena",
+				fv.confirmar_nueva_contrasena,
+			);
+
 		if (this.imagenLocalStorageKey) {
 			const imageDataUrl = localStorage.getItem(this.imagenLocalStorageKey);
-
 			if (imageDataUrl) {
-				// Convertir DataURL a Blob y subir la imagen
 				const blob = this.dataURLtoBlob(imageDataUrl);
-				const formData = new FormData();
-				formData.append("file", blob, "perfil_image.jpg");
-
-				// Primero subir la imagen
-				this.configuracionService.subirImagen(formData).subscribe({
-					next: (response) => {
-						this.actualizarConfiguracionConDatos(response.url);
-						console.log("Imagen subida con éxito:", response.url);
-						if (this.imagenLocalStorageKey) {
-							localStorage.removeItem(this.imagenLocalStorageKey); // Limpiar
-						}
-					},
-					error: (error) => {
-						alert("Error al subir la imagen. Intenta nuevamente.");
-						console.error(error);
-					},
-				});
-				return;
+				formData.append("file", blob, "perfil.jpg");
 			}
+		} else if (this.imagenActual) {
+			formData.append("foto_url", this.imagenActual);
 		}
 
-		// 3. Si no hay imagen, actualizar el perfil directamente
-		this.actualizarConfiguracionConDatos(undefined);
+		this.isUploading = true;
+		Swal.fire({
+			title: "Actualizando perfil...",
+			allowOutsideClick: false,
+			didOpen: () => Swal.showLoading(),
+		});
+
+		this.configuracionService
+			.updatePerfilUsuario(formData)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					this.isUploading = false;
+					Swal.close();
+					console.log("Perfil actualizado:", response);
+					if (this.imagenLocalStorageKey) {
+						localStorage.removeItem(this.imagenLocalStorageKey);
+						this.imagenLocalStorageKey = null;
+					}
+					Swal.fire({
+						title: "¡Perfil Actualizado!",
+						text: "Tu información se ha guardado correctamente.",
+						icon: "success",
+						timer: 2000,
+						showConfirmButton: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+						},
+					});
+					this.obtenerPerfilUsuario();
+				},
+				error: (error) => {
+					this.isUploading = false;
+					Swal.close();
+					const errorMessage =
+						error.error?.error || "Error al actualizar el perfil.";
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+						},
+					});
+				},
+			});
 	}
 
 	/**
@@ -266,7 +386,7 @@ export class ConfiguracionAplicacionComponent implements OnInit {
 	 */
 	private dataURLtoBlob(dataURL: string): Blob {
 		const arr = dataURL.split(",");
-		const mime = arr[0].match(/:(.*?);/)![1];
+		const mime = arr[0].match(/:(.*?);/)?.[1] || "";
 		const bstr = atob(arr[1]);
 		let n = bstr.length;
 		const u8arr = new Uint8Array(n);
@@ -277,85 +397,70 @@ export class ConfiguracionAplicacionComponent implements OnInit {
 		return new Blob([u8arr], { type: mime });
 	}
 
-	private actualizarConfiguracionConDatos(imagenUrl: string | undefined): void {
-		// Obtener los valores del formulario
-		const perfilData = {
-			nombre: this.perfilForm.value.nombre || undefined,
-			email: this.perfilForm.value.email || undefined,
-			departamento: this.perfilForm.value.departamento || undefined,
-			contrasena_actual: this.perfilForm.value.contrasena_actual || undefined,
-			nueva_contrasena: this.perfilForm.value.nueva_contrasena || undefined,
-			confirmar_nueva_contrasena:
-				this.perfilForm.value.confirmar_nueva_contrasena || undefined,
-			foto_url: imagenUrl,
-		};
-
-		// Filtrar para eliminar campos undefined (no enviarlos)
-		const payload = Object.fromEntries(
-			Object.entries(perfilData).filter(([_, v]) => v !== undefined),
-		);
-
-		console.log("Datos del perfil a actualizar:", payload);
-
-		// Llamar al servicio para actualizar el perfil
-		this.configuracionService.updatePerfilUsuario(payload).subscribe({
-			next: (response) => {
-				// 1. Log de éxito
-				console.log("[SUCCESS] Perfil actualizado:", response);
-
-				// 2. Feedback al usuario
-				alert("¡Perfil actualizado con éxito!");
-
-				// 3. Resetear y recargar datos
-				this.perfilForm.reset();
-
-				// 4. Obtener datos actualizados
-				this.obtenerPerfilUsuario();
-			},
-			error: (error) => {
-				// Manejar el error
-				const errorMessage =
-					error.error?.error || "Error al actualizar el perfil.";
-				console.error("[ERROR] Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
-	}
 	cancelarConfiguracion(): void {
-		const confirmar = confirm(
-			"¿Estás seguro de que deseas cancelar? Se perderán los cambios no guardados.",
-		);
+		Swal.fire({
+			title: "¿Cancelar Cambios?",
+			text: "Se perderán los ajustes del sistema no guardados.",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Sí, cancelar",
+			cancelButtonText: "Continuar editando",
+			reverseButtons: true,
+			buttonsStyling: false,
+			customClass: {
+				popup: "premium-swal-popup",
+				title: "premium-swal-title",
+				htmlContainer: "premium-swal-html",
+				confirmButton: "premium-swal-confirm",
+				cancelButton: "premium-swal-cancel",
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				this.configuracionForm.reset();
+				this.obtenerConfiguracion();
 
-		if (confirmar) {
-			// Limpiar el formulario y localStorage
-			this.configuracionForm.reset();
-			//  Obtener datos actualizados
-			this.obtenerConfiguracion();
-
-			if (this.imagenLocalStorageKey) {
-				localStorage.removeItem(this.imagenLocalStorageKey);
-				this.imagenLocalStorageKey = null;
-				this.previewUrl = null;
+				if (this.imagenLocalStorageKey) {
+					localStorage.removeItem(this.imagenLocalStorageKey);
+					this.imagenLocalStorageKey = null;
+					this.previewUrl = null;
+				}
 			}
-		}
+		});
 	}
 
 	cancelarPerfil(): void {
-		const confirmar = confirm(
-			"¿Estás seguro de que deseas cancelar? Se perderán los cambios no guardados.",
-		);
+		Swal.fire({
+			title: "¿Cancelar Cambios?",
+			text: "Se perderán los datos del perfil no guardados.",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Sí, cancelar",
+			cancelButtonText: "Continuar editando",
+			reverseButtons: true,
+			buttonsStyling: false,
+			customClass: {
+				popup: "premium-swal-popup",
+				title: "premium-swal-title",
+				htmlContainer: "premium-swal-html",
+				confirmButton: "premium-swal-confirm",
+				cancelButton: "premium-swal-cancel",
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				this.perfilForm.reset();
+				this.obtenerPerfilUsuario();
 
-		if (confirmar) {
-			// Limpiar el formulario y localStorage
-			this.perfilForm.reset();
-			//  Obtener datos actualizados
-			this.obtenerPerfilUsuario();
-
-			if (this.imagenLocalStorageKey) {
-				localStorage.removeItem(this.imagenLocalStorageKey);
-				this.imagenLocalStorageKey = null;
-				this.previewUrl = null;
+				if (this.imagenLocalStorageKey) {
+					localStorage.removeItem(this.imagenLocalStorageKey);
+					this.imagenLocalStorageKey = null;
+					this.previewUrl = null;
+				}
 			}
-		}
+		});
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

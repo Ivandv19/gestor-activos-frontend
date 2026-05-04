@@ -1,363 +1,212 @@
 <main>
-  <section class="container">
-    <form [formGroup]="editarActivoForm" (ngSubmit)="onSubmit()">
-      <section class="parte-1">
-        <section class="section-1">
-          <!-- Nombre del Activo -->
-          <div class="container-inputs">
-            <label for="nombreActivo">Nombre del Activo:</label>
-            <input
-              type="text"
-              id="nombreActivo"
-              formControlName="nombreActivo"
-              placeholder="Ejemplo: Laptop HP ProBook"
-              required
+  <div class="container">
+    <div class="form-card">
+      
+      <!-- Hero de Edición: Contexto Inmediato -->
+      <header class="edit-hero">
+        <div style="display: flex; align-items: center; gap: 30px; flex: 1;">
+          <div class="hero-image-wrapper">
+            <img 
+              [src]="getAssetPhoto(previewUrl || imagenActual) || 'https://gestor-assets.mgdc.site/gestionar-activos.png'" 
+              alt="Vista Previa" 
             />
           </div>
+          <div class="hero-text">
+            <span>Editando Propiedades del Activo</span>
+            <h1>{{ editarActivoForm.get('nombre')?.value || 'Cargando...' }}</h1>
+          </div>
+        </div>
 
-          <!-- Dueño -->
-          <div class="container-inputs">
-            <label for="nombreActivo">Dueño:</label>
-            <ng-select
-              type="text"
-              id="dueno"
-              formControlName="dueno"
-              [items]="duenos"
-              bindLabel="nombre"
-              bindValue="id"
-              placeholder="Ejemplo: Laptop HP ProBook"
-              required
-            />
-          </div>
-          <!-- Tipo de Activo -->
-          <div class="container-inputs">
-            <label for="tipoActivo">Tipo de Activo:</label>
-            <ng-select
-              id="tipoActivo"
-              formControlName="tipoActivo"
-              [items]="tiposActivos"
-              bindLabel="nombre"
-              bindValue="id"
-              placeholder="Seleccionar o escribir un tipo..."
-              [addTag]="true"
-              addTagText="Agregar nuevo tipo"
-            >
-            </ng-select>
-          </div>
-          <!-- Fecha de Adquisición -->
-          <div class="container-inputs">
-            <label for="fechaAdquisicion">Fecha de Adquisición:</label>
-            <input
-              type="date"
-              id="fechaAdquisicion"
-              formControlName="fechaAdquisicion"
-              required
-            />
-          </div>
-          <!-- Valor de Compra -->
-          <div class="container-inputs">
-            <label for="valorCompra">Valor de Compra:</label>
-            <input
-              type="number"
-              id="valorCompra"
-              formControlName="valorCompra"
-              placeholder="Ejemplo: 1000"
-              min="0"
-              required
-            />
-          </div>
-          <!-- Proveedor -->
-          <div class="container-inputs">
-            <label for="proveedor">Proveedor:</label>
-            <ng-select
-              id="proveedor"
-              formControlName="proveedor"
-              [items]="proveedores"
-              bindLabel="nombre"
-              bindValue="id"
-              placeholder="Seleccionar o escribir un proveedor..."
-              [addTag]="true"
-              addTagText="Agregar nuevo proveedor"
-            >
-            </ng-select>
-          </div>
-          <!-- Modelo -->
-          <div class="container-inputs">
-            <label for="modelo">Modelo:</label>
-            <input
-              type="text"
-              id="modelo"
-              formControlName="modelo"
-              placeholder="Ejemplo: XPS 13"
-            />
-          </div>
-          <!-- Versión de Software -->
-          <div class="container-inputs">
-            <label for="versionSoftware">Versión de Software:</label>
-            <input
-              type="text"
-              id="versionSoftware"
-              formControlName="versionSoftware"
-              placeholder="Ejemplo: v2.3.1"
-            />
-          </div>
-          <!-- Tipo de Licencia -->
-          <div class="container-inputs">
-            <label for="tipoLicencia">Tipo de Licencia:</label>
-            <input
-              id="tipoLicencia"
-              formControlName="tipoLicencia"
-              placeholder="Escribe un tipo..."
-            />
-          </div>
-        </section>
-        <section class="section-2">
-          <!-- Condición Física -->
-          <div class="container-inputs">
-            <label for="condicionFisica">Condición Física:</label>
-            <ng-select
-              id="condicionFisica"
-              formControlName="condicionFisica"
-              [items]="condicionesFisicas"
-              bindLabel="nombre"
-              bindValue="nombre"
-              placeholder="Seleccionar o escribir una condición..."
-              [addTag]="true"
-              addTagText="Agregar nueva condición"
-            >
-            </ng-select>
-          </div>
-          <!-- Etiqueta/Serial -->
-          <div class="container-inputs">
-            <label for="etiquetaSerial">Etiqueta/Serial:</label>
-            <input
-              type="text"
-              id="etiquetaSerial"
-              formControlName="etiquetaSerial"
-              placeholder="Ejemplo: SN123456789"
-            />
-          </div>
-          <!-- Descripción -->
-          <div class="container-inputs">
-            <label for="descripcion">Descripción:</label>
-            <textarea
-              id="descripcion"
-              formControlName="descripcion"
-              placeholder="Escribe una descripción detallada del activo..."
-            ></textarea>
-          </div>
-          <!-- Estado -->
-          <div class="container-inputs">
-            <label for="estado">Estado:</label>
-            <ng-select
-              id="estado"
-              formControlName="estado"
-              [items]="estados"
-              bindLabel="nombre"
-              bindValue="nombre"
-              placeholder="Seleccionar o escribir un estado..."
-              [addTag]="true"
-              addTagText="Agregar nuevo estado"
-            >
-            </ng-select>
-          </div>
-          <!-- Ubicación -->
-          <div class="container-inputs">
-            <label for="ubicacion">Ubicación:</label>
-            <ng-select
-              id="ubicacion"
-              formControlName="ubicacion"
-              [items]="ubicaciones"
-              bindLabel="nombre"
-              bindValue="id"
-              placeholder="Seleccionar o escribir una ubicación..."
-              [addTag]="true"
-              addTagText="Agregar nueva ubicación"
-            >
-            </ng-select>
-          </div>
-          <!-- Fecha de Vencimiento -->
-          <div class="container-inputs">
-            <label for="fechaVencimiento">Fecha de Vencimiento:</label>
-            <input
-              type="date"
-              id="fechaVencimiento"
-              formControlName="fechaVencimiento"
-            />
-          </div>
-          <!-- Costo Mensual -->
-          <div class="container-inputs">
-            <label for="costoMensual">Costo Mensual:</label>
-            <input
-              type="number"
-              id="costoMensual"
-              formControlName="costoMensual"
-              placeholder="Ejemplo: 5000"
-              min="0"
-            />
-          </div>
-          <!-- Recursos Asignados -->
-          <div class="container-inputs">
-            <label for="recursosAsignados">Recursos Asignados:</label>
-            <input
-              type="text"
-              id="recursosAsignados"
-              formControlName="recursosAsignados"
-              placeholder="Ejemplo: Memoria RAM, Disco Duro"
-            />
-          </div>
-        </section>
-        <section class="section-3">
-          <!-- Imagen -->
-          <div class="container-img">
-            <label for="imagen">Imagen del Activo:</label>
-            <input
-              type="file"
-              id="imagen"
-              formControlName="imagen"
-              accept="image/*"
-              (change)="onFileSelected($event)"
-            />
-
-            <img
-              [src]="
-                previewUrl ||
-                (imagenActual ? 'http://localhost:3000' + imagenActual : null)
-              "
-              *ngIf="previewUrl || imagenActual"
-              alt="Vista previa de la imagen"
-              class="preview-img"
-            />
-          </div>
-          <div class="image-actions">
-            <!-- Botón para quitar imagen (enviará null al backend) -->
-            <button
-              type="button"
-              class="btn btn-danger btn-sm"
-              (click)="removeImage()"
-            >
-              Quitar Imagen
+        <!-- Controles de Imagen a la Derecha -->
+        <div class="upload-controls">
+          <label class="btn-file">
+            <iconify-icon icon="lucide:upload-cloud" style="vertical-align: middle; margin-right: 5px;"></iconify-icon>
+            Cambiar Foto
+            <input type="file" (change)="onFileSelected($event)" style="display: none;" accept="image/*" />
+          </label>
+          <div class="image-actions-row">
+            <!-- Eliminar: Solo si hay imagen y no la hemos cambiado aún -->
+            <button type="button" class="btn-danger-light" *ngIf="!haCambiadoImagen && imagenActual" (click)="removeImage()">
+              Eliminar Foto
             </button>
-
-            <button
-              type="button"
-              class="btn btn-secondary btn-sm"
-              (click)="restoreOriginalImage()"
-            >
+            
+            <!-- Restaurar: Solo si ya hubo un cambio (subida o borrado) -->
+            <button type="button" class="btn-restore" *ngIf="haCambiadoImagen" (click)="restoreOriginalImage()">
               Restaurar Original
             </button>
           </div>
-        </section>
-      </section>
-      <section class="parte-2">
-        <!-- Campos de Garantía -->
-        <section class="section-garantia">
-          <h2>Garantía (Opcional)</h2>
-          <!-- Nombre de la Garantía -->
-          <div class="container-inputs-garantia">
-            <label for="nombreGarantia">Nombre de la Garantía:</label>
-            <input
-              type="text"
-              id="nombreGarantia"
-              formControlName="nombreGarantia"
-              placeholder="Ejemplo: Garantia extendida"
-              class="input-garantia"
-            />
-          </div>
-          <!-- Proveedor de la Garantía -->
-          <div class="container-inputs-garantia">
-            <label for="proveedorGarantia">Proveedor de la Garantía:</label>
-            <ng-select
-              id="proveedorGarantia"
-              formControlName="proveedorGarantia"
-              [items]="proveedorGarantia"
-              bindLabel="nombre"
-              bindValue="id"
-              placeholder="Seleccionar o escribir un proveedor..."
-              [addTag]="true"
-              addTagText="Agregar nuevo proveedor"
-              class="input-garantia"
-            >
-            </ng-select>
-          </div>
-          <!-- Fecha de Inicio -->
-          <div class="container-inputs-garantia">
-            <label for="fechaInicioGarantia">Fecha de Inicio:</label>
-            <input
-              type="date"
-              id="fechaInicioGarantia"
-              formControlName="fechaInicioGarantia"
-              class="input-garantia"
-            />
-          </div>
-          <!-- Fecha de Fin -->
-          <div class="container-inputs-garantia">
-            <label for="fechaFinGarantia">Fecha de Fin:</label>
-            <input
-              type="date"
-              id="fechaFinGarantia"
-              formControlName="fechaFinGarantia"
-              class="input-garantia"
-            />
+        </div>
+      </header>
+
+      <form [formGroup]="editarActivoForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Grid Principal: Datos del Activo -->
+        <div class="form-grid">
+          
+          <!-- Columna 1 -->
+          <div class="form-group">
+            <label for="nombre">Nombre del Activo *</label>
+            <input type="text" id="nombre" formControlName="nombre" placeholder="Ej: MacBook Pro 16" />
+            <small class="error-text" role="alert" *ngIf="editarActivoForm.get('nombre')?.touched && editarActivoForm.get('nombre')?.hasError('required')">Campo obligatorio</small>
           </div>
 
-          <!-- Costo -->
-          <div class="container-inputs-garantia">
-            <label for="costo">Costo:</label>
-            <input
-              type="text"
-              id="costo"
-              formControlName="costo"
-              placeholder="Ejemplo: 5000"
-              class="input-garantia"
-            />
+          <div class="form-group">
+            <label for="dueno_id">Dueño / Responsable *</label>
+            <ng-select id="dueno_id" formControlName="dueno_id" [items]="duenos" bindLabel="nombre" bindValue="id" placeholder="Seleccionar dueño..."></ng-select>
+            <small class="error-text" role="alert" *ngIf="editarActivoForm.get('dueno_id')?.touched && editarActivoForm.get('dueno_id')?.hasError('required')">Campo obligatorio</small>
           </div>
 
-          <!-- Condiciones -->
-          <div class="container-inputs-garantia">
-            <label for="Condiciones">Condiciones:</label>
-            <input
-              type="text"
-              id="Condiciones"
-              class="input-garantia"
-              placeholder="Ejemplo: No incluye daños por agua"
-              formControlName="condiciones"
-            />
+          <div class="form-group">
+            <label for="tipo_id">Tipo de Activo *</label>
+            <ng-select id="tipo_id" formControlName="tipo_id" [items]="tiposActivos" bindLabel="nombre" bindValue="id" [addTag]="true" placeholder="Seleccionar tipo..."></ng-select>
+            <small class="error-text" role="alert" *ngIf="editarActivoForm.get('tipo_id')?.touched && editarActivoForm.get('tipo_id')?.hasError('required')">Campo obligatorio</small>
           </div>
 
-          <!-- Estado de la Garantía -->
-          <div class="container-inputs-garantia">
-            <label for="estadoGarantia">Estado de la Garantía:</label>
-            <ng-select
-              id="estadoGarantia"
-              formControlName="estadoGarantia"
-              [items]="estadoGarantia"
-              bindLabel="nombre"
-              bindValue="nombre"
-              placeholder="Seleccionar o escribir un estado..."
-              [addTag]="true"
-              addTagText="Agregar nuevo estado"
-              class="input-garantia"
-            >
-            </ng-select>
+          <div class="form-group">
+            <label for="fecha_adquisicion">Fecha de Adquisición *</label>
+            <input type="date" id="fecha_adquisicion" formControlName="fecha_adquisicion" />
+            <small class="error-text" role="alert" *ngIf="editarActivoForm.get('fecha_adquisicion')?.touched && editarActivoForm.get('fecha_adquisicion')?.hasError('required')">Campo obligatorio</small>
           </div>
-          <!-- Descripción de la Garantía -->
-          <div class="container-inputs-garantia">
-            <label for="descripcionGarantia">Descripción:</label>
-            <textarea
-              id="descripcionGarantia"
-              formControlName="descripcionGarantia"
-              placeholder="Escribe una descripción detallada de la garantía..."
-              class="textarea-garantia"
-            ></textarea>
+
+          <div class="form-group">
+            <label for="valor_compra">Valor de Compra ($) *</label>
+            <input type="number" id="valor_compra" formControlName="valor_compra" placeholder="0.00" />
+            <small class="error-text" role="alert" *ngIf="editarActivoForm.get('valor_compra')?.touched && editarActivoForm.get('valor_compra')?.hasError('required')">Campo obligatorio</small>
+            <small class="error-text" role="alert" *ngIf="editarActivoForm.get('valor_compra')?.touched && editarActivoForm.get('valor_compra')?.hasError('min')">Debe ser un número positivo</small>
           </div>
-        </section>
-      </section>
-      <div class="botones-container">
-        <!-- Botón de Envío -->
-        <button type="submit" class="btn-guardar">Actualizar</button>
-        <button class="btn-cancelar" (click)="onCancelar()">Cancelar</button>
-      </div>
-    </form>
-  </section>
+
+          <div class="form-group">
+            <label for="proveedor_id">Proveedor *</label>
+            <ng-select id="proveedor_id" formControlName="proveedor_id" [items]="proveedores" bindLabel="nombre" bindValue="id" [addTag]="true" placeholder="Seleccionar proveedor..."></ng-select>
+            <small class="error-text" role="alert" *ngIf="editarActivoForm.get('proveedor_id')?.touched && editarActivoForm.get('proveedor_id')?.hasError('required')">Campo obligatorio</small>
+          </div>
+
+          <div class="form-group">
+            <label for="modelo">Modelo / Referencia</label>
+            <input type="text" id="modelo" formControlName="modelo" placeholder="Ej: A2485" />
+          </div>
+
+          <div class="form-group">
+            <label for="etiqueta_serial">Etiqueta / Serial</label>
+            <input type="text" id="etiqueta_serial" formControlName="etiqueta_serial" placeholder="Ej: SN-9988-XX" />
+          </div>
+
+          <div class="form-group">
+            <label for="estado">Estado del Activo *</label>
+            <ng-select id="estado" formControlName="estado" [items]="estados" bindLabel="nombre" bindValue="nombre" [addTag]="true" placeholder="Seleccionar estado..."></ng-select>
+            <small class="error-text" role="alert" *ngIf="editarActivoForm.get('estado')?.touched && editarActivoForm.get('estado')?.hasError('required')">Campo obligatorio</small>
+          </div>
+
+          <div class="form-group">
+            <label for="ubicacion_id">Ubicación Actual *</label>
+            <ng-select id="ubicacion_id" formControlName="ubicacion_id" [items]="ubicaciones" bindLabel="nombre" bindValue="id" [addTag]="true" placeholder="Seleccionar ubicación..."></ng-select>
+            <small class="error-text" role="alert" *ngIf="editarActivoForm.get('ubicacion_id')?.touched && editarActivoForm.get('ubicacion_id')?.hasError('required')">Campo obligatorio</small>
+          </div>
+
+          <!-- Campos de Ancho Completo -->
+          <div class="form-group full-width">
+            <label for="descripcion">Descripción Detallada</label>
+            <textarea id="descripcion" formControlName="descripcion" placeholder="Notas sobre el estado, accesorios incluidos, etc..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="version_software">Versión de Software</label>
+            <input type="text" id="version_software" formControlName="version_software" placeholder="Ej: macOS Sequoia" />
+          </div>
+
+          <div class="form-group">
+            <label for="tipo_licencia">Tipo de Licencia</label>
+            <input type="text" id="tipo_licencia" formControlName="tipo_licencia" placeholder="Ej: Perpetua / Suscripción" />
+          </div>
+
+          <div class="form-group">
+            <label for="fecha_vencimiento_licencia">Próximo Vencimiento</label>
+            <input type="date" id="fecha_vencimiento_licencia" formControlName="fecha_vencimiento_licencia" />
+          </div>
+
+          <div class="form-group">
+            <label for="costo_mensual">Costo Mensual Mant.</label>
+            <input type="number" id="costo_mensual" formControlName="costo_mensual" placeholder="0.00" />
+          </div>
+
+          <div class="form-group">
+            <label for="recursos_asignados">Recursos (RAM, Almacenamiento)</label>
+            <input type="text" id="recursos_asignados" formControlName="recursos_asignados" placeholder="Ej: 32GB RAM, 1TB SSD" />
+          </div>
+
+          <div class="form-group">
+            <label for="condicion_fisica">Condición Física</label>
+            <ng-select id="condicion_fisica" formControlName="condicion_fisica" [items]="condicionesFisicas" bindLabel="nombre" bindValue="nombre" [addTag]="true" placeholder="Ej: Excelente, Bueno..."></ng-select>
+            <small class="error-text" role="alert" *ngIf="editarActivoForm.get('condicion_fisica')?.errors?.['condicionInvalida']">Condición no válida.</small>
+          </div>
+
+        </div>
+
+        <!-- Sección de Garantía -->
+        <div class="warranty-section">
+          <h2>
+            <iconify-icon icon="lucide:shield-check"></iconify-icon>
+            Información de Garantía (Opcional)
+          </h2>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="nombre_garantia">Nombre de la Póliza</label>
+              <input type="text" id="nombre_garantia" formControlName="nombre_garantia" placeholder="Ej: AppleCare+" />
+            </div>
+
+            <div class="form-group">
+              <label for="proveedor_garantia_id">Proveedor de Garantía</label>
+              <ng-select id="proveedor_garantia_id" formControlName="proveedor_garantia_id" [items]="proveedorGarantia" bindLabel="nombre" bindValue="id" [addTag]="true" placeholder="Seleccionar proveedor..."></ng-select>
+            </div>
+
+            <div class="form-group">
+              <label for="fecha_inicio">Fecha de Inicio</label>
+              <input type="date" id="fecha_inicio" formControlName="fecha_inicio" />
+            </div>
+
+            <div class="form-group">
+              <label for="fecha_fin">Fecha de Vencimiento</label>
+              <input type="date" id="fecha_fin" formControlName="fecha_fin" />
+            </div>
+
+            <div class="form-group">
+              <label for="costo">Costo de la Póliza ($)</label>
+              <input type="text" id="costo" formControlName="costo" placeholder="0.00" />
+            </div>
+
+            <div class="form-group">
+              <label for="estado_garantia">Estado de Garantía</label>
+              <ng-select id="estado_garantia" formControlName="estado_garantia" [items]="estadoGarantia" bindLabel="nombre" bindValue="nombre" [addTag]="true" placeholder="Vigente / Vencida..."></ng-select>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="condiciones">Condiciones / Cobertura</label>
+              <input type="text" id="condiciones" formControlName="condiciones" placeholder="Ej: No incluye daños por agua..." />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="descripcion_garantia">Notas Adicionales de Garantía</label>
+              <textarea id="descripcion_garantia" formControlName="descripcion_garantia" placeholder="Detalles extra sobre el soporte técnico..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer de Acciones -->
+        <footer class="actions-footer">
+          <button type="button" class="btn-cancelar" (click)="onCancelar()">
+            Descartar Cambios
+          </button>
+          <button type="submit" class="btn-guardar" [disabled]="!editarActivoForm.valid">
+            Guardar Cambios
+          </button>
+        </footer>
+
+        <small class="error-text" role="alert" style="text-align:center;display:block;margin-top:8px;" *ngIf="!editarActivoForm.valid && editarActivoForm.touched">
+          Completa todos los campos obligatorios marcados con *
+        </small>
+
+      </form>
+    </div>
+  </div>
 </main>

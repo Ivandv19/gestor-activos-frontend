@@ -4,19 +4,17 @@ import { AppComponent } from "./app.component";
 import { AuthService } from "./login/services/auth.service";
 
 describe("AppComponent", () => {
-	let authServiceMock: any;
+	let authServiceMock: jest.Mocked<Pick<AuthService, "isLoggedIn">>;
 
 	beforeEach(waitForAsync(() => {
 		authServiceMock = {
-			isLoggedIn: jest.fn().mockReturnValue(false)
+			isLoggedIn: jest.fn().mockReturnValue(false),
 		};
 
 		TestBed.configureTestingModule({
 			imports: [RouterTestingModule],
 			declarations: [AppComponent],
-			providers: [
-				{ provide: AuthService, useValue: authServiceMock }
-			]
+			providers: [{ provide: AuthService, useValue: authServiceMock }],
 		}).compileComponents();
 	}));
 
@@ -33,5 +31,4 @@ describe("AppComponent", () => {
 		expect(compiled.querySelector("app-header")).toBeTruthy();
 		expect(compiled.querySelector("app-footer")).toBeTruthy();
 	});
-
 });

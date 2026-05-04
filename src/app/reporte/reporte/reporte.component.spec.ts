@@ -1,4 +1,10 @@
+jest.mock("jspdf", () => ({}));
+jest.mock("jspdf-autotable", () => ({}));
+jest.mock("html2canvas", () => ({}));
+jest.mock("chart.js/auto", () => ({}));
+
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 import { ReporteComponent } from "./reporte.component";
 
@@ -9,6 +15,7 @@ describe("ReporteComponent", () => {
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
 			declarations: [ReporteComponent],
+			imports: [HttpClientTestingModule],
 		}).compileComponents();
 
 		fixture = TestBed.createComponent(ReporteComponent);

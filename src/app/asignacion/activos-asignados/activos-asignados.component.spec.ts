@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { ActivosAsignadosComponent } from "./activos-asignados.component";
 
 describe("ActivosAsignadosComponent", () => {
@@ -8,6 +9,7 @@ describe("ActivosAsignadosComponent", () => {
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
 			declarations: [ActivosAsignadosComponent],
+			imports: [HttpClientTestingModule],
 		}).compileComponents();
 
 		fixture = TestBed.createComponent(ActivosAsignadosComponent);

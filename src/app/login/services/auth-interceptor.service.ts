@@ -13,22 +13,24 @@ export class AuthInterceptor implements HttpInterceptor {
 	constructor(private authService: AuthService) {}
 
 	intercept(
-		req: HttpRequest<any>,
+		req: HttpRequest<unknown>,
 		next: HttpHandler,
-	): Observable<HttpEvent<any>> {
-		const token = this.authService.getToken(); // Obtiene el token JWT
+	): Observable<HttpEvent<unknown>> {
+		const token = this.authService.getToken();
 
 		if (token) {
-			// Clona la solicitud y agrega el encabezado Authorization
-			req = req.clone({
-				setHeaders: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-					Accept: "application/json",
-				},
-			});
+			const headers: Record<string, string> = {
+				Authorization: `Bearer ${token}`,
+				Accept: "application/json",
+			};
+
+			if (!(req.body instanceof FormData)) {
+				headers["Content-Type"] = "application/json";
+			}
+
+			req = req.clone({ setHeaders: headers });
 		}
 
-		return next.handle(req); // Continúa con la solicitud modificada
+		return next.handle(req);
 	}
 }

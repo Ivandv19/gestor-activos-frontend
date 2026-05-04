@@ -2,6 +2,8 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
+import { ActivoDisponibleResponse } from "../../models/activo.interface";
+import { Pagination } from "../../models/pagination.interface";
 
 @Injectable({
 	providedIn: "root",
@@ -18,25 +20,26 @@ export class ActivosDisponiblesService {
 		filtroSeleccionado?: string,
 		opcionSeleccionada?: string,
 		orden?: string,
-	): Observable<any> {
+	): Observable<Pagination<ActivoDisponibleResponse>> {
 		let params = new HttpParams()
 			.set("page", page.toString())
 			.set("limit", limit.toString());
 
 		if (search) {
-			params = params.set("search", search); // Agregar término de búsqueda
+			params = params.set("search", search);
 		}
 
 		if (filtroSeleccionado && opcionSeleccionada) {
-			// Enviar el filtro como clave y su valor como valor
 			params = params.set(filtroSeleccionado, opcionSeleccionada);
 		}
 
 		if (orden) {
-			params = params.set("orden", orden); // Agregar ordenamiento
+			params = params.set("orden", orden);
 		}
 
 		console.log("[SERVICE] Parámetros enviados al backend:", params.toString());
-		return this.http.get(this.apiUrl, { params });
+		return this.http.get<Pagination<ActivoDisponibleResponse>>(this.apiUrl, {
+			params,
+		});
 	}
 }

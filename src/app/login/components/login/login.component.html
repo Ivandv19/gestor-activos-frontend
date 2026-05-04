@@ -1,76 +1,86 @@
-<main>
-  <!-- Contenedor principal del formulario de inicio de sesión -->
-  <div class="container-login">
-    <div class="container-titulo">
-      <h1>Iniciar sesión</h1>
+<main class="login-page">
+  <!-- Sección Izquierda: Ilustración y Branding -->
+  <section class="login-visual">
+    <div class="overlay"></div>
+    <div class="visual-content">
+      <div class="logo-container">
+        <img src="https://gestor-assets.mgdc.site/logo.png" alt="Logo" class="main-logo" />
+        <span class="brand-name">Gestor de Activos</span>
+      </div>
+      <div class="visual-text">
+        <h2>Control Total de tu Inventario</h2>
+        <p>Optimiza la vida útil de tus equipos y mantén el control total de tu inventario corporativo con precisión y seguridad.</p>
+      </div>
     </div>
+  </section>
 
-    <!-- Formulario de inicio de sesión -->
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <!-- Campo para el email -->
-      <div class="container-inputs">
-        <label for="email">Email:</label>
-        <div class="input-email">
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            placeholder="Ingresa tu correo..."
-          />
-        </div>
+  <!-- Sección Derecha: Formulario de Login -->
+  <section class="login-form-section">
+    <div class="login-card">
+      <div class="card-header">
+        <h1>Iniciar sesión</h1>
+        <p>Ingresa tus credenciales para acceder al panel administrativo.</p>
       </div>
 
-      <!-- Campo para la contraseña -->
-      <div class="container-inputs">
-        <label for="password">Contraseña:</label>
-        <div class="input-password">
-          <input
-            #passwordInput
-            id="password"
-            [type]="isPasswordVisible ? 'text' : 'password'"
-            formControlName="password"
-            placeholder="Ingresa tu contraseña..."
-            autocomplete="off"
-          />
-
-          <!-- Botón para mostrar/ocultar la contraseña -->
-          <button
-            class="btn-password"
-            type="button"
-            (click)="togglePasswordVisibility()"
-            aria-label="Mostrar u ocultar contraseña"
-          >
-            <img
-              [src]="
-                isPasswordVisible
-                  ? 'https://gestor-assets.mgdc.site/contrasena-visible.png'
-                  : 'https://gestor-assets.mgdc.site/contrasena-oculta.png'
-              "
-              alt="Mostrar contraseña"
-              aria-hidden="true"
-              style="cursor: pointer; width: 24px; height: 24px"
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="modern-form">
+        <!-- Campo Email -->
+        <div class="form-group">
+          <label for="email">Correo Electrónico</label>
+          <div class="input-wrapper">
+            <iconify-icon icon="ph:envelope-simple-light" class="input-icon"></iconify-icon>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="nombre@empresa.com"
             />
-          </button>
+          </div>
         </div>
 
-        <!-- Mensaje de error general (si existe) -->
-        @if (errorMessage) {
-        <div class="error-message">
-          <img src="https://gestor-assets.mgdc.site/advertencia.png" alt="error" />
-          <small>{{ errorMessage }}</small>
+        <!-- Campo Password -->
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <div class="input-wrapper">
+            <iconify-icon icon="ph:lock-simple-light" class="input-icon"></iconify-icon>
+            <input
+              #passwordInput
+              id="password"
+              [type]="isPasswordVisible ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+              autocomplete="off"
+            />
+            <button
+              class="toggle-password"
+              type="button"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="isPasswordVisible ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <iconify-icon [icon]="isPasswordVisible ? 'ph:eye-slash-light' : 'ph:eye-light'"></iconify-icon>
+            </button>
+          </div>
         </div>
-        }
-      </div>
 
-      <!-- Botón de envío del formulario -->
-      <button
-        class="btn-login"
-        type="submit"
-        [disabled]="loginForm.invalid || isLoading"
-      >
-        <span *ngIf="isLoading">Cargando...</span>
-        <span *ngIf="!isLoading">Iniciar Sesión</span>
-      </button>
-    </form>
-  </div>
+        <!-- Mensaje de Error -->
+        <div class="error-container" *ngIf="errorMessage" role="alert">
+          <iconify-icon icon="ph:warning-circle-light"></iconify-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <!-- Botón Submit -->
+        <button
+          class="btn-submit"
+          type="submit"
+          [disabled]="loginForm.invalid || isLoading"
+        >
+          <span *ngIf="!isLoading">Entrar al Sistema</span>
+          <div class="loader" *ngIf="isLoading"></div>
+        </button>
+      </form>
+
+      <footer class="login-footer">
+        <p>&copy; 2026 Gestor de Activos. Todos los derechos reservados.</p>
+      </footer>
+    </div>
+  </section>
 </main>

@@ -1,4 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { ReactiveFormsModule } from "@angular/forms";
+import { NgSelectModule } from "@ng-select/ng-select";
+import { CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 
 import { AgregarActivoComponent } from "./agregar-activo.component";
 
@@ -9,6 +13,8 @@ describe("AgregarActivoComponent", () => {
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
 			declarations: [AgregarActivoComponent],
+			imports: [HttpClientTestingModule, ReactiveFormsModule, NgSelectModule],
+			schemas: [CUSTOM_ELEMENTS_SCHEMA],
 		}).compileComponents();
 
 		fixture = TestBed.createComponent(AgregarActivoComponent);

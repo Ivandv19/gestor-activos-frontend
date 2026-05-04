@@ -27,6 +27,7 @@
 
     <!-- Enlace a los reportes -->
     <app-caja-nav
+      *ngIf="isAdmin()"
       label="Reportes"
       route="/reportes"
       icon="https://gestor-assets.mgdc.site/icono-reportes.png"
@@ -35,6 +36,7 @@
 
     <!-- Enlace a la configuración -->
     <app-caja-nav
+      *ngIf="isAdmin()"
       label="Configuración"
       route="/configuracion"
       icon="https://gestor-assets.mgdc.site/icono-configuracion.png"

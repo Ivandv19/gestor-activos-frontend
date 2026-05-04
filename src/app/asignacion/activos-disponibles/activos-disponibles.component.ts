@@ -1,7 +1,15 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { Subject } from "rxjs";
+import { Subject, takeUntil } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
+import Swal from "sweetalert2";
+import { AuthService } from "../../login/services/auth.service";
+import { ActivoDisponibleResponse } from "../../models/activo.interface";
+import {
+	DatosAuxiliares,
+	SelectItem,
+} from "../../models/datos-auxiliares.interface";
+import { getCloudflareImage } from "../../utils/images";
 import { ActivosDisponiblesService } from "../services/activos-disponibles.service";
 import { AuxiliaresService } from "../services/auxiliares.service";
 
@@ -11,24 +19,31 @@ import { AuxiliaresService } from "../services/auxiliares.service";
 	templateUrl: "./activos-disponibles.component.html",
 	styleUrl: "./activos-disponibles.component.css",
 })
-export class ActivosDisponiblesComponent implements OnInit {
+export class ActivosDisponiblesComponent implements OnInit, OnDestroy {
 	filtroSeleccionado: string = "";
 	opcionSeleccionada: string = "";
 	ordenSeleccionado: string = "asc";
 
-	activosDisponibles: any[] = [];
-	pagination: any = {};
+	activosDisponibles: ActivoDisponibleResponse[] = [];
+	pagination: {
+		total: number;
+		totalPages: number;
+		page: number;
+		limit: number;
+	} = { total: 0, totalPages: 0, page: 1, limit: 10 };
 	paginaActual: number = 1;
 	limitePorPagina: number = 10;
 	private searchSubject = new Subject<string>();
+	private destroy$ = new Subject<void>();
 	terminoBusqueda: string = "";
-	datosAuxiliares: any = {};
+	datosAuxiliares: DatosAuxiliares | null = null;
 	errorMessage: string = "";
 
 	constructor(
 		private activosDisponiblesServices: ActivosDisponiblesService,
 		private auxiliaresService: AuxiliaresService,
 		private router: Router,
+		private authService: AuthService,
 	) {}
 
 	ngOnInit(): void {
@@ -48,6 +63,7 @@ export class ActivosDisponiblesComponent implements OnInit {
 						this.terminoBusqueda,
 					);
 				}),
+				takeUntil(this.destroy$),
 			)
 			.subscribe({
 				next: (response) => {
@@ -63,7 +79,18 @@ export class ActivosDisponiblesComponent implements OnInit {
 					// Mostrar el mensaje
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
 				},
 			});
 	}
@@ -90,6 +117,7 @@ export class ActivosDisponiblesComponent implements OnInit {
 				this.opcionSeleccionada,
 				this.ordenSeleccionado,
 			)
+			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
 					console.log("Respuesta del backend recibida:", response);
@@ -104,7 +132,18 @@ export class ActivosDisponiblesComponent implements OnInit {
 					// Mostrar el mensaje
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
 				},
 			});
 	}
@@ -112,21 +151,35 @@ export class ActivosDisponiblesComponent implements OnInit {
 	// Función para obtener los datos auxiliares
 	obtenerDatosAuxiliares(): void {
 		const idActivo = 1; // Supongamos que estamos buscando datos auxiliares para un activo con ID 1
-		this.auxiliaresService.getDatosAuxiliares(idActivo).subscribe({
-			next: (response) => {
-				console.log("Datos auxiliares recibidos:", response);
-				this.datosAuxiliares = response; // Almacena los datos auxiliares
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error al obtener los datos auxiliares" }
-				const errorMessage =
-					error.error?.error || "Error al obtener los datos auxiliares";
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+		this.auxiliaresService
+			.getDatosAuxiliares(idActivo)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					console.log("Datos auxiliares recibidos:", response);
+					this.datosAuxiliares = response; // Almacena los datos auxiliares
+				},
+				error: (error) => {
+					// Ejem. Si el backend devuelve { error: "Error al obtener los datos auxiliares" }
+					const errorMessage =
+						error.error?.error || "Error al obtener los datos auxiliares";
+					// Mostrar el mensaje
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					Swal.fire({
+						title: "Error",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
+				},
+			});
 	}
 
 	// Cambiar de página
@@ -257,7 +310,7 @@ export class ActivosDisponiblesComponent implements OnInit {
 	 * Carga las opciones dinámicas según el filtro seleccionado
 	 * @param event Evento del select de filtro
 	 */
-	cargarOpcionesFiltro(event: Event): void {
+	cargarOpcionesFiltro(_event: Event): void {
 		const filtroSelect = document.getElementById("filtro") as HTMLSelectElement;
 		this.filtroSeleccionado = filtroSelect.value; // Guarda el tipo de filtro
 
@@ -270,7 +323,7 @@ export class ActivosDisponiblesComponent implements OnInit {
 			opcionesSelect.remove(1);
 		}
 
-		let opciones: any[] = [];
+		let opciones: SelectItem[] = [];
 
 		switch (
 			this.filtroSeleccionado // Usamos la variable guardada
@@ -291,13 +344,13 @@ export class ActivosDisponiblesComponent implements OnInit {
 		console.log("[FILTRO] Opciones cargadas:", opciones);
 		opciones.forEach((opcion) => {
 			const optionElement = document.createElement("option");
-			optionElement.value = opcion.id;
-			optionElement.textContent = opcion.nombre || opcion.descripcion;
+			optionElement.value = String(opcion.id);
+			optionElement.textContent = opcion.nombre || opcion.descripcion || null;
 			opcionesSelect.appendChild(optionElement);
 		});
 	}
 
-	aplicarFiltro(event: Event): void {
+	aplicarFiltro(_event: Event): void {
 		// Seleccionar el elemento por su ID
 		const opcionesSelect = document.getElementById(
 			"opciones",
@@ -318,7 +371,7 @@ export class ActivosDisponiblesComponent implements OnInit {
 		}
 	}
 
-	aplicarOrden(event: Event): void {
+	aplicarOrden(_event: Event): void {
 		const ordenSelect = document.getElementById(
 			"direccion",
 		) as HTMLSelectElement;
@@ -332,5 +385,26 @@ export class ActivosDisponiblesComponent implements OnInit {
 		} else {
 			console.error('[ERROR] No se encontró el elemento con ID "orden2".');
 		}
+	}
+
+	isAdmin(): boolean {
+		return this.authService.isAdmin();
+	}
+
+	getAssetPhoto(fotoUrl: string): string {
+		return getCloudflareImage(fotoUrl, { width: 150 });
+	}
+
+	trackById(_index: number, item: ActivoDisponibleResponse): number {
+		return item.id;
+	}
+
+	trackByIndex(index: number): number {
+		return index;
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

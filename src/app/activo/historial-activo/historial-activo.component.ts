@@ -1,43 +1,79 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Subject } from "rxjs";
+import { Subject, takeUntil } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
+import {
+	DatosAuxiliares,
+	SelectItem,
+} from "../../models/datos-auxiliares.interface";
+import { HistorialEntry } from "../../models/historial.interface";
 import { HistorialService } from "../service/historial.service";
 
 @Component({
 	selector: "app-historial-activo",
 	standalone: false,
 	templateUrl: "./historial-activo.component.html",
-	styleUrls: ["./historial-activo.component.css"],
+	styleUrl: "./historial-activo.component.css",
 })
-export class HistorialActivoComponent implements OnInit {
+export class HistorialActivoComponent implements OnInit, OnDestroy {
 	filtroSeleccionado: string = "";
 	opcionSeleccionada: string = "";
 	ordenSeleccionado: string = "asc";
 
-	activoId!: number; // ID del activo
-	historial: any[] = []; // Datos del historial
+	activoId!: number;
+	historial: HistorialEntry[] = [];
 
-	pagination: any = {}; // Información de paginación recibida del backend
-	paginaActual: number = 1; // Página actual
-	limitePorPagina: number = 10; // Límite de resultados por página
+	pagination: {
+		total: number;
+		totalPages: number;
+		page: number;
+		limit: number;
+	} = { total: 0, totalPages: 0, page: 1, limit: 10 };
+	paginaActual: number = 1;
+	limitePorPagina: number = 10;
 
-	searchTerm: string = ""; // Término de búsqueda
+	searchTerm: string = "";
 
-	errorMessage: string = ""; // Mensaje de error para mostrar al usuario
+	errorMessage: string = "";
 
-	private searchSubject = new Subject<string>(); // Sujeto para manejar el debounce
+	private searchSubject = new Subject<string>();
+	private destroy$ = new Subject<void>();
 
-	datosAuxiliares: any;
+	datosAuxiliares: DatosAuxiliares | null = null;
 
 	constructor(
 		private route: ActivatedRoute,
 		private historialService: HistorialService,
 	) {}
 
+	// Helper para determinar la clase del badge según la acción
+	getBadgeClass(accion: string): string {
+		const a = accion.toLowerCase();
+		if (a.includes("asignado") && !a.includes("desasignado"))
+			return "badge-assign";
+		if (a.includes("desasignado") || a.includes("baja"))
+			return "badge-unassign";
+		if (a.includes("creado") || a.includes("nuevo")) return "badge-create";
+		if (a.includes("actualizado") || a.includes("editado"))
+			return "badge-update";
+		return "badge-default";
+	}
+
+	// Helper para determinar el icono según la acción
+	getBadgeIcon(accion: string): string {
+		const a = accion.toLowerCase();
+		if (a.includes("asignado") && !a.includes("desasignado"))
+			return "lucide:user-plus";
+		if (a.includes("desasignado")) return "lucide:user-minus";
+		if (a.includes("baja")) return "lucide:trash-2";
+		if (a.includes("creado")) return "lucide:plus-circle";
+		if (a.includes("actualizado")) return "lucide:edit-3";
+		return "lucide:info";
+	}
+
 	ngOnInit(): void {
 		// Obtener el ID del activo desde la ruta
-		this.activoId = +this.route.snapshot.paramMap.get("id")!;
+		this.activoId = +(this.route.snapshot.paramMap.get("id") || 0);
 		// Cargar el historial al inicializar el componente
 		this.cargarHistorial();
 
@@ -66,6 +102,7 @@ export class HistorialActivoComponent implements OnInit {
 						this.searchTerm,
 					);
 				}),
+				takeUntil(this.destroy$),
 			)
 			.subscribe({
 				next: (response) => {
@@ -108,6 +145,7 @@ export class HistorialActivoComponent implements OnInit {
 				this.opcionSeleccionada,
 				this.ordenSeleccionado,
 			)
+			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
 					console.log("Respuesta del backend:", response);
@@ -135,22 +173,25 @@ export class HistorialActivoComponent implements OnInit {
 	 * Carga los datos auxiliares necesarios para el componente.
 	 */
 	cargarDatosAuxiliares(): void {
-		this.historialService.obtenerDatosAuxiliares().subscribe({
-			next: (response) => {
-				console.log("Datos auxiliares cargados:", response);
-				this.datosAuxiliares = response;
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error al obtener datos auxiliares" }
-				const errorMessage =
-					error.error?.error || "Error al obtener datos auxiliares";
+		this.historialService
+			.obtenerDatosAuxiliares()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					console.log("Datos auxiliares cargados:", response);
+					this.datosAuxiliares = response;
+				},
+				error: (error) => {
+					// Ejem. Si el backend devuelve { error: "Error al obtener datos auxiliares" }
+					const errorMessage =
+						error.error?.error || "Error al obtener datos auxiliares";
 
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+					// Mostrar el mensaje
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					alert(errorMessage);
+				},
+			});
 	}
 
 	/**
@@ -270,7 +311,7 @@ export class HistorialActivoComponent implements OnInit {
 			opcionesSelect.remove(1);
 		}
 
-		let opciones: any[] = [];
+		let opciones: SelectItem[] = [];
 
 		switch (
 			this.filtroSeleccionado // Usamos la variable guardada
@@ -288,8 +329,8 @@ export class HistorialActivoComponent implements OnInit {
 		console.log("[FILTRO] Opciones cargadas:", opciones);
 		opciones.forEach((opcion) => {
 			const optionElement = document.createElement("option");
-			optionElement.value = opcion.id || opcion.nombre;
-			optionElement.textContent = opcion.nombre || opcion.descripcion;
+			optionElement.value = String(opcion.id || opcion.nombre);
+			optionElement.textContent = opcion.nombre || opcion.descripcion || null;
 			opcionesSelect.appendChild(optionElement);
 		});
 	}
@@ -343,5 +384,18 @@ export class HistorialActivoComponent implements OnInit {
 	aplicarOrden(event: Event): void {
 		this.ordenSeleccionado = (event.target as HTMLSelectElement).value;
 		this.cargarHistorial();
+	}
+
+	trackById(_index: number, item: HistorialEntry): number {
+		return item.id;
+	}
+
+	trackByIndex(index: number): number {
+		return index;
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

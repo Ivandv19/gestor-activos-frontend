@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import {
 	AbstractControl,
 	FormBuilder,
@@ -8,6 +8,11 @@ import {
 	Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
+import { Subject, takeUntil } from "rxjs";
+import Swal from "sweetalert2";
+import { ActivoPayload, GarantiaItem } from "../../models/activo.interface";
+import { SelectItem } from "../../models/datos-auxiliares.interface";
+import { getCloudflareImage } from "../../utils/images";
 import { ActivoService } from "../service/activo.service";
 import { DatosService } from "../service/datos.service";
 
@@ -17,21 +22,32 @@ import { DatosService } from "../service/datos.service";
 	templateUrl: "./editar-activo.component.html",
 	styleUrl: "./editar-activo.component.css",
 })
-export class EditarActivoComponent implements OnInit {
+export class EditarActivoComponent implements OnInit, OnDestroy {
 	// Formulario para editar un activo
 	editarActivoForm!: FormGroup;
 	activoId!: number; // ID del activo
-	tiposActivos: any[] = [];
-	proveedores: any[] = [];
-	ubicaciones: any[] = [];
-	proveedorGarantia: any[] = [];
-	duenos: any[] = [];
+	tiposActivos: SelectItem[] = [];
+	proveedores: SelectItem[] = [];
+	ubicaciones: SelectItem[] = [];
+	proveedorGarantia: SelectItem[] = [];
+	duenos: SelectItem[] = [];
 	errorMessage: string = "";
-	estados: any[] = [];
+	estados: SelectItem[] = [];
 
 	public previewUrl: string | null = null; // Vista previa de la nueva imagen
 	imagenActual: string | null | undefined = null; // URL de la imagen actual del activo
+	imagenOriginal: string | null | undefined = null; // Guardar la imagen inicial del backend
 	imagenLocalStorageKey: string | null = null; // Clave de la imagen en localStorage
+	isUploading = false;
+	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+
+	get haCambiadoImagen(): boolean {
+		// Ha cambiado si hay un preview nuevo O si la imagen actual es nula pero la original no lo era (borrado)
+		return (
+			!!this.previewUrl ||
+			(this.imagenActual === null && this.imagenOriginal !== null)
+		);
+	}
 
 	condicionesFisicas = [
 		{ id: 1, nombre: "Nuevo" },
@@ -55,7 +71,7 @@ export class EditarActivoComponent implements OnInit {
 
 	ngOnInit(): void {
 		// Obtener el ID del activo desde la ruta
-		this.activoId = +this.route.snapshot.paramMap.get("id")!;
+		this.activoId = +(this.route.snapshot.paramMap.get("id") || 0);
 		this.inicializarFormulario();
 		this.cargarDatosActivo();
 		this.cargarDatosAdicionales();
@@ -64,73 +80,93 @@ export class EditarActivoComponent implements OnInit {
 	// Inicializar el formulario
 	inicializarFormulario(): void {
 		this.editarActivoForm = this.fb.group({
-			nombreActivo: [""],
-			dueno: [""],
-			tipoActivo: [""],
-			fechaAdquisicion: [""],
-			valorCompra: [""],
-			proveedor: [""],
+			nombre: ["", Validators.required],
+			tipo_id: ["", Validators.required],
+			fecha_adquisicion: ["", Validators.required],
+			valor_compra: [null, [Validators.required, Validators.min(0)]],
+			estado: ["", Validators.required],
+			proveedor_id: ["", Validators.required],
+			ubicacion_id: ["", Validators.required],
+			dueno_id: ["", Validators.required],
 			modelo: [""],
-			versionSoftware: [""],
-			tipoLicencia: [""],
-			condicionFisica: [""],
-			etiquetaSerial: [""],
+			version_software: [""],
+			tipo_licencia: [""],
+			fecha_vencimiento_licencia: [""],
+			costo_mensual: [null, Validators.min(0)],
+			recursos_asignados: [""],
+			condicion_fisica: ["", this.condicionFisicaValidator()],
+			etiqueta_serial: [""],
 			descripcion: [""],
-			estado: [""],
-			ubicacion: [""],
-			fechaVencimiento: [""],
-			costoMensual: [""],
-			recursosAsignados: [""],
-			imagen: [""],
-			nombreGarantia: [""],
-			proveedorGarantia: [""],
-			fechaInicioGarantia: [""],
-			fechaFinGarantia: [""],
-			estadoGarantia: [""],
-			descripcionGarantia: [""],
-			costo: [""],
+			nombre_garantia: [""],
+			proveedor_garantia_id: [""],
+			fecha_inicio: [""],
+			fecha_fin: [""],
+			estado_garantia: [""],
+			descripcion_garantia: [""],
+			costo: [null],
 			condiciones: [""],
 		});
 	}
 
 	// Cargar datos auxiliares (tipos, proveedores, ubicaciones, etc.)
 	cargarDatosAdicionales(): void {
-		this.datosService.obtenerDatosAuxiliares().subscribe({
-			next: (response) => {
-				console.log(response);
-				this.tiposActivos = response.tipos;
-				this.proveedores = response.proveedores;
-				this.ubicaciones = response.ubicaciones;
-				this.proveedorGarantia = response.proveedoresGarantia;
-				this.duenos = response.duenos;
-				this.estados = response.estados;
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { mensaje: "Error al obtener datos auxiliares" }
-				const errorMessage =
-					error.error?.mensaje || "Error al obtener datos auxiliares";
+		this.datosService
+			.obtenerDatosAuxiliares()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					console.log(response);
+					this.tiposActivos = response.tipos || [];
+					this.proveedores = response.proveedores || [];
+					this.ubicaciones = response.ubicaciones || [];
+					this.proveedorGarantia = response.proveedoresGarantia || [];
+					this.duenos = response.duenos || [];
+					this.estados = response.estados || [];
+				},
+				error: (error) => {
+					// Ejem. Si el backend devuelve { mensaje: "Error al obtener datos auxiliares" }
+					const errorMessage =
+						error.error?.mensaje || "Error al obtener datos auxiliares";
 
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+					// Mostrar el mensaje
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					alert(errorMessage);
+				},
+			});
 	}
 
-	// Quitar imagen completamente (enviará null al backend)
+	// Quitar imagen completamente (enviará null al backend al guardar)
 	removeImage(): void {
-		// Eliminar imagen del localStorage si existe
-		if (this.imagenLocalStorageKey) {
-			localStorage.removeItem(this.imagenLocalStorageKey);
-			this.imagenLocalStorageKey = null;
-		}
+		Swal.fire({
+			title: "¿Eliminar Imagen?",
+			text: "Esta acción marcará la imagen para ser eliminada permanentemente al guardar los cambios.",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Sí, eliminar",
+			cancelButtonText: "Cancelar",
+			reverseButtons: true,
+			buttonsStyling: false,
+			customClass: {
+				popup: "premium-swal-popup",
+				title: "premium-swal-title",
+				htmlContainer: "premium-swal-html",
+				confirmButton: "premium-swal-confirm",
+				cancelButton: "premium-swal-cancel",
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				// Eliminar imagen del localStorage si existe
+				if (this.imagenLocalStorageKey) {
+					localStorage.removeItem(this.imagenLocalStorageKey);
+					this.imagenLocalStorageKey = null;
+				}
 
-		// Limpiar vista previa
-		this.previewUrl = null;
-		this.imagenActual = null; // Limpiar imagen actual del activo
-		// También limpiar el input file
-		this.editarActivoForm.get("imagen")?.reset();
+				// Limpiar vista previa
+				this.previewUrl = null;
+				this.imagenActual = null; // Marcar como nula para el backend
+			}
+		});
 	}
 
 	// Restaurar la imagen original del backend
@@ -141,73 +177,85 @@ export class EditarActivoComponent implements OnInit {
 			this.imagenLocalStorageKey = null;
 		}
 
-		// Restaurar la imagen original del backend
-		this.previewUrl = "http://localhost:3000" + this.imagenActual;
-
-		// También limpiar el input file
-		this.editarActivoForm.get("imagen")?.reset();
+		// Limpiar vista previa y volver a la original
+		this.previewUrl = null;
+		this.imagenActual = this.imagenOriginal;
 	}
 
 	// Cargar datos del activo a editar
 	cargarDatosActivo(): void {
-		this.activoService.getActivoById(this.activoId).subscribe({
-			next: (response) => {
-				console.log("Datos del activo:", response);
-				// Guarda la imagen actual del activo
-				this.imagenActual = response.fotoUrl || undefined;
-				// Si hay imagen actual, prepara la vista previa
-				if (this.imagenActual) {
-					this.previewUrl = "http://localhost:3000" + this.imagenActual;
-				}
-				// Manejo SEGURO de garantía (si es null o undefined)
-				const garantia = response.garantia?.[0] ?? {}; // Si no hay garantía, usa objeto vacío
-				const datosFormulario = {
-					nombreActivo: response.nombre || undefined,
-					dueno: response.dueno?.id || undefined,
-					tipoActivo: response.tipo?.id || undefined,
-					fechaAdquisicion: undefined,
-					valorCompra: response.valorCompra,
-					proveedor: response.proveedor?.id || undefined,
-					modelo: response.modelo || undefined,
-					versionSoftware: response.versionSoftware || undefined,
-					tipoLicencia: response.tipoLicencia || undefined,
-					condicionFisica: response.condicionFisica || undefined,
-					etiquetaSerial: response.etiquetaSerial || undefined,
-					descripcion: response.descripcion || undefined,
-					estado: response.estado || undefined,
-					ubicacion: response.ubicacion?.id || undefined,
-					fechaVencimiento: undefined,
-					costoMensual: response.costoMensual || undefined,
-					recursosAsignados: response.recursosAsignados || undefined,
-					nombreGarantia: garantia.nombre || undefined,
-					proveedorGarantia: garantia.proveedor?.id || undefined,
-					fechaInicioGarantia: garantia.fecha_inicio || undefined,
-					fechaFinGarantia: garantia.fecha_fin || undefined,
-					estadoGarantia: garantia.estado || undefined,
-					descripcionGarantia: garantia.descripcion || undefined,
-					costo: garantia.costo || undefined,
-					condiciones: garantia.condiciones || undefined,
-				};
+		this.activoService
+			.getActivoById(this.activoId)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					console.log("Datos del activo:", response);
+					// Guarda la imagen actual y la original para comparaciones
+					this.imagenActual = response.foto_url || null;
+					this.imagenOriginal = response.foto_url || null;
 
-				this.editarActivoForm.patchValue(datosFormulario);
-				console.log("Datos del formulario:", datosFormulario);
-				console.log("Imagen actual:", this.imagenActual);
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error al obtener activo" }
-				const errorMessage = error.error?.error || "Error al obtener activo";
+					// Si hay imagen actual, prepara la vista previa (esto es opcional ahora que usamos haCambiadoImagen)
+					this.previewUrl = null;
 
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
-		});
+					// Manejo SEGURO de garantía (si es null o undefined)
+					const garantia: GarantiaItem =
+						response.garantia?.[0] ?? ({} as GarantiaItem); // Si no hay garantía, usa objeto vacío
+					const datosFormulario = {
+						nombre: response.nombre || undefined,
+						dueno_id: response.dueno?.id || undefined,
+						tipo_id: response.tipo?.id || undefined,
+						fecha_adquisicion: response.fecha_adquisicion
+							? response.fecha_adquisicion.split("T")[0]
+							: undefined,
+						valor_compra: response.valor_compra,
+						proveedor_id: response.proveedor?.id || undefined,
+						modelo: response.modelo || undefined,
+						version_software: response.version_software || undefined,
+						tipo_licencia: response.tipo_licencia || undefined,
+						condicion_fisica: response.condicion_fisica || undefined,
+						etiqueta_serial: response.etiqueta_serial || undefined,
+						descripcion: response.descripcion || undefined,
+						estado: response.estado || undefined,
+						ubicacion_id: response.ubicacion?.id || undefined,
+						fecha_vencimiento_licencia: response.fecha_vencimiento_licencia
+							? response.fecha_vencimiento_licencia.split("T")[0]
+							: undefined,
+						costo_mensual: response.costo_mensual || undefined,
+						recursos_asignados: response.recursos_asignados || undefined,
+						nombre_garantia: garantia.nombre_garantia || undefined,
+						proveedor_garantia_id: garantia.proveedor?.id || undefined,
+						fecha_inicio: garantia.fecha_inicio
+							? garantia.fecha_inicio.split("T")[0]
+							: undefined,
+						fecha_fin: garantia.fecha_fin
+							? garantia.fecha_fin.split("T")[0]
+							: undefined,
+						estado_garantia: garantia.estado_garantia || undefined,
+						descripcion_garantia: garantia.descripcion || undefined,
+						costo: garantia.costo || undefined,
+						condiciones: garantia.condiciones || undefined,
+					};
+
+					this.editarActivoForm.patchValue(datosFormulario);
+					console.log("Datos del formulario:", datosFormulario);
+					console.log("Imagen actual:", this.imagenActual);
+				},
+				error: (error) => {
+					// Ejem. Si el backend devuelve { error: "Error al obtener activo" }
+					const errorMessage = error.error?.error || "Error al obtener activo";
+
+					// Mostrar el mensaje
+					this.errorMessage = errorMessage;
+					console.error("Error del backend:", errorMessage);
+					alert(errorMessage);
+				},
+			});
 	}
 	// Manejar la selección de archivos (imagen)
-	onFileSelected(event: any): void {
-		const file: File = event.target.files[0];
-		if (file && file.type.startsWith("image/")) {
+	onFileSelected(event: Event): void {
+		const input = event.target as HTMLInputElement;
+		const file = input.files?.[0];
+		if (file?.type.startsWith("image/")) {
 			// Vista previa local
 			const reader = new FileReader();
 			reader.onload = () => {
@@ -224,95 +272,89 @@ export class EditarActivoComponent implements OnInit {
 	}
 	// Manejar el envío del formulario
 	onSubmit(): void {
-		if (this.imagenLocalStorageKey) {
-			const imageDataUrl = localStorage.getItem(this.imagenLocalStorageKey);
-			if (imageDataUrl) {
-				// Convertir DataURL a Blob y subir la imagen
-				const blob = this.dataURLtoBlob(imageDataUrl);
-				const formData = new FormData();
-				formData.append("file", blob, "activo_image.jpg");
+		if (!this.editarActivoForm.valid) {
+			this.editarActivoForm.markAllAsTouched();
+			return;
+		}
 
-				// Primero subir la imagen
-				this.activoService.subirImagen(formData).subscribe({
-					next: (res) => {
-						console.log("Imagen subida exitosamente:", res);
-						this.actualizarActivoConDatos(res.url); // Enviar la URL de la imagen al backend
-						// Limpiar localStorage en cualquier caso exitoso
-						if (this.imagenLocalStorageKey) {
-							localStorage.removeItem(this.imagenLocalStorageKey);
-							this.imagenLocalStorageKey = null;
-						}
-					},
-					error: (err) => {
-						alert("Error al subir la imagen. Intenta nuevamente.");
-						console.error(err);
-					},
-				});
-				return; // Salir para no ejecutar actualizarActivoConDatos otra vez
+		const formData = new FormData();
+		const fv = this.editarActivoForm.value as ActivoPayload;
+
+		for (const key of Object.keys(fv) as (keyof ActivoPayload)[]) {
+			const val = fv[key];
+			if (val !== null && val !== undefined && val !== "") {
+				formData.append(key, String(val));
 			}
 		}
 
-		this.actualizarActivoConDatos(this.imagenActual);
-	}
+		if (this.imagenLocalStorageKey) {
+			const imageDataUrl = localStorage.getItem(this.imagenLocalStorageKey);
+			if (imageDataUrl) {
+				const blob = this.dataURLtoBlob(imageDataUrl);
+				formData.append("file", blob, "activo.jpg");
+			}
+		} else if (this.imagenActual) {
+			formData.append("foto_url", this.imagenActual);
+		} else if (this.imagenActual === null) {
+			formData.append("foto_url", "");
+		}
 
-	private actualizarActivoConDatos(imagenUrl: string | undefined | null): void {
-		const formValue = this.editarActivoForm.value;
-
-		// Preparar objeto de datos para el backend
-		const datosBackend: any = {
-			nombre: formValue.nombreActivo || undefined,
-			dueno_id: formValue.dueno || undefined,
-			tipo_id: formValue.tipoActivo || undefined,
-			fecha_adquisicion: this.formatDateForBackend(formValue.fechaAdquisicion),
-			valor_compra: formValue.valorCompra || undefined,
-			proveedor_id: formValue.proveedor || undefined,
-			modelo: formValue.modelo || undefined,
-			version_software: formValue.versionSoftware || undefined,
-			tipo_licencia: formValue.tipoLicencia || undefined,
-			condicion_fisica: formValue.condicionFisica || undefined,
-			etiqueta_serial: formValue.etiquetaSerial || undefined,
-			descripcion: formValue.descripcion || undefined,
-			estado: formValue.estado || undefined,
-			ubicacion_id: formValue.ubicacion || undefined,
-			fecha_vencimiento_licencia: this.formatDateForBackend(
-				formValue.fechaVencimiento,
-			),
-			costo_mensual: formValue.costoMensual || undefined,
-			recursos_asignados: formValue.recursosAsignados || undefined,
-			foto_url: imagenUrl,
-
-			// Datos de garantía
-			nombre_garantia: formValue.nombreGarantia || undefined,
-			proveedor_garantia_id: formValue.proveedorGarantia || undefined,
-			fecha_inicio: this.formatDateForBackend(formValue.fechaInicioGarantia),
-			fecha_fin: this.formatDateForBackend(formValue.fechaFinGarantia),
-			estado_garantia: formValue.estadoGarantia || undefined,
-			descripcion_garantia: formValue.descripcionGarantia || undefined,
-			costo: formValue.garantiaCosto || undefined,
-			condiciones: formValue.garantiaCondiciones || undefined,
-		};
-
-		// Filtrar para eliminar campos undefined (no enviarlos)
-		const payload = Object.fromEntries(
-			Object.entries(datosBackend).filter(([_, v]) => v !== undefined),
-		);
-
-		this.activoService.updateActivo(this.activoId, payload).subscribe({
-			next: (response) => {
-				console.log("activo actualizado exitosamente:", response);
-				alert("Activo actualizado exitosamente");
-				this.router.navigate(["/gestion-activos"]);
-			},
-			error: (error) => {
-				// Ejem. Si el backend devuelve { error: "Error al actualizar el activo" }
-				const errorMessage =
-					error.error?.error || "Error al actualizar el activo";
-				// Mostrar el mensaje
-				this.errorMessage = errorMessage;
-				console.error("Error del backend:", errorMessage);
-				alert(errorMessage);
-			},
+		this.isUploading = true;
+		Swal.fire({
+			title: "Actualizando activo...",
+			allowOutsideClick: false,
+			didOpen: () => Swal.showLoading(),
 		});
+
+		this.activoService
+			.updateActivo(this.activoId, formData)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					this.isUploading = false;
+					Swal.close();
+					console.log("activo actualizado exitosamente:", response);
+					if (this.imagenLocalStorageKey) {
+						localStorage.removeItem(this.imagenLocalStorageKey);
+						this.imagenLocalStorageKey = null;
+					}
+					Swal.fire({
+						title: "¡Actualizado!",
+						text: "Los cambios se han guardado exitosamente.",
+						icon: "success",
+						timer: 2000,
+						timerProgressBar: true,
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					}).then(() => {
+						this.router.navigate(["/gestion-activos"]);
+					});
+				},
+				error: (error) => {
+					this.isUploading = false;
+					Swal.close();
+					const errorMessage =
+						error.error?.error || "Error al actualizar el activo";
+					Swal.fire({
+						title: "Error de Guardado",
+						text: errorMessage,
+						icon: "error",
+						buttonsStyling: false,
+						customClass: {
+							popup: "premium-swal-popup",
+							title: "premium-swal-title",
+							htmlContainer: "premium-swal-html",
+							confirmButton: "premium-swal-confirm",
+						},
+					});
+					this.errorMessage = errorMessage;
+				},
+			});
 	}
 
 	/**
@@ -320,7 +362,7 @@ export class EditarActivoComponent implements OnInit {
 	 */
 	private dataURLtoBlob(dataURL: string): Blob {
 		const arr = dataURL.split(",");
-		const mime = arr[0].match(/:(.*?);/)![1];
+		const mime = arr[0].match(/:(.*?);/)?.[1] || "";
 		const bstr = atob(arr[1]);
 		let n = bstr.length;
 		const u8arr = new Uint8Array(n);
@@ -331,45 +373,35 @@ export class EditarActivoComponent implements OnInit {
 		return new Blob([u8arr], { type: mime });
 	}
 
-	/**
-	 * Formatea la fecha para el backend (YYYY-MM-DD).
-	 * Si la fecha es undefined, null o string vacío, retorna undefined.
-	 * Si ya está en formato YYYY-MM-DD, retorna la fecha tal cual.
-	 * Para cualquier otro caso (incluyendo objetos Date), retorna undefined.
-	 */
-	formatDateForBackend(date: any): string | undefined {
-		// Si es undefined, null o string vacío, retornar undefined
-		if (date === undefined || date === null || date === "") {
-			return undefined;
-		}
-
-		// Si ya está en formato YYYY-MM-DD, retornar directo
-		if (typeof date === "string" && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-			return date;
-		}
-
-		// Para cualquier otro caso (incluyendo objetos Date), retornar undefined
-		return undefined;
-	}
-
 	// Manejar el evento de cancelar
 	onCancelar(): void {
-		const confirmar = confirm(
-			"¿Estás seguro de que deseas cancelar? Se perderán los cambios no guardados.",
-		);
-
-		if (confirmar) {
-			// Limpiar el formulario y localStorage
-			this.editarActivoForm.reset();
-
-			if (this.imagenLocalStorageKey) {
-				localStorage.removeItem(this.imagenLocalStorageKey);
-				this.imagenLocalStorageKey = null;
-				this.previewUrl = null;
+		Swal.fire({
+			title: "¿Descartar Cambios?",
+			text: "Tienes cambios sin guardar. Si continúas, se perderá toda la información editada.",
+			icon: "question",
+			showCancelButton: true,
+			confirmButtonText: "Sí, descartar",
+			cancelButtonText: "Seguir editando",
+			reverseButtons: true,
+			buttonsStyling: false,
+			customClass: {
+				popup: "premium-swal-popup",
+				title: "premium-swal-title",
+				htmlContainer: "premium-swal-html",
+				confirmButton: "premium-swal-confirm",
+				cancelButton: "premium-swal-cancel",
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				this.editarActivoForm.reset();
+				if (this.imagenLocalStorageKey) {
+					localStorage.removeItem(this.imagenLocalStorageKey);
+					this.imagenLocalStorageKey = null;
+					this.previewUrl = null;
+				}
+				this.router.navigate(["/gestion-activos"]);
 			}
-
-			this.router.navigate(["/gestion-activos"]);
-		}
+		});
 	}
 
 	// Validador personalizado para condicionFisica
@@ -382,5 +414,15 @@ export class EditarActivoComponent implements OnInit {
 			}
 			return null;
 		};
+	}
+
+	getAssetPhoto(fotoUrl: string | null | undefined): string {
+		if (!fotoUrl) return "";
+		return getCloudflareImage(fotoUrl, { width: 300 });
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

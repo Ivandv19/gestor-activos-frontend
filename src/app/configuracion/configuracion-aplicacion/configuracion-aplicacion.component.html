@@ -1,193 +1,157 @@
 <main>
   <div class="container">
-    <div class="container-2">
-      <!-- Primer Formulario: Ajustes Generales -->
-      <div class="ajustes-generales">
-        <div class="container-titulo">
-          <h3>Ajustes generales</h3>
-        </div>
+    <div class="config-grid">
+      
+      <!-- Panel Izquierdo: Ajustes Generales -->
+      <section class="config-card">
+        <header class="card-header">
+          <iconify-icon icon="lucide:settings-2"></iconify-icon>
+          <h3>Ajustes del Sistema</h3>
+        </header>
 
-        <div class="container-form">
-          <form [formGroup]="configuracionForm">
+        <form [formGroup]="configuracionForm">
+          <div class="form-grid">
             <!-- Idioma -->
-            <div class="form-group">
-              <label for="idioma">Idioma</label>
+            <div class="form-group full-width">
+              <label>Idioma del Sistema</label>
               <ng-select
-                id="idioma"
                 formControlName="idioma"
                 [items]="idiomasDisponibles"
                 bindLabel="nombre"
                 bindValue="codigo"
-                placeholder="Selecciona un idioma"
+                placeholder="Selecciona idioma"
               ></ng-select>
             </div>
 
             <!-- Zona Horaria -->
-            <div class="form-group">
-              <label for="zona_horaria">Zona horaria</label>
+            <div class="form-group full-width">
+              <label>Zona Horaria</label>
               <ng-select
-                id="zona_horaria"
                 formControlName="zona_horaria"
                 [items]="zonasHorariasDisponibles"
                 bindLabel="nombre"
                 bindValue="codigo"
-                placeholder="Selecciona una zona horaria"
+                placeholder="Selecciona zona"
               ></ng-select>
             </div>
 
             <!-- Formato de Fecha -->
             <div class="form-group">
-              <label for="formato_fecha">Formato de fecha</label>
+              <label>Formato de Fecha</label>
               <ng-select
-                type="text"
-                id="formato_fecha"
                 formControlName="formato_fecha"
                 [items]="formatosFechaDisponibles"
                 bindLabel="nombre"
                 bindValue="codigo"
-                placeholder="Ej. DD/MM/YYYY"
-              />
+                placeholder="DD/MM/YYYY"
+              ></ng-select>
             </div>
 
             <!-- Moneda -->
             <div class="form-group">
-              <label for="formato_moneda">Moneda</label>
+              <label>Moneda Local</label>
               <ng-select
-                id="formato_moneda"
                 formControlName="formato_moneda"
                 [items]="monedasDisponibles"
                 bindLabel="nombre"
                 bindValue="codigo"
-                placeholder="Selecciona una moneda"
+                placeholder="MXN, USD..."
               ></ng-select>
             </div>
+          </div>
 
-            <!-- Botones -->
-            <div class="form-buttons">
-              <button class="btn-guardar" (click)="guardarConfiguracion()">
-                Guardar
-              </button>
-              <button class="btn-cancelar" (click)="cancelarConfiguracion()">
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+          <div class="actions-row">
+            <button type="button" class="btn-cancelar" (click)="cancelarConfiguracion()">Cancelar</button>
+            <button type="button" class="btn-guardar" (click)="guardarConfiguracion()">Guardar Cambios</button>
+          </div>
+        </form>
+      </section>
 
-      <!-- Segundo Formulario: Configuración de Perfil -->
-      <div class="configuracion-perfil">
-        <div class="container-titulo">
-          <h3>Configuración de perfil</h3>
-        </div>
-        <div class="container-form">
-          <form [formGroup]="perfilForm">
-            <div class="contenido">
-              <div class="section-1">
-                <!-- Nombre -->
-                <div class="form-group">
-                  <label for="nombre">Nombre</label>
-                  <input
-                    type="text"
-                    id="nombre"
-                    formControlName="nombre"
-                    placeholder="Ingresa tu nombre"
-                  />
+      <!-- Panel Derecho: Perfil de Usuario -->
+      <section class="config-card">
+        <header class="card-header">
+          <iconify-icon icon="lucide:user-circle"></iconify-icon>
+          <h3>Perfil y Seguridad</h3>
+        </header>
+
+        <form [formGroup]="perfilForm">
+          <!-- Avatar Section -->
+          <div class="avatar-section">
+            <div class="avatar-wrapper">
+              <div class="avatar-container" (click)="fileInput.click()">
+                <img *ngIf="previewUrl" [src]="previewUrl" alt="Avatar">
+                <div *ngIf="!previewUrl" class="avatar-placeholder">
+                  <iconify-icon icon="lucide:user" style="font-size: 48px; color: #cbd5e0;"></iconify-icon>
                 </div>
-
-                <!-- Correo Electrónico -->
-                <div class="form-group">
-                  <label for="email">Correo electrónico</label>
-                  <input
-                    type="email"
-                    id="email"
-                    formControlName="email"
-                    placeholder="Ingresa tu correo"
-                  />
-                </div>
-
-                <!-- Departamento -->
-                <div class="form-group">
-                  <label for="departamento">Departamento</label>
-                  <input
-                    type="text"
-                    id="departamento"
-                    formControlName="departamento"
-                    placeholder="Ingresa tu departamento"
-                  />
-                </div>
-
-                <!-- Contraseña Actual -->
-                <div class="form-group">
-                  <label for="contrasena_actual">Contraseña actual</label>
-                  <input
-                    type="password"
-                    id="contrasena_actual"
-                    formControlName="contrasena_actual"
-                    placeholder="Ingresa tu contraseña actual"
-                  />
-                </div>
-
-                <!-- Nueva Contraseña -->
-                <div class="form-group">
-                  <label for="nueva_contrasena">Nueva contraseña</label>
-                  <input
-                    type="password"
-                    id="nueva_contrasena"
-                    formControlName="nueva_contrasena"
-                    placeholder="Ingresa tu nueva contraseña"
-                  />
-                </div>
-
-                <!-- Confirmar Nueva Contraseña -->
-                <div class="form-group">
-                  <label for="confirmar_nueva_contrasena"
-                    >Confirmar nueva contraseña</label
-                  >
-                  <input
-                    type="password"
-                    id="confirmar_nueva_contrasena"
-                    formControlName="confirmar_nueva_contrasena"
-                    placeholder="Confirma tu nueva contraseña"
-                  />
+                <div class="avatar-overlay">
+                  <iconify-icon icon="lucide:camera" style="font-size: 24px;"></iconify-icon>
+                  <span>Cambiar</span>
                 </div>
               </div>
+              <label for="imagen" class="avatar-edit-badge" title="Cambiar foto">
+                <iconify-icon icon="lucide:plus"></iconify-icon>
+              </label>
+            </div>
+            <p class="avatar-hint">JPG o PNG. Máximo 2MB.</p>
+            <input
+              #fileInput
+              type="file"
+              id="imagen"
+              style="display: none;"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+            />
+          </div>
 
-              <div class="section-2">
-                <div class="container-img">
-                  <!-- Foto de Perfil -->
-                  <div class="form-group-img">
-                    <label for="foto">Foto de perfil</label>
-                    <input
-                      type="file"
-                      id="imagen"
-                      formControlName="foto_url"
-                      accept="image/*"
-                      (change)="onFileSelected($event)"
-                    />
-                    <img
-                      [src]="previewUrl"
-                      *ngIf="previewUrl"
-                      alt="Vista previa de la imagen"
-                      class="preview-img"
-                    />
-                  </div>
-                </div>
+          <div class="form-grid">
+            <!-- Nombre -->
+            <div class="form-group full-width">
+              <label>Nombre Completo</label>
+              <input type="text" formControlName="nombre" placeholder="Tu nombre">
+            </div>
+
+            <!-- Correo -->
+            <div class="form-group">
+              <label>Correo Electrónico</label>
+              <input type="email" formControlName="email" placeholder="correo@empresa.com">
+            </div>
+
+            <!-- Departamento -->
+            <div class="form-group">
+              <label>Departamento</label>
+              <input type="text" formControlName="departamento" placeholder="Área">
+            </div>
+          </div>
+
+          <!-- Caja de Seguridad -->
+          <div class="security-box">
+            <h4>
+              <iconify-icon icon="lucide:lock" style="font-size: 16px;"></iconify-icon>
+              Cambiar Contraseña
+            </h4>
+            <div class="form-group">
+              <label>Contraseña Actual</label>
+              <input type="password" formControlName="contrasena_actual" placeholder="••••••••">
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nueva Contraseña</label>
+                <input type="password" formControlName="nueva_contrasena" placeholder="Nueva">
+              </div>
+              <div class="form-group">
+                <label>Confirmar</label>
+                <input type="password" formControlName="confirmar_nueva_contrasena" placeholder="Repetir">
               </div>
             </div>
+          </div>
 
-            <!-- Botones -->
-            <div class="form-buttons">
-              <button class="btn-guardar" (click)="guardarPerfil()">
-                Guardar
-              </button>
-              <button class="btn-cancelar" (click)="cancelarPerfil()">
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+          <div class="actions-row">
+            <button type="button" class="btn-cancelar" (click)="cancelarPerfil()">Cancelar</button>
+            <button type="button" class="btn-guardar" (click)="guardarPerfil()">Actualizar Perfil</button>
+          </div>
+        </form>
+      </section>
+
     </div>
   </div>
 </main>

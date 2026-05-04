@@ -1,13 +1,16 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { NavigationEnd, Router } from "@angular/router";
-import { Observable, Subject, takeUntil, throwError } from "rxjs";
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy } from "@angular/core";
+import { Router } from "@angular/router";
+import { Subject, takeUntil } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AuthService } from "../../login/services/auth.service";
+import { getCloudflareImage } from "../../utils/images";
 
 @Component({
 	selector: "app-header",
+	standalone: true,
 	templateUrl: "./header.component.html",
-	styleUrls: ["./header.component.css"],
+	styleUrl: "./header.component.css",
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class HeaderComponent implements OnDestroy {
 	apiUrl = environment.apiUrl;
@@ -41,16 +44,13 @@ export class HeaderComponent implements OnDestroy {
 	// Funcion para obtener la foto de usuario
 	getUserPhoto(): string {
 		const userData = this.authService.getUserData();
+		const fotoUrl = userData?.foto_url || "";
 
-		if (userData && userData.foto_url) {
-			// Si la URL es completa (R2), usarla directo. Si no, usar apiUrl.
-			return userData.foto_url.startsWith("http")
-				? userData.foto_url
-				: `${this.apiUrl}${userData.foto_url}`;
-		}
-
-		// Imagen por defecto si no hay foto_url
-		return "https://gestor-assets.mgdc.site/img-perfil.jpg";
+		// Usamos el optimizador (50px para el avatar del header)
+		return (
+			getCloudflareImage(fotoUrl, { width: 50 }) ||
+			"https://gestor-assets.mgdc.site/img-perfil.jpg"
+		);
 	}
 
 	ngOnDestroy(): void {

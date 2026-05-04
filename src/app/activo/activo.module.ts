@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { ActivoRoutingModule } from "./activo-routing.module";
@@ -23,5 +23,6 @@ import { ListaActivosComponent } from "./lista-activos/lista-activos.component";
 		ReactiveFormsModule,
 		NgSelectModule,
 	],
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ActivoModule {}

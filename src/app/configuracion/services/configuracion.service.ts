@@ -2,6 +2,11 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
+import { SubirImagenResponse } from "../../models/common.interface";
+import {
+	ConfiguracionAplicacionResponse,
+	PerfilResponse,
+} from "../../models/configuracion.interface";
 @Injectable({
 	providedIn: "root",
 })
@@ -10,24 +15,33 @@ export class ConfiguracionService {
 
 	constructor(private http: HttpClient) {}
 
-	getConfiguracionAplicacion(): Observable<any> {
-		return this.http.get<any>(`${this.apiUrl}/aplicacion`);
+	getConfiguracionAplicacion(): Observable<ConfiguracionAplicacionResponse> {
+		return this.http.get<ConfiguracionAplicacionResponse>(
+			`${this.apiUrl}/aplicacion`,
+		);
 	}
 
-	updateConfiguracionAplicacion(datos: any): Observable<any> {
-		return this.http.put<any>(`${this.apiUrl}/aplicacion`, datos);
+	updateConfiguracionAplicacion(
+		datos: Partial<ConfiguracionAplicacionResponse>,
+	): Observable<{ message: string }> {
+		return this.http.put<{ message: string }>(
+			`${this.apiUrl}/aplicacion`,
+			datos,
+		);
 	}
 
-	updatePerfilUsuario(datos: any): Observable<any> {
-		// Enviar los datos como JSON al backend
-		return this.http.put<any>(`${this.apiUrl}/perfil`, datos);
+	updatePerfilUsuario(formData: FormData): Observable<PerfilResponse> {
+		return this.http.put<PerfilResponse>(`${this.apiUrl}/perfil`, formData);
 	}
 
-	getPerfilUsuario(): Observable<any> {
-		return this.http.get<any>(`${this.apiUrl}/perfil`);
+	getPerfilUsuario(): Observable<PerfilResponse> {
+		return this.http.get<PerfilResponse>(`${this.apiUrl}/perfil`);
 	}
-	//  método para subir imágenes
-	subirImagen(formData: FormData): Observable<any> {
-		return this.http.post(`${this.apiUrl}/upload`, formData);
+
+	subirImagen(formData: FormData): Observable<SubirImagenResponse> {
+		return this.http.post<SubirImagenResponse>(
+			`${this.apiUrl}/upload`,
+			formData,
+		);
 	}
 }

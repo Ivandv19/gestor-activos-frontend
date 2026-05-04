@@ -1,173 +1,143 @@
 <main>
-  <!-- Sección de búsqueda y filtros -->
-  <section class="busqueda">
-    <!-- Barra de búsqueda -->
-    <div class="barra-de-busqueda">
-      <div class="barra-busqueda">
-        <div>
-          <p>Buscar Activo</p>
+  <div class="container">
+    <div class="history-card">
+      
+      <!-- Encabezado con título -->
+      <header class="card-header">
+        <h2>Historial del Activo</h2>
+      </header>
+
+      <!-- Barra de Herramientas (Búsqueda y Filtros) -->
+      <section class="toolbar">
+        <!-- Búsqueda -->
+        <div class="search-group">
+          <label>Buscar en el historial</label>
+          <div class="search-input-wrapper">
+            <iconify-icon icon="lucide:search"></iconify-icon>
+            <input
+              type="text"
+              placeholder="Filtra por acción, detalles o responsable..."
+              (input)="onSearchInput($event)"
+            />
+          </div>
         </div>
-        <input
-          type="text"
-          placeholder="Ingresa activo a buscar..."
-          (input)="onSearchInput($event)"
-        />
-      </div>
-      <!-- Contenedor de filtros y opciones -->
-      <div class="container-filtros">
-        <!-- Selector de filtros principales -->
-        <div class="filtros">
-          <p>Filtro</p>
-          <select
-            name="filtro"
-            id="filtro"
-            (change)="cargarOpcionesFiltro($event)"
-          >
-            <option value="">Selecciona un filtro</option>
-            <option value="accion">Accion</option>
-            <option value="usuario_responsable">Usuario responsable</option>
+
+        <!-- Filtro Principal -->
+        <div class="filter-group">
+          <label>Filtrar por</label>
+          <select name="filtro" id="filtro" (change)="cargarOpcionesFiltro($event)">
+            <option value="">Cualquier categoría</option>
+            <option value="accion">Tipo de Acción</option>
+            <option value="usuario_responsable">Responsable</option>
           </select>
         </div>
 
-        <!-- Selector de opciones dinámicas -->
-        <div class="opciones">
-          <p>Opciones</p>
-          <select
-            name="opciones"
-            id="opciones"
-            (change)="aplicarFiltro($event)"
-          >
-            <option value="">Todos</option>
-            <!-- Las opciones se llenarán dinámicamente según el filtro elegido -->
+        <!-- Opciones dinámicas -->
+        <div class="filter-group">
+          <label>Opciones</label>
+          <select name="opciones" id="opciones" (change)="aplicarFiltro($event)">
+            <option value="">Ver todos</option>
           </select>
         </div>
 
-        <!-- Selector de dirección (asc/desc) -->
-        <div class="direccion">
-          <p>Dirección</p>
-          <select
-            name="direccion"
-            id="direccion"
-            (change)="aplicarOrden($event)"
-          >
-            <option value="asc">Ascendente (A-Z)</option>
-            <option value="desc">Descendente (Z-A)</option>
+        <!-- Orden -->
+        <div class="filter-group">
+          <label>Orden</label>
+          <select name="direccion" id="direccion" (change)="aplicarOrden($event)">
+            <option value="asc">Más antiguos primero</option>
+            <option value="desc" selected>Más recientes primero</option>
           </select>
         </div>
-      </div>
-    </div>
 
-    <div class="container-botones">
-      <button class="btn-limpiar" (click)="limpiarFiltros()">
-        Limpiar Filtros
-        <img src="https://gestor-assets.mgdc.site/reiniciar-filtros.png" alt="Limpiar" />
-      </button>
-
-      <button class="btn-agregar" routerLink="agregar">
-        Agregar activo
-        <img src="https://gestor-assets.mgdc.site/icono-agregar.png" alt="" />
-      </button>
-    </div>
-  </section>
-
-  <!-- Tabla de historial -->
-  <section class="tabla-historial">
-    <h2>Historial del Activo</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Acción</th>
-          <th>Detalles</th>
-          <th>Fecha</th>
-          <th>Usuario Responsable</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let registro of historial">
-          <!-- Itera sobre los registros del historial -->
-          <td>{{ registro.id }}</td>
-          <td>
-            <span *ngFor="let parte of dividirTexto(registro.accion)">
-              <!-- Divide el texto para resaltar coincidencias -->
-              <span [class.highlight]="esParteResaltada(parte)">{{
-                parte
-              }}</span>
-              <!-- Aplica clase 'highlight' si coincide -->
-            </span>
-          </td>
-          <td>{{ registro.detalles }}</td>
-          <td>{{ registro.fecha | date:'dd/MM/yyyy HH:mm:ss' }}</td>
-          <td>{{ registro.usuario_responsable }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
-  
-  <!-- Sección de paginación -->
-  <section class="container-paginacion">
-    <section class="pagination-info" *ngIf="pagination.total > 0">
-      <p>
-        Mostrando {{ primerActivoMostrado }}-{{ ultimoActivoMostrado }} de
-        {{ pagination.total }} activos
-        <!-- Muestra información de la paginación -->
-      </p>
-    </section>
-
-    <!-- Paginación avanzada -->
-    <section class="pagination" *ngIf="pagination.totalPages > 1">
-      <!-- Botones Primera página / Anterior -->
-      <button (click)="cambiarPagina(1)" [disabled]="paginaActual === 1">
-        « Primera |
-      </button>
-      <!-- Va a la primera página -->
-      <button
-        (click)="cambiarPagina(paginaActual - 1)"
-        [disabled]="paginaActual === 1"
-      >
-        « Anterior |
-      </button>
-      <!-- Va a la página anterior -->
-
-      <!-- Números de página -->
-      <span *ngFor="let pagina of paginasVisibles">
-        <button
-          (click)="cambiarPagina(pagina)"
-          [class.active]="pagina === paginaActual"
-        >
-          <!-- Resalta la página actual -->
-          {{ pagina }}
+        <!-- Botón Limpiar -->
+        <button class="btn-limpiar" (click)="limpiarFiltros()" title="Restablecer filtros">
+          <iconify-icon icon="lucide:rotate-ccw"></iconify-icon>
+          Limpiar
         </button>
-      </span>
+      </section>
 
-      <!-- Botones Siguiente / Última página -->
-      <button
-        (click)="cambiarPagina(paginaActual + 1)"
-        [disabled]="paginaActual === pagination.totalPages"
-      >
-        <!-- Deshabilita si estás en la última página -->
-        | Siguiente »
-      </button>
-      <button
-        (click)="cambiarPagina(pagination.totalPages)"
-        [disabled]="paginaActual === pagination.totalPages"
-      >
-        <!-- Deshabilita si estás en la última página -->
-        | Última »
-      </button>
-    </section>
+      <!-- Tabla de Datos -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 60px;">ID</th>
+              <th style="width: 200px;">Acción</th>
+              <th>Detalles de la Operación</th>
+              <th style="width: 180px;">Fecha y Hora</th>
+              <th style="width: 200px;">Responsable</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let registro of historial; trackBy: trackById">
+              <td style="color: #a0aec0; font-weight: 600;">#{{ registro.id }}</td>
+              <td>
+                <span [class]="'action-badge ' + getBadgeClass(registro.accion)">
+                  <iconify-icon [icon]="getBadgeIcon(registro.accion)"></iconify-icon>
+                  <span *ngFor="let parte of dividirTexto(registro.accion)">
+                    <span [class.highlight]="esParteResaltada(parte)">{{ parte }}</span>
+                  </span>
+                </span>
+              </td>
+              <td style="color: #4a5568; line-height: 1.4;">{{ registro.detalles }}</td>
+              <td style="font-weight: 600; color: #2d374d;">
+                <iconify-icon icon="lucide:calendar" style="margin-right: 5px; vertical-align: middle;"></iconify-icon>
+                {{ registro.fecha | date:'dd MMM, yyyy' }}
+                <div style="font-size: 12px; color: #a0aec0; font-weight: 400; margin-top: 2px;">
+                   {{ registro.fecha | date:'HH:mm:ss' }}
+                </div>
+              </td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="width: 32px; height: 32px; background: #edf2f7; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #141b4d; font-weight: 800; font-size: 11px;">
+                    {{ registro.usuario_responsable.substring(0,2) | uppercase }}
+                  </div>
+                  <span style="font-weight: 700; color: #141b4d;">{{ registro.usuario_responsable }}</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <!-- Selector de límite por página -->
-    <section class="limite-pagina">
-      <p>Mostrar:</p>
-      <select (change)="onLimitChange($event)">
-        <!-- Cambia el número de elementos por página -->
-        <option value="10" [selected]="limitePorPagina === 10">10</option>
-        <option value="20" [selected]="limitePorPagina === 20">20</option>
-        <option value="50" [selected]="limitePorPagina === 50">50</option>
-      </select>
-    </section>
-  </section>
+      <!-- Footer con Paginación -->
+      <footer class="pagination-footer">
+        <div class="pagination-info" *ngIf="pagination.total > 0">
+          <p>Mostrando <b>{{ primerActivoMostrado }}</b> al <b>{{ ultimoActivoMostrado }}</b> de <b>{{ pagination.total }}</b> registros</p>
+        </div>
 
+        <div class="pagination-controls" *ngIf="pagination.totalPages > 1">
+          <button (click)="cambiarPagina(1)" [disabled]="paginaActual === 1" title="Primera página">
+            <iconify-icon icon="lucide:chevrons-left"></iconify-icon>
+          </button>
+          <button (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">
+            <iconify-icon icon="lucide:chevron-left"></iconify-icon>
+          </button>
 
+          <span *ngFor="let pagina of paginasVisibles; trackBy: trackByIndex">
+            <button (click)="cambiarPagina(pagina)" [class.active]="pagina === paginaActual">
+              {{ pagina }}
+            </button>
+          </span>
+
+          <button (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === pagination.totalPages">
+            <iconify-icon icon="lucide:chevron-right"></iconify-icon>
+          </button>
+          <button (click)="cambiarPagina(pagination.totalPages)" [disabled]="paginaActual === pagination.totalPages">
+            <iconify-icon icon="lucide:chevrons-right"></iconify-icon>
+          </button>
+        </div>
+
+        <div class="page-limit">
+          <label style="margin: 0;">Ver:</label>
+          <select (change)="onLimitChange($event)">
+            <option value="10" [selected]="limitePorPagina === 10">10</option>
+            <option value="20" [selected]="limitePorPagina === 20">20</option>
+            <option value="50" [selected]="limitePorPagina === 50">50</option>
+          </select>
+        </div>
+      </footer>
+
+    </div>
+  </div>
 </main>

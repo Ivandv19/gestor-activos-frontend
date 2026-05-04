@@ -2,47 +2,56 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
 import { AuthGuard } from "./services/auth-guard.service";
+import { RoleGuard } from "./services/role-guard.service";
 
 const routes: Routes = [
 	{
-		path: "login", // Ruta para el login
+		path: "login",
+		title: "Iniciar Sesión | Gestor de Activos",
 		loadChildren: () =>
-			import("./login/login.module").then((m) => m.LoginModule), // Carga perezosa
+			import("./login/login.module").then((m) => m.LoginModule),
 	},
 	{
-		path: "dashboard", // Ruta para el dashboard
+		path: "dashboard",
+		title: "Panel de Control | Gestor de Activos",
 		loadChildren: () =>
 			import("./dashboard/dashboard.module").then((m) => m.DashboardModule),
-		canActivate: [AuthGuard], // Protege esta ruta con el guardia
+		canActivate: [AuthGuard],
 	},
 	{
-		path: "gestion-activos", //  ruta para el módulo de activos
+		path: "gestion-activos",
+		title: "Inventario de Activos | Gestor de Activos",
 		loadChildren: () =>
-			import("./activo/activo.module").then((m) => m.ActivoModule), // Carga perezosa
-		canActivate: [AuthGuard], // Protege esta ruta con el guardia
+			import("./activo/activo.module").then((m) => m.ActivoModule),
+		canActivate: [AuthGuard],
 	},
 	{
-		path: "asignaciones", //  ruta para el módulo de activos
+		path: "asignaciones",
+		title: "Asignaciones | Gestor de Activos",
 		loadChildren: () =>
-			import("./asignacion/asignacion.module").then((m) => m.AsignacionModule), // Carga perezosa
-		canActivate: [AuthGuard], // : Protege esta ruta con el guardia
+			import("./asignacion/asignacion.module").then((m) => m.AsignacionModule),
+		canActivate: [AuthGuard],
 	},
 	{
-		path: "reportes", //  ruta para el módulo de activos
+		path: "reportes",
+		title: "Reportes Gerenciales | Gestor de Activos",
 		loadChildren: () =>
-			import("./reporte/reporte.module").then((m) => m.ReporteModule), // Carga perezosa
-		canActivate: [AuthGuard], // : Protege esta ruta con el guardia
+			import("./reporte/reporte.module").then((m) => m.ReporteModule),
+		canActivate: [AuthGuard, RoleGuard],
+		data: { expectedRole: "Administrador" },
 	},
 	{
-		path: "configuracion", //  ruta para el módulo de activos
+		path: "configuracion",
+		title: "Configuración | Gestor de Activos",
 		loadChildren: () =>
 			import("./configuracion/configuracion.module").then(
 				(m) => m.ConfiguracionModule,
-			), // Carga perezosa
-		canActivate: [AuthGuard], // : Protege esta ruta con el guardia
+			),
+		canActivate: [AuthGuard, RoleGuard],
+		data: { expectedRole: "Administrador" },
 	},
 
-	{ path: "", redirectTo: "login", pathMatch: "full" }, // Redirección por defecto
+	{ path: "", redirectTo: "login", pathMatch: "full" },
 ];
 
 @NgModule({

@@ -2,6 +2,11 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
+import {
+	AsignacionPayload,
+	AsignacionResponse,
+} from "../../models/asignacion.interface";
+import { Pagination } from "../../models/pagination.interface";
 
 @Injectable({
 	providedIn: "root",
@@ -18,7 +23,7 @@ export class AsignacionService {
 		filtroSeleccionado?: string,
 		opcionSeleccionada?: string,
 		orden?: string,
-	): Observable<any> {
+	): Observable<Pagination<AsignacionResponse>> {
 		// Construir parámetros dinámicamente
 		let params = new HttpParams()
 			.set("page", page.toString())
@@ -38,28 +43,35 @@ export class AsignacionService {
 		}
 
 		console.log("[SERVICE] Parámetros enviados al backend:", params.toString());
-		return this.http.get(this.apiUrl, { params });
+		return this.http.get<Pagination<AsignacionResponse>>(this.apiUrl, {
+			params,
+		});
 	}
 
 	// Método para crear una nueva asignación
-	createAsignacion(asignacionData: any): Observable<any> {
-		return this.http.post(`${this.apiUrl}`, asignacionData);
+	createAsignacion(
+		asignacionData: AsignacionPayload,
+	): Observable<AsignacionResponse> {
+		return this.http.post<AsignacionResponse>(`${this.apiUrl}`, asignacionData);
 	}
 
 	// Método para obtener los datos de una asignación por su ID
-	getAsignacionPorId(id: number): Observable<any> {
+	getAsignacionPorId(id: number): Observable<AsignacionResponse> {
 		const url = `${this.apiUrl}/${id}`;
-		return this.http.get(url);
+		return this.http.get<AsignacionResponse>(url);
 	}
 
 	// Método para actualizar una asignación existente
-	updateAsignacion(id: number, asignacionData: any): Observable<any> {
+	updateAsignacion(
+		id: number,
+		asignacionData: AsignacionPayload,
+	): Observable<AsignacionResponse> {
 		const url = `${this.apiUrl}/${id}`;
-		return this.http.put(url, asignacionData);
+		return this.http.put<AsignacionResponse>(url, asignacionData);
 	}
 
 	// Método para eliminar una asignación por ID
-	deleteAsignacion(id: number): Observable<any> {
-		return this.http.delete(`${this.apiUrl}/${id}`);
+	deleteAsignacion(id: number): Observable<void> {
+		return this.http.delete<void>(`${this.apiUrl}/${id}`);
 	}
 }

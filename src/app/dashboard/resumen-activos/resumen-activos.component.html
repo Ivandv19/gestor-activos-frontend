@@ -1,54 +1,48 @@
-<div class="wrapper">
-  <section class="seccion-1">
-    <div class="total-activos">
-      <div class="total-activos--titulo">
-        <h2>Total Activos</h2>
-      </div>
-      <div class="total-activos--numero">
-        <p>{{ totalActivos }}</p>
-      </div>
+<div class="resumen-activos">
+  <!-- Sección 1: Badges de Resumen -->
+  <section class="container-badges">
+    <div class="badge">
+      <span class="badge--titulo">Total Activos</span>
+      <span class="badge--numero">{{ totalActivos }}</span>
     </div>
 
-    <div class="total-activos">
-      <div class="total-activos--titulo">
-        <h2>Activos asignados</h2>
-      </div>
-      <div class="total-activos--numero">
-        <p>{{ activosAsignados }}</p>
-      </div>
+    <div class="badge">
+      <span class="badge--titulo">Activos Asignados</span>
+      <span class="badge--numero">{{ activosAsignados }}</span>
     </div>
 
-    <div class="total-activos">
-      <div class="total-activos--titulo">
-        <h2>Activos disponibles</h2>
-      </div>
-      <div class="total-activos--numero">
-        <p>{{ activosDisponibles }}</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-2">
-    <div class="activos-vs-disponibles">
-      <div class="activos-vs-disponibles--titulo">
-        <h2>Asignados vs Disponibles</h2>
-      </div>
-
-      <div class="activos-vs-disponibles--grafico">
-        <canvas #activosVsDisponibles></canvas>
-      </div>
+    <div class="badge">
+      <span class="badge--titulo">Activos Disponibles</span>
+      <span class="badge--numero">{{ activosDisponibles }}</span>
     </div>
 
-    <div class="tendencia-mensual">
-      <div class="tendencia-mensual--titulo">
-        <h2>Tendencia Mensual</h2>
-      </div>
+    <div class="badge">
+      <span class="badge--titulo">En Mantenimiento</span>
+      <span class="badge--numero">{{ activosEnMantenimiento }}</span>
+    </div>
 
-      <div class="tendencia-mensual--grafico">
-        <canvas #tendenciaMensual></canvas>
-      </div>
+    <div class="badge">
+      <span class="badge--titulo">Dados de Baja</span>
+      <span class="badge--numero">{{ activosDadosDeBaja }}</span>
     </div>
   </section>
 
+  <!-- Sección 2: Gráficas -->
+  <section class="container-graficas">
+    <!-- Gráfica de Dona -->
+    <div class="grafica-card asignados-vs-disponibles">
+      <h2 class="grafica-titulo">Asignados vs Disponibles</h2>
+      <div class="chart-container">
+        <canvas #activosVsDisponibles role="img" aria-label="Gráfico de dona mostrando la distribución de activos asignados vs disponibles"></canvas>
+      </div>
+    </div>
 
+    <!-- Gráfica de Tendencia -->
+    <div class="grafica-card tendencia-mensual">
+      <h2 class="grafica-titulo">Tendencia Mensual (Últimos 12 meses)</h2>
+      <div class="chart-container">
+        <canvas #tendenciaMensual role="img" aria-label="Gráfico de línea mostrando la tendencia mensual de activos en los últimos 12 meses"></canvas>
+      </div>
+    </div>
+  </section>
 </div>

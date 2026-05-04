@@ -18,12 +18,24 @@
 			"recommended": true,
 			"style": {
 				"useImportType": "off"
+			},
+			"correctness": {
+				"noUnknownPseudoElement": "off"
+			},
+			"complexity": {
+				"noImportantStyles": "off",
+				"useLiteralKeys": "off"
 			}
 		}
 	},
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double"
+		}
+	},
+	"html": {
+		"parser": {
+			"interpolation": true
 		}
 	},
 	"assist": {

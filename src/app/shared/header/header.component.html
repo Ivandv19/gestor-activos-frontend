@@ -1,29 +1,31 @@
-<header>
-  <div class="container-lytle">
-    <div class="container-logo">
-      <img class="logo" src="https://gestor-assets.mgdc.site/logo.png" alt="logo" />
+<header [class.login-header]="isLoginRoute()">
+  <div class="header-container">
+    <div class="container-lytle">
+      <div class="container-logo">
+        <img class="logo" src="https://gestor-assets.mgdc.site/logo.png" alt="logo" />
+      </div>
+      <h1>{{ getTitle() }}</h1>
     </div>
-    <h1>{{ getTitle() }}</h1>
-  </div>
 
-  @if (!isLoginRoute() && isLoggedIn()) {
-  <div class="header-actions">
-    <!-- Ícono de notificaciones -->
-    <img
-      src="https://gestor-assets.mgdc.site/icono-notificacion.png"
-      alt="Notificaciones"
-      class="icon-notification"
-    />
+    @if (!isLoginRoute() && isLoggedIn()) {
+    <div class="header-actions">
+      <!-- Ícono de notificaciones -->
+      <iconify-icon 
+        icon="ph:bell-light" 
+        class="icon-notification" 
+        title="Notificaciones">
+      </iconify-icon>
 
-    <!-- Foto de perfil con datos del usuario -->
-    <div class="profile-circle">
-      <img
-        [src]="getUserPhoto()"
-        alt="Foto de perfil"
-        class="profile-image"
-      />
+      <!-- Foto de perfil con datos del usuario -->
+      <div class="profile-circle">
+        <img
+          [src]="getUserPhoto()"
+          alt="Foto de perfil"
+          class="profile-image"
+        />
+      </div>
     </div>
+    }
   </div>
-  }
 </header>
 

@@ -2,30 +2,32 @@ import {
 	Component,
 	ElementRef,
 	OnDestroy,
+	OnInit,
 	Renderer2,
 	ViewChild,
 } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { Subject, takeUntil } from "rxjs";
 import { AuthService } from "../../services/auth.service";
 
 @Component({
 	selector: "app-login",
 	standalone: false,
 	templateUrl: "./login.component.html",
-	styleUrls: ["./login.component.css"],
+	styleUrl: "./login.component.css",
 })
-export class LoginComponent implements OnDestroy {
+export class LoginComponent implements OnInit, OnDestroy {
 	// Formulario reactivo
 	loginForm: FormGroup;
 	// Mensaje de error para credenciales
 	errorMessage: string = "";
 	// Control de visibilidad de contraseña
 	isPasswordVisible: boolean = false;
-	// Referencia para limpiar timeout
-	timeoutRef: any = null;
+	timeoutRef: ReturnType<typeof setTimeout> | null = null;
 	// Estado de carga del botón
 	isLoading: boolean = false;
+	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
 
 	// Referencia al input de contraseña
 	@ViewChild("passwordInput") passwordInput!: ElementRef;
@@ -42,6 +44,8 @@ export class LoginComponent implements OnDestroy {
 			password: ["", [Validators.required, Validators.minLength(6)]],
 		});
 	}
+
+	ngOnInit() {}
 
 	// Alterna visibilidad de contraseña
 	togglePasswordVisibility() {
@@ -73,25 +77,32 @@ export class LoginComponent implements OnDestroy {
 			this.errorMessage = "";
 			const { email, password } = this.loginForm.value;
 
-			this.authService.login(email, password).subscribe({
-				next: (response) => {
-					console.log("Login response:", response);
-					this.isLoading = false;
-					// Guarda el token y datos del usuario
-					this.authService.saveToken(response.token, response.userData);
-					this.router.navigate(["/dashboard"]); // Redirige a dashboard
-				},
-				error: (error) => {
-					this.isLoading = false;
-					this.errorMessage = error.error?.error || "Error al iniciar sesión";
-					setTimeout(() => (this.errorMessage = ""), 5000); // Limpia error después de 5s
-				},
-			});
+			this.authService
+				.login(email, password)
+				.pipe(takeUntil(this.destroy$))
+				.subscribe({
+					next: (response) => {
+						console.log("Login response:", response);
+						this.isLoading = false;
+						// Guarda el token y datos del usuario
+						this.authService.saveToken(response.token, response.userData);
+						this.router.navigate(["/dashboard"]); // Redirige a dashboard
+					},
+					error: (error) => {
+						this.isLoading = false;
+						this.errorMessage = error.error?.error || "Error al iniciar sesión";
+						setTimeout(() => {
+							this.errorMessage = "";
+						}, 5000); // Limpia error después de 5s
+					},
+				});
 		}
 	}
 
 	// Limpieza al destruir componente
 	ngOnDestroy() {
 		if (this.timeoutRef) clearTimeout(this.timeoutRef);
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

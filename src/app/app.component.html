@@ -1,12 +1,12 @@
-<!-- Encabezado de la aplicación -->
-<app-header></app-header>
-
 <div
   [ngClass]="[
     isLoginPage() ? 'container-login' : '',
     isLoginPage() ? 'login-layout' : ''
   ]"
-  class="main-grid">
+  class="main-grid"
+  [class.full-height-login]="isLoginPage()">
+
+  <a href="#main-content" class="skip-link">Ir al contenido principal</a>
 
   <!-- Primera columna: Navbar -->
   @if (showNavbar()) {
@@ -16,10 +16,19 @@
   }
 
   <!-- Segunda columna: Contenido principal (router-outlet) -->
-  <div class="content-column">
-    <router-outlet></router-outlet>
+  <div class="content-column" id="main-content">
+    <!-- Encabezado de la aplicación (Se oculta en login) -->
+    @if (!isLoginPage()) {
+      <app-header></app-header>
+    }
+
+    <div class="router-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+    
+    <!-- Pie de página de la aplicación (Se oculta en login) -->
+    @if (!isLoginPage()) {
+      <app-footer></app-footer>
+    }
   </div>
 </div>
-
-<!-- Pie de página de la aplicación -->
-<app-footer></app-footer>

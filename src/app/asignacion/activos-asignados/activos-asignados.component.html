@@ -1,73 +1,44 @@
 <main>
-  <!-- Sección de búsqueda y filtros -->
-  <section class="busqueda">
-    <!-- Barra de búsqueda -->
-    <div class="barra-de-busqueda">
-      <div class="barra-busqueda">
-        <div>
-          <p>Activos asignados</p>
-        </div>
-        <input
-          type="text"
-          id="busqueda2"
-          placeholder="Ingresa activo a buscar..."
-          (input)="onSearchInput($event)"
-        />
-      </div>
-      <!-- Contenedor de filtros y opciones -->
-      <div class="container-filtros">
-        <!-- Selector de filtros principales -->
-        <div class="filtros">
-          <p>Filtro</p>
-          <select
-            name="filtro"
-            id="filtro2"
-            (change)="cargarOpcionesFiltro($event)"
-          >
-            <option value="">Selecciona un filtro</option>
-            <option value="tipo">Tipo</option>
-            <option value="ubicacion">Ubicación</option>
-            <option value="usuario_asignado">Usuario asignado</option>
-          </select>
-        </div>
-
-        <!-- Selector de opciones dinámicas -->
-        <div class="opciones">
-          <p>Opciones</p>
-          <select
-            name="opciones"
-            id="opciones2"
-            (change)="aplicarFiltro($event)"
-          >
-            <option value="">Todos</option>
-          </select>
-        </div>
-
-        <!-- Selector de dirección de ordenamiento -->
-        <div class="direccion">
-          <p>Dirección</p>
-          <select
-            name="direccion"
-            id="direccion2"
-            (change)="aplicarOrden($event)"
-          >
-            <option value="asc">Ascendente (A-Z)</option>
-            <option value="desc">Descendente (Z-A)</option>
-          </select>
-        </div>
-      </div>
+  <!-- Sección de búsqueda y filtros (Toolbar Premium) -->
+  <section class="toolbar-container">
+    <div class="search-box">
+      <input
+        type="text"
+        id="busqueda2"
+        placeholder="Buscar activo asignado..."
+        (input)="onSearchInput($event)"
+      />
     </div>
 
+    <div class="filters-group">
+      <select name="filtro" id="filtro2" (change)="cargarOpcionesFiltro($event)">
+        <option value="">Filtrar por...</option>
+        <option value="tipo">Tipo</option>
+        <option value="ubicacion">Ubicación</option>
+        <option value="usuario_asignado">Usuario asignado</option>
+      </select>
 
-    <button class="btn-limpiar" (click)="limpiarFiltros()">
-      Limpiar Filtros
-      <img src="https://gestor-assets.mgdc.site/reiniciar-filtros.png" alt="Limpiar" />
-    </button>
+      <select name="opciones" id="opciones2" (change)="aplicarFiltro($event)">
+        <option value="">Todas las opciones</option>
+      </select>
+
+      <select name="direccion" id="direccion2" (change)="aplicarOrden($event)">
+        <option value="asc">A - Z</option>
+        <option value="desc">Z - A</option>
+      </select>
+    </div>
+
+    <div class="actions-group">
+      <button class="btn-secondary" (click)="limpiarFiltros()">
+        <img src="https://gestor-assets.mgdc.site/reiniciar-filtros.png" alt="Limpiar" />
+        Limpiar
+      </button>
+    </div>
   </section>
 
-  <!-- Tabla de activos -->
+  <!-- Tabla de activos Premium -->
   <section class="tabla-activos">
-    <table>
+    <table aria-label="Lista de activos asignados">
       <thead>
         <tr>
           <th>ID</th>
@@ -76,118 +47,79 @@
           <th>Tipo</th>
           <th>Estado</th>
           <th>Asignado a</th>
-          <th>Ubicacion</th>
-          <th>Fecha de asignacion</th>
-          <th>Acciones</th>
+          <th>Ubicación</th>
+          <th>Fecha de Asignación</th>
+          <th *ngIf="isAdmin()">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let activo of listaAsignaciones">
-          <!-- Itera sobre la lista de activos -->
+        <tr *ngIf="!listaAsignaciones || listaAsignaciones.length === 0">
+          <td [attr.colspan]="isAdmin() ? '9' : '8'" style="text-align: center; padding: 40px;">
+            <p>No hay activos asignados para mostrar</p>
+          </td>
+        </tr>
+        <tr *ngFor="let activo of listaAsignaciones; trackBy: trackById">
           <td>{{ activo.id }}</td>
           <td>
-            <!-- Si hay foto_url, muestra la imagen -->
             <img
               *ngIf="activo.foto_url"
-              [src]="'http://localhost:3000' + activo.foto_url"
-              alt="Imagen del activo"
+              [src]="getAssetPhoto(activo.foto_url)"
+              alt="Activo"
               class="imagen-circular"
             />
-
-            <!-- Si NO hay foto_url, muestra "N/A" -->
-            <div *ngIf="!activo.foto_url" class="texto-na">
-              N/A
-            </div>
+            <div *ngIf="!activo.foto_url" class="texto-na">N/A</div>
           </td>
           <td>
             <span *ngFor="let parte of dividirTexto(activo.activo)">
-              <!-- Divide el texto para resaltar coincidencias -->
-              <span [class.highlight]="esParteResaltada(parte)">{{
-                parte
-              }}</span>
-              <!-- Aplica clase 'highlight' si coincide -->
+              <span [class.highlight]="esParteResaltada(parte)">{{ parte }}</span>
             </span>
           </td>
           <td>{{ activo.tipo_activo }}</td>
-          <td>{{ activo.estado_activo }}</td>
+          <td>
+            <span class="status-badge status-asignado">
+              {{ activo.estado_activo }}
+            </span>
+          </td>
           <td>{{ activo.usuario }}</td>
           <td>{{ activo.ubicacion }}</td>
           <td>{{ activo.fecha_asignacion | date : "dd/MM/yyyy" }}</td>
-          <td>
-            <div class="container-boton">
-              <button class="btn-ver-detalles" (click)="editar(activo.id)">
-                Editar
-              </button>
-            </div>
-            <!-- Navega a detalles del activo -->
+          <td *ngIf="isAdmin()">
+            <button class="btn-ver-detalles" (click)="editar(activo.id)">
+              Editar
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </section>
 
-  <!-- Sección de paginación -->
+  <!-- Sección de paginación Premium -->
   <section class="container-paginacion">
-    <section class="pagination-info" *ngIf="pagination.total > 0">
-      <p>
-        Mostrando {{ primerActivoMostrado }}-{{ ultimoActivoMostrado }} de
-        {{ pagination.total }} activos
-        <!-- Muestra información de la paginación -->
-      </p>
-    </section>
+    <div class="pagination-info" *ngIf="pagination.total > 0">
+      Mostrando {{ primerActivoMostrado }}-{{ ultimoActivoMostrado }} de {{ pagination.total }} activos
+    </div>
 
-    <!-- Paginación avanzada -->
-    <section class="pagination" *ngIf="pagination.totalPages > 1">
-      <!-- Botones Primera página / Anterior -->
-      <button (click)="cambiarPagina(1)" [disabled]="paginaActual === 1">
-        « Primera |
-      </button>
-      <!-- Va a la primera página -->
-      <button
-        (click)="cambiarPagina(paginaActual - 1)"
-        [disabled]="paginaActual === 1"
-      >
-        « Anterior |
-      </button>
-      <!-- Va a la página anterior -->
-
-      <!-- Números de página -->
-      <span *ngFor="let pagina of paginasVisibles">
-        <button
-          (click)="cambiarPagina(pagina)"
-          [class.active]="pagina === paginaActual"
-        >
-          <!-- Resalta la página actual -->
+    <div class="pagination" *ngIf="pagination.totalPages > 1">
+      <button (click)="cambiarPagina(1)" [disabled]="paginaActual === 1" aria-label="Ir a la primera página">«</button>
+      <button (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1" aria-label="Ir a la página anterior">‹</button>
+      
+      <span *ngFor="let pagina of paginasVisibles; trackBy: trackByIndex">
+        <button (click)="cambiarPagina(pagina)" [class.active]="pagina === paginaActual" [attr.aria-label]="'Ir a la página ' + pagina" [attr.aria-current]="pagina === paginaActual ? 'page' : null">
           {{ pagina }}
         </button>
       </span>
 
-      <!-- Botones Siguiente / Última página -->
-      <button
-        (click)="cambiarPagina(paginaActual + 1)"
-        [disabled]="paginaActual === pagination.totalPages"
-      >
-        <!-- Deshabilita si estás en la última página -->
-        | Siguiente »
-      </button>
-      <button
-        (click)="cambiarPagina(pagination.totalPages)"
-        [disabled]="paginaActual === pagination.totalPages"
-      >
-        <!-- Deshabilita si estás en la última página -->
-        | Última »
-      </button>
-    </section>
+      <button (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === pagination.totalPages" aria-label="Ir a la página siguiente">›</button>
+      <button (click)="cambiarPagina(pagination.totalPages)" [disabled]="paginaActual === pagination.totalPages" aria-label="Ir a la última página">»</button>
+    </div>
 
-    <!-- Selector de límite por página -->
-    <section class="limite-pagina">
+    <div class="limite-pagina">
       <p>Mostrar:</p>
       <select (change)="onLimitChange($event)">
-        <!-- Cambia el número de elementos por página -->
         <option value="10" [selected]="limitePorPagina === 10">10</option>
         <option value="20" [selected]="limitePorPagina === 20">20</option>
         <option value="50" [selected]="limitePorPagina === 50">50</option>
       </select>
-    </section>
+    </div>
   </section>
 </main>
