@@ -1,6 +1,7 @@
 import {
 	AfterViewInit,
 	ChangeDetectorRef,
+	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
 	OnDestroy,
@@ -22,8 +23,10 @@ import {
 } from "../../models/reporte.interface";
 import { DatosAuxiliaresService } from "../service/datos-auxiliares.service";
 import { ReporteService } from "../service/reporte.service";
+import Swal from "sweetalert2";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-reporte",
 	standalone: false,
 	templateUrl: "./reporte.component.html",
@@ -107,7 +110,7 @@ export class ReporteComponent implements OnInit, AfterViewInit, OnDestroy {
 						error.error?.error || "Error al cargar los tipos de reporte.";
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+					Swal.fire({ icon: "error", text: errorMessage, confirmButtonColor: "#1e293b" });
 				},
 			});
 	}
@@ -132,7 +135,7 @@ export class ReporteComponent implements OnInit, AfterViewInit, OnDestroy {
 						error.error?.message || "Error al cargar los tipos de reporte.";
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+					Swal.fire({ icon: "error", text: errorMessage, confirmButtonColor: "#1e293b" });
 				},
 			});
 	}
@@ -168,7 +171,7 @@ export class ReporteComponent implements OnInit, AfterViewInit, OnDestroy {
 						error.error?.error || "Error al generar el reporte.";
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+					Swal.fire({ icon: "error", text: errorMessage, confirmButtonColor: "#1e293b" });
 				},
 			});
 	}

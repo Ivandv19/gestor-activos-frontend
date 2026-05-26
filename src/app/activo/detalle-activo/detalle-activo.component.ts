@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import Swal from "sweetalert2";
@@ -8,6 +8,7 @@ import { getCloudflareImage } from "../../utils/images";
 import { ActivoService } from "../service/activo.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-detalle-activo",
 	standalone: false,
 	templateUrl: "./detalle-activo.component.html",
@@ -25,6 +26,7 @@ export class DetalleActivoComponent implements OnInit {
 		private activoService: ActivoService,
 		private router: Router,
 		private authService: AuthService,
+		private cdr: ChangeDetectorRef,
 	) {}
 
 	ngOnInit(): void {
@@ -43,6 +45,7 @@ export class DetalleActivoComponent implements OnInit {
 			.subscribe({
 				next: (response) => {
 					this.activo = { ...response.data, garantia: response.data.garantia ?? [] };
+					this.cdr.markForCheck();
 					console.log("Activo cargado correctamente:", this.activo);
 				},
 				error: (error) => {
@@ -98,6 +101,7 @@ export class DetalleActivoComponent implements OnInit {
 					.pipe(takeUntil(this.destroy$))
 					.subscribe({
 						next: (_response) => {
+							this.cdr.markForCheck();
 							Swal.fire({
 								title: "¡Baja Exitosa!",
 								text: "El activo ha sido retirado del sistema.",

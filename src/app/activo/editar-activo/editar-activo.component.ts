@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, signal } from "@angular/core";
 import {
 	AbstractControl,
 	FormBuilder,
@@ -17,6 +17,7 @@ import { ActivoService } from "../service/activo.service";
 import { DatosService } from "../service/datos.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-editar-activo",
 	standalone: false,
 	templateUrl: "./editar-activo.component.html",
@@ -34,17 +35,17 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 	errorMessage: string = "";
 	estados: SelectItem[] = [];
 
-	public previewUrl: string | null = null; // Vista previa de la nueva imagen
+	public previewUrl = signal<string | null>(null); // Vista previa de la nueva imagen
 	imagenActual: string | null | undefined = null; // URL de la imagen actual del activo
 	imagenOriginal: string | null | undefined = null; // Guardar la imagen inicial del backend
 	imagenLocalStorageKey: string | null = null; // Clave de la imagen en localStorage
-	isUploading = false;
+	isUploading = signal(false);
 	private destroy$ = new Subject<void>();
 
 	get haCambiadoImagen(): boolean {
 		// Ha cambiado si hay un preview nuevo O si la imagen actual es nula pero la original no lo era (borrado)
 		return (
-			!!this.previewUrl ||
+			!!this.previewUrl() ||
 			(this.imagenActual === null && this.imagenOriginal !== null)
 		);
 	}
@@ -67,6 +68,7 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 		private router: Router,
 		private activoService: ActivoService,
 		private datosService: DatosService,
+		private cdr: ChangeDetectorRef,
 	) {}
 
 	ngOnInit(): void {
@@ -121,16 +123,17 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 					this.proveedorGarantia = response.data.proveedoresGarantia || [];
 					this.duenos = response.data.duenos || [];
 					this.estados = response.data.estados || [];
+					this.cdr.markForCheck();
 				},
 				error: (error) => {
-					// Ejem. Si el backend devuelve { mensaje: "Error al obtener datos auxiliares" }
-					const errorMessage =
-						error.error?.mensaje || "Error al obtener datos auxiliares";
+				// Ejem. Si el backend devuelve { mensaje: "Error al obtener datos auxiliares" }
+				const errorMessage =
+					error.error?.mensaje || "Error al obtener datos auxiliares";
 
-					// Mostrar el mensaje
-					this.errorMessage = errorMessage;
-					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+				// Mostrar el mensaje
+				this.errorMessage = errorMessage;
+				console.error("Error del backend:", errorMessage);
+				Swal.fire({ icon: "error", text: errorMessage, confirmButtonColor: "#1e293b" });
 				},
 			});
 	}
@@ -162,7 +165,7 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 				}
 
 				// Limpiar vista previa
-				this.previewUrl = null;
+				this.previewUrl.set(null);
 				this.imagenActual = null; // Marcar como nula para el backend
 			}
 		});
@@ -177,7 +180,7 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 		}
 
 		// Limpiar vista previa y volver a la original
-		this.previewUrl = null;
+		this.previewUrl.set(null);
 		this.imagenActual = this.imagenOriginal;
 	}
 
@@ -193,8 +196,8 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 					this.imagenActual = response.data.foto_url || null;
 					this.imagenOriginal = response.data.foto_url || null;
 
-					// Si hay imagen actual, prepara la vista previa (esto es opcional ahora que usamos haCambiadoImagen)
-					this.previewUrl = null;
+				// Si hay imagen actual, prepara la vista previa (esto es opcional ahora que usamos haCambiadoImagen)
+				this.previewUrl.set(null);
 
 					// Manejo SEGURO de garantía (si es null o undefined)
 					const garantia: GarantiaItem =
@@ -236,17 +239,18 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 					};
 
 					this.editarActivoForm.patchValue(datosFormulario);
+					this.cdr.markForCheck();
 					console.log("Datos del formulario:", datosFormulario);
 					console.log("Imagen actual:", this.imagenActual);
 				},
 				error: (error) => {
-					// Ejem. Si el backend devuelve { error: "Error al obtener activo" }
-					const errorMessage = error.error?.error || "Error al obtener activo";
+				// Ejem. Si el backend devuelve { error: "Error al obtener activo" }
+				const errorMessage = error.error?.error || "Error al obtener activo";
 
-					// Mostrar el mensaje
-					this.errorMessage = errorMessage;
-					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+				// Mostrar el mensaje
+				this.errorMessage = errorMessage;
+				console.error("Error del backend:", errorMessage);
+				Swal.fire({ icon: "error", text: errorMessage, confirmButtonColor: "#1e293b" });
 				},
 			});
 	}
@@ -258,15 +262,15 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 			// Vista previa local
 			const reader = new FileReader();
 			reader.onload = () => {
-				this.previewUrl = reader.result as string;
+				this.previewUrl.set(reader.result as string);
 				// Guardar en localStorage (clave única para evitar conflictos)
 				const imageKey = `activo_img_${Date.now()}`;
-				localStorage.setItem(imageKey, this.previewUrl);
+				if (this.previewUrl()) localStorage.setItem(imageKey, this.previewUrl()!);
 				this.imagenLocalStorageKey = imageKey; // Guardar la clave para usarla después
 			};
 			reader.readAsDataURL(file);
 		} else {
-			alert("Por favor selecciona una imagen válida (JPEG, PNG, GIF).");
+			Swal.fire({ icon: "error", text: "Por favor selecciona una imagen válida (JPEG, PNG, GIF).", confirmButtonColor: "#1e293b" });
 		}
 	}
 	// Manejar el envío del formulario
@@ -298,7 +302,7 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 			formData.append("foto_url", "");
 		}
 
-		this.isUploading = true;
+		this.isUploading.set(true);
 		Swal.fire({
 			title: "Actualizando activo...",
 			allowOutsideClick: false,
@@ -310,13 +314,14 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
-					this.isUploading = false;
+					this.isUploading.set(false);
 					Swal.close();
 					console.log("activo actualizado exitosamente:", response);
 					if (this.imagenLocalStorageKey) {
 						localStorage.removeItem(this.imagenLocalStorageKey);
 						this.imagenLocalStorageKey = null;
 					}
+					this.cdr.markForCheck();
 					Swal.fire({
 						title: "¡Actualizado!",
 						text: "Los cambios se han guardado exitosamente.",
@@ -335,7 +340,7 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 					});
 				},
 				error: (error) => {
-					this.isUploading = false;
+					this.isUploading.set(false);
 					Swal.close();
 					const errorMessage =
 						error.error?.error || "Error al actualizar el activo";
@@ -396,9 +401,9 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 				if (this.imagenLocalStorageKey) {
 					localStorage.removeItem(this.imagenLocalStorageKey);
 					this.imagenLocalStorageKey = null;
-					this.previewUrl = null;
-				}
-				this.router.navigate(["/gestion-activos"]);
+				this.previewUrl.set(null);
+			}
+			this.router.navigate(["/gestion-activos"]);
 			}
 		});
 	}

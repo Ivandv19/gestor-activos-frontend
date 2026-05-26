@@ -1,9 +1,12 @@
 import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	ElementRef,
 	OnDestroy,
 	OnInit,
 	Renderer2,
+	signal,
 	ViewChild,
 } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
@@ -12,6 +15,7 @@ import { Subject, takeUntil } from "rxjs";
 import { AuthService } from "../../services/auth.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-login",
 	standalone: false,
 	templateUrl: "./login.component.html",
@@ -20,14 +24,15 @@ import { AuthService } from "../../services/auth.service";
 export class LoginComponent implements OnInit, OnDestroy {
 	loginForm: FormGroup;
 	errorMessage: string = "";
-	isPasswordVisible: boolean = false;
+	isPasswordVisible = signal(false);
 	timeoutRef: ReturnType<typeof setTimeout> | null = null;
-	isLoading: boolean = false;
+	isLoading = signal(false);
 	private destroy$ = new Subject<void>();
 
 	@ViewChild("passwordInput") passwordInput!: ElementRef;
 
 	constructor(
+		private cdr: ChangeDetectorRef,
 		private fb: FormBuilder,
 		private authService: AuthService, // Servicio de autenticación
 		private router: Router,
@@ -44,18 +49,18 @@ export class LoginComponent implements OnInit, OnDestroy {
 
 	// Alterna visibilidad de contraseña
 	togglePasswordVisibility() {
-		this.isPasswordVisible = !this.isPasswordVisible;
+		this.isPasswordVisible.update((v: boolean) => !v);
 		this.renderer.setProperty(
 			this.passwordInput.nativeElement,
 			"type",
-			this.isPasswordVisible ? "text" : "password",
+			this.isPasswordVisible() ? "text" : "password",
 		);
 
 		// Oculta automáticamente después de 10 segundos
-		if (this.isPasswordVisible) {
+		if (this.isPasswordVisible()) {
 			if (this.timeoutRef) clearTimeout(this.timeoutRef);
 			this.timeoutRef = setTimeout(() => {
-				this.isPasswordVisible = false;
+				this.isPasswordVisible.set(false);
 				this.renderer.setProperty(
 					this.passwordInput.nativeElement,
 					"type",
@@ -68,7 +73,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 	// Envío de formulario
 	onSubmit() {
 		if (this.loginForm.valid) {
-			this.isLoading = true;
+			this.isLoading.set(true);
 			this.errorMessage = "";
 			const { email, password } = this.loginForm.value;
 
@@ -78,13 +83,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 				.subscribe({
 					next: (response) => {
 						console.log("Login response:", response);
-						this.isLoading = false;
+						this.isLoading.set(false);
+						this.cdr.markForCheck();
 						// Guarda el token y datos del usuario
 						this.authService.saveToken(response.data.token, response.data.userData);
 						this.router.navigate(["/dashboard"]); // Redirige a dashboard
 					},
 					error: (error) => {
-						this.isLoading = false;
+						this.isLoading.set(false);
 						this.errorMessage = error.error?.error || "Error al iniciar sesión";
 						setTimeout(() => {
 							this.errorMessage = "";

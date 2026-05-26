@@ -1,5 +1,5 @@
 import { Location } from "@angular/common";
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
@@ -11,6 +11,7 @@ import { AsignacionService } from "../services/asignacion.service";
 import { AuxiliaresService } from "../services/auxiliares.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-asignar-activo",
 	standalone: false,
 	templateUrl: "./asignar-activo.component.html",
@@ -31,6 +32,7 @@ export class AsignarActivoComponent implements OnInit, OnDestroy {
 	private destroy$ = new Subject<void>();
 
 	constructor(
+		private cdr: ChangeDetectorRef,
 		private route: ActivatedRoute,
 		private auxiliaresService: AuxiliaresService,
 		private asignacionService: AsignacionService,
@@ -44,6 +46,7 @@ export class AsignarActivoComponent implements OnInit, OnDestroy {
 
 		this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
 			this.id = +params["id"];
+			this.cdr.markForCheck();
 			console.log("ID recibido:", this.id);
 
 			if (this.id) {
@@ -75,6 +78,7 @@ export class AsignarActivoComponent implements OnInit, OnDestroy {
 
 					const nombre = response.data.nombre || "Nombre no disponible";
 					this.asignacionForm.get("nombre")?.setValue(nombre);
+					this.cdr.markForCheck();
 
 					console.log("Datos cargados:", response);
 				},
@@ -121,6 +125,7 @@ export class AsignarActivoComponent implements OnInit, OnDestroy {
 				.subscribe({
 					next: (response) => {
 						console.log("Asignación creada exitosamente:", response);
+						this.cdr.markForCheck();
 						Swal.fire({
 							title: "¡Éxito!",
 							text: "Asignación creada correctamente.",

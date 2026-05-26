@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy } from "@angular/core";
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, ChangeDetectionStrategy } from "@angular/core";
 import { Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import { environment } from "../../../environments/environment";
@@ -6,6 +6,7 @@ import { AuthService } from "../../login/services/auth.service";
 import { getCloudflareImage } from "../../utils/images";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-header",
 	standalone: true,
 	templateUrl: "./header.component.html",

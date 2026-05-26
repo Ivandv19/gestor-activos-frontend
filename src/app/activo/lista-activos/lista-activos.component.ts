@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
@@ -14,6 +14,7 @@ import { ActivoService } from "../service/activo.service";
 import { DatosService } from "../service/datos.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-lista-activos",
 	standalone: false,
 	templateUrl: "./lista-activos.component.html",
@@ -45,6 +46,7 @@ export class ListaActivosComponent implements OnInit, OnDestroy {
 		private datosService: DatosService,
 		private route: ActivatedRoute,
 		private authService: AuthService,
+		private cdr: ChangeDetectorRef,
 	) {}
 
 	ngOnInit(): void {
@@ -76,6 +78,7 @@ export class ListaActivosComponent implements OnInit, OnDestroy {
 
 				// Cargar los datos con los filtros aplicados
 				this.cargarActivos();
+				this.cdr.markForCheck();
 			});
 
 		this.cargarDatosAuxiliares();
@@ -101,6 +104,7 @@ export class ListaActivosComponent implements OnInit, OnDestroy {
 					console.log("Respuesta del backend recibida:", response);
 					this.activos = response.data; // Actualiza la lista de activos
 					this.pagination = response.pagination; // Actualiza la paginación
+					this.cdr.markForCheck();
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Error al cargar los activos" }
@@ -153,6 +157,7 @@ export class ListaActivosComponent implements OnInit, OnDestroy {
 					console.log("Respuesta del backend:", response);
 					this.activos = response.data;
 					this.pagination = response.pagination;
+					this.cdr.markForCheck();
 					console.groupEnd();
 				},
 				error: (error) => {
@@ -189,6 +194,7 @@ export class ListaActivosComponent implements OnInit, OnDestroy {
 				next: (response) => {
 					console.log("Datos auxiliares cargados:", response);
 					this.datosAuxiliares = response.data;
+					this.cdr.markForCheck();
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Error al cargar datos auxiliares" }

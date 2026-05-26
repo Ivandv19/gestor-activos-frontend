@@ -51,13 +51,27 @@ button {
 }
 
 :root {
+	--color-primary: #141b4d;
+	--color-primary-light: #1e2a6e;
+	--color-primary-dark: #0d1233;
+	--color-text: #000;
+	--color-text-secondary: #4a5568;
+	--color-label: #4a5568;
+	--color-bg: #fcfcfc;
+	--color-bg-alt: #f8f9fa;
+	--color-white: #fff;
+	--color-border: #e2e8f0;
+	--color-success: #38a169;
+	--color-warning: #d69e2e;
+	--color-error: #e53e3e;
+	--font-body: "Inter", sans-serif;
+	--font-heading: "Outfit", sans-serif;
 	--radius-sm: 8px;
 	--radius-md: 12px;
 	--radius-lg: 20px;
 	--shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
 	--shadow-md: 0 10px 30px rgba(0, 0, 0, 0.04);
 	--shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.06);
-	--color-label: #4a5568;
 }
 
 /*  Imágenes responsivas por defecto */

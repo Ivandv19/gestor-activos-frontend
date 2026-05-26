@@ -1,8 +1,9 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import Swal from "sweetalert2";
 import { AuthService } from "../../login/services/auth.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-navbar",
 	standalone: false,
 	templateUrl: "./navbar.component.html",

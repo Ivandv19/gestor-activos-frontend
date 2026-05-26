@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, signal } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Subject, takeUntil } from "rxjs";
 import Swal from "sweetalert2";
@@ -7,6 +7,7 @@ import { getCloudflareImage } from "../../utils/images";
 import { ConfiguracionService } from "../services/configuracion.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-configuracion-aplicacion",
 	standalone: false,
 	templateUrl: "./configuracion-aplicacion.component.html",
@@ -17,10 +18,10 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 	perfilForm!: FormGroup;
 	errorMessage: string = "";
 
-	public previewUrl: string | null = null; // Vista previa de la nueva imagen
+	public previewUrl = signal<string | null>(null); // Vista previa de la nueva imagen
 	imagenActual: string | null = null; // URL de la imagen actual del activo
 	imagenLocalStorageKey: string | null = null; // Clave de la imagen en localStorage
-	isUploading = false;
+	isUploading = signal(false);
 	private destroy$ = new Subject<void>();
 
 	// Datos para NgSelect
@@ -49,6 +50,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 	error: string | null = null;
 
 	constructor(
+		private cdr: ChangeDetectorRef,
 		private fb: FormBuilder,
 		private configuracionService: ConfiguracionService,
 		private authService: AuthService,
@@ -97,6 +99,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: (response) => {
 					this.configuracionForm.patchValue(response.data);
+					this.cdr.markForCheck();
 					console.log("Configuración cargada:", response);
 				},
 				error: (error) => {
@@ -141,10 +144,10 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 
 					this.imagenActual = foto || "";
 
-					// Usar la lógica global robusta (150px para el perfil de configuración)
-					this.previewUrl =
-						getCloudflareImage(this.imagenActual, { width: 150 }) ||
-						"https://gestor-assets.mgdc.site/img-perfil.jpg";
+				// Usar la lógica global robusta (150px para el perfil de configuración)
+				this.previewUrl.set(
+					getCloudflareImage(this.imagenActual, { width: 150 }) ||
+					"https://gestor-assets.mgdc.site/img-perfil.jpg");
 
 					const perfilData = {
 						nombre: nombre,
@@ -152,6 +155,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 						departamento: departamento,
 					};
 					this.perfilForm.patchValue(perfilData);
+					this.cdr.markForCheck();
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Error al obtener la configuración." }
@@ -184,11 +188,11 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 			// Vista previa local
 			const reader = new FileReader();
 			reader.onload = () => {
-				this.previewUrl = reader.result as string;
+				this.previewUrl.set(reader.result as string);
 
 				// Guardar en localStorage (clave única para evitar conflictos)
 				const imageKey = `activo_img_${Date.now()}`;
-				localStorage.setItem(imageKey, this.previewUrl);
+				if (this.previewUrl()) localStorage.setItem(imageKey, this.previewUrl()!);
 				this.imagenLocalStorageKey = imageKey; // Guardar la clave para usarla después
 			};
 			reader.readAsDataURL(file);
@@ -238,7 +242,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 	guardarConfiguracion(): void {
 		// 1. Primero verificar si el formulario es válido
 		if (!this.perfilForm.valid) {
-			alert("Por favor completa correctamente todos los campos requeridos");
+			Swal.fire({ icon: "warning", text: "Por favor completa correctamente todos los campos requeridos", confirmButtonColor: "#1e293b" });
 			this.perfilForm.markAllAsTouched(); // Marcar campos como tocados para mostrar errores
 			return; // Detener la ejecución si el formulario no es válido
 		}
@@ -258,6 +262,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (_response) => {
+					this.cdr.markForCheck();
 					Swal.fire({
 						title: "¡Configuración Guardada!",
 						text: "Los ajustes del sistema se han actualizado correctamente.",
@@ -331,7 +336,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 			formData.append("foto_url", this.imagenActual);
 		}
 
-		this.isUploading = true;
+		this.isUploading.set(true);
 		Swal.fire({
 			title: "Actualizando perfil...",
 			allowOutsideClick: false,
@@ -343,7 +348,8 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
-					this.isUploading = false;
+					this.isUploading.set(false);
+					this.cdr.markForCheck();
 					Swal.close();
 					console.log("Perfil actualizado:", response);
 					if (this.imagenLocalStorageKey) {
@@ -364,7 +370,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 					this.obtenerPerfilUsuario();
 				},
 				error: (error) => {
-					this.isUploading = false;
+					this.isUploading.set(false);
 					Swal.close();
 					const errorMessage =
 						error.error?.error || "Error al actualizar el perfil.";
@@ -422,7 +428,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 				if (this.imagenLocalStorageKey) {
 					localStorage.removeItem(this.imagenLocalStorageKey);
 					this.imagenLocalStorageKey = null;
-					this.previewUrl = null;
+					this.previewUrl.set(null);
 				}
 			}
 		});
@@ -453,7 +459,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 				if (this.imagenLocalStorageKey) {
 					localStorage.removeItem(this.imagenLocalStorageKey);
 					this.imagenLocalStorageKey = null;
-					this.previewUrl = null;
+					this.previewUrl.set(null);
 				}
 			}
 		});

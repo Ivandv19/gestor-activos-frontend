@@ -45,7 +45,7 @@
             <input
               #passwordInput
               id="password"
-              [type]="isPasswordVisible ? 'text' : 'password'"
+              [type]="isPasswordVisible() ? 'text' : 'password'"
               formControlName="password"
               placeholder="••••••••"
               autocomplete="off"
@@ -54,9 +54,9 @@
               class="toggle-password"
               type="button"
               (click)="togglePasswordVisibility()"
-              [attr.aria-label]="isPasswordVisible ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              [attr.aria-label]="isPasswordVisible() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
             >
-              <iconify-icon [icon]="isPasswordVisible ? 'ph:eye-slash-light' : 'ph:eye-light'"></iconify-icon>
+              <iconify-icon [icon]="isPasswordVisible() ? 'ph:eye-slash-light' : 'ph:eye-light'"></iconify-icon>
             </button>
           </div>
         </div>
@@ -71,10 +71,10 @@
         <button
           class="btn-submit"
           type="submit"
-          [disabled]="loginForm.invalid || isLoading"
+          [disabled]="loginForm.invalid || isLoading()"
         >
-          <span *ngIf="!isLoading">Entrar al Sistema</span>
-          <div class="loader" *ngIf="isLoading"></div>
+          <span *ngIf="!isLoading()">Entrar al Sistema</span>
+          <div class="loader" *ngIf="isLoading()"></div>
         </button>
       </form>
 

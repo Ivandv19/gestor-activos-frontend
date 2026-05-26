@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
@@ -14,6 +14,7 @@ import { ActivosDisponiblesService } from "../services/activos-disponibles.servi
 import { AuxiliaresService } from "../services/auxiliares.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-activos-disponibles",
 	standalone: false,
 	templateUrl: "./activos-disponibles.component.html",
@@ -40,6 +41,7 @@ export class ActivosDisponiblesComponent implements OnInit, OnDestroy {
 	errorMessage: string = "";
 
 	constructor(
+		private cdr: ChangeDetectorRef,
 		private activosDisponiblesServices: ActivosDisponiblesService,
 		private auxiliaresService: AuxiliaresService,
 		private router: Router,
@@ -71,6 +73,7 @@ export class ActivosDisponiblesComponent implements OnInit, OnDestroy {
 					this.activosDisponibles = response.data;
 					this.pagination = response.pagination;
 					console.log("Activos disponibles xd:", this.activosDisponibles);
+					this.cdr.markForCheck();
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Error al obtener los activos disponibles" }
@@ -123,6 +126,7 @@ export class ActivosDisponiblesComponent implements OnInit, OnDestroy {
 					console.log("Respuesta del backend recibida:", response);
 					this.activosDisponibles = response.data;
 					this.pagination = response.pagination;
+					this.cdr.markForCheck();
 					console.groupEnd();
 				},
 				error: (error) => {
@@ -158,6 +162,7 @@ export class ActivosDisponiblesComponent implements OnInit, OnDestroy {
 				next: (response) => {
 					console.log("Datos auxiliares recibidos:", response);
 					this.datosAuxiliares = response.data; // Almacena los datos auxiliares
+					this.cdr.markForCheck();
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Error al obtener los datos auxiliares" }

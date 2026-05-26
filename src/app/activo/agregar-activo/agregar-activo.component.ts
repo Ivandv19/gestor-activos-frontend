@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, signal } from "@angular/core";
 import {
 	AbstractControl,
 	FormBuilder,
@@ -16,6 +16,7 @@ import { ActivoService } from "../service/activo.service";
 import { DatosService } from "../service/datos.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-agregar-activo",
 	standalone: false,
 	templateUrl: "./agregar-activo.component.html",
@@ -25,10 +26,10 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 	agregarActivoForm!: FormGroup; // Formulario para agregar un activo
 	serialError: string = ""; // Mensaje de error para la etiqueta serial
 	errorMessage: string = ""; // Mensaje de error para el backend
-	public previewUrl: string | null = null; // URL de la imagen seleccionada para previsualización
+	public previewUrl = signal<string | null>(null); // URL de la imagen seleccionada para previsualización
 	imagenLocalStorageKey: string | null = null; // Clave de la imagen en localStorage
 	imagenActual: string | null = null; // Imagen actual del activo (si existe)
-	isUploading = false;
+	isUploading = signal(false);
 	private destroy$ = new Subject<void>();
 	tiposActivos: SelectItem[] = [];
 	proveedores: SelectItem[] = [];
@@ -54,6 +55,7 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 		private datosService: DatosService,
 		private activoService: ActivoService,
 		private router: Router,
+		private cdr: ChangeDetectorRef,
 	) {}
 
 	ngOnInit(): void {
@@ -113,6 +115,7 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 					this.proveedorGarantia = response.data.proveedoresGarantia || [];
 					this.duenos = response.data.duenos || [];
 					this.estados = response.data.estados || [];
+					this.cdr.markForCheck();
 
 					console.log("Datos auxiliares cargados:", response);
 				},
@@ -147,10 +150,10 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 			// Vista previa local
 			const reader = new FileReader();
 			reader.onload = () => {
-				this.previewUrl = reader.result as string;
+				this.previewUrl.set(reader.result as string);
 				// Guardar en localStorage (clave única para evitar conflictos)
 				const imageKey = `activo_img_${Date.now()}`;
-				localStorage.setItem(imageKey, this.previewUrl);
+				if (this.previewUrl()) localStorage.setItem(imageKey, this.previewUrl()!);
 				this.imagenLocalStorageKey = imageKey; // Guardar la clave para usarla después
 			};
 			reader.readAsDataURL(file);
@@ -197,7 +200,7 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 			}
 		}
 
-		this.isUploading = true;
+		this.isUploading.set(true);
 		Swal.fire({
 			title: "Creando activo...",
 			allowOutsideClick: false,
@@ -209,12 +212,13 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
-					this.isUploading = false;
+					this.isUploading.set(false);
 					Swal.close();
 					console.log("Activo creado con éxito:", response);
 					if (this.imagenLocalStorageKey) {
 						localStorage.removeItem(this.imagenLocalStorageKey);
 					}
+					this.cdr.markForCheck();
 					Swal.fire({
 						title: "¡Activo Creado!",
 						text: "El activo ha sido registrado exitosamente.",
@@ -233,7 +237,7 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 					});
 				},
 				error: (error) => {
-					this.isUploading = false;
+					this.isUploading.set(false);
 					Swal.close();
 					const errorMessage = error.error?.error || "Error al crear activo";
 					console.error("Error del backend:", errorMessage);
@@ -277,7 +281,7 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 			this.imagenLocalStorageKey = null;
 		}
 		// Limpiar vista previa
-		this.previewUrl = null;
+		this.previewUrl.set(null);
 	}
 
 	/**
@@ -295,6 +299,7 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 					next: (response) => {
 						// La etiqueta serial está disponible
 						this.serialError = ""; // No hay error
+						this.cdr.markForCheck();
 						console.log("Respuesta del backend:", response);
 					},
 					error: (error) => {
@@ -349,9 +354,9 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 				if (this.imagenLocalStorageKey) {
 					localStorage.removeItem(this.imagenLocalStorageKey);
 					this.imagenLocalStorageKey = null;
-					this.previewUrl = null;
-				}
-				this.router.navigate(["/gestion-activos"]);
+				this.previewUrl.set(null);
+			}
+			this.router.navigate(["/gestion-activos"]);
 			}
 		});
 	}

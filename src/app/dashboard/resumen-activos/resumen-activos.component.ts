@@ -1,4 +1,6 @@
 import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	ElementRef,
 	OnDestroy,
@@ -32,6 +34,7 @@ Chart.register(
 );
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-resumen-activos",
 	standalone: false,
 	templateUrl: "./resumen-activos.component.html",
@@ -57,7 +60,10 @@ export class ResumenActivosComponent implements OnInit, OnDestroy {
 	private chartPie: Chart | undefined;
 	private chartBar: Chart | undefined;
 
-	constructor(private dashboardService: DashboardService) {}
+	constructor(
+		private cdr: ChangeDetectorRef,
+		private dashboardService: DashboardService,
+	) {}
 
 	ngOnInit(): void {
 		this.cargarDatosBackend();
@@ -85,6 +91,7 @@ export class ResumenActivosComponent implements OnInit, OnDestroy {
 
 					this.anoTendencia =
 						response.data.ano_tendencia || new Date().getFullYear();
+					this.cdr.markForCheck();
 
 					// Inicializar o actualizar gráficas
 					this.initGraficoActivosVsDisponibles();

@@ -142,12 +142,12 @@
           </div>
           <div class="meta-item">
             <span>Periodo</span>
-            <span>{{ reporte.filtros?.fecha_inicio || 'Inicio' }} ➔ {{ reporte.filtros?.fecha_fin || 'Presente' }}</span>
+            <span>{{ reporte.filtros.fecha_inicio || 'Inicio' }} ➔ {{ reporte.filtros.fecha_fin || 'Presente' }}</span>
           </div>
           <div class="meta-item">
             <span>Filtros Activos</span>
             <span style="font-size: 12px; color: #718096;">
-              {{ reporte.filtros?.tipo_activo || 'Todos' }} | {{ reporte.filtros?.ubicacion || 'Cualquier lugar' }}
+              {{ reporte.filtros.tipo_activo || 'Todos' }} | {{ reporte.filtros.ubicacion || 'Cualquier lugar' }}
             </span>
           </div>
         </div>

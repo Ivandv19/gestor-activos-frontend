@@ -79,8 +79,8 @@
           <div class="avatar-section">
             <div class="avatar-wrapper">
               <div class="avatar-container" (click)="fileInput.click()">
-                <img *ngIf="previewUrl" [src]="previewUrl" alt="Avatar">
-                <div *ngIf="!previewUrl" class="avatar-placeholder">
+                <img *ngIf="previewUrl()" [src]="previewUrl()" alt="Avatar">
+                <div *ngIf="!previewUrl()" class="avatar-placeholder">
                   <iconify-icon icon="lucide:user" style="font-size: 48px; color: #cbd5e0;"></iconify-icon>
                 </div>
                 <div class="avatar-overlay">

@@ -1,5 +1,5 @@
 import { Location } from "@angular/common";
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
@@ -13,6 +13,7 @@ import { AsignacionService } from "../services/asignacion.service";
 import { AuxiliaresService } from "../services/auxiliares.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-editar-asignacion",
 	standalone: false,
 	templateUrl: "./editar-asignacion.component.html",
@@ -37,6 +38,7 @@ export class EditarAsignacionComponent implements OnInit, OnDestroy {
 	private destroy$ = new Subject<void>();
 
 	constructor(
+		private cdr: ChangeDetectorRef,
 		private route: ActivatedRoute,
 		private router: Router,
 		private fb: FormBuilder,
@@ -88,6 +90,7 @@ export class EditarAsignacionComponent implements OnInit, OnDestroy {
 							: undefined,
 						comentarios: this.asignacionData.comentarios,
 					});
+					this.cdr.markForCheck();
 				},
 				error: (error) => {
 					const errorMessage =
@@ -120,6 +123,7 @@ export class EditarAsignacionComponent implements OnInit, OnDestroy {
 				next: (response) => {
 					this.usuarios = response.data.usuarios || [];
 					this.ubicaciones = response.data.ubicaciones || [];
+					this.cdr.markForCheck();
 					console.log("Datos auxiliares cargados:", response);
 				},
 				error: (error) => {

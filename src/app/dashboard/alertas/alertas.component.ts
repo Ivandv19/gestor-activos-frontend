@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import Swal from "sweetalert2";
 import { DashboardService } from "../services/dashboard.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-alertas",
 	standalone: false,
 	templateUrl: "./alertas.component.html",
@@ -20,6 +21,7 @@ export class AlertasComponent implements OnInit, OnDestroy {
 	private destroy$ = new Subject<void>();
 
 	constructor(
+		private cdr: ChangeDetectorRef,
 		private dashboardService: DashboardService,
 		private router: Router,
 	) {}
@@ -49,6 +51,7 @@ export class AlertasComponent implements OnInit, OnDestroy {
 					this.activosEnMantenimiento = response.data.activos_en_mantenimiento || 0;
 					this.activosProximosADevolver =
 						response.data.activos_proximos_a_devolver || 0;
+					this.cdr.markForCheck();
 
 					// Log para confirmar que los datos se han asignado correctamente
 					console.log("Datos asignados:", {

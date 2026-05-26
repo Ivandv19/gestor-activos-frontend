@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
@@ -14,6 +14,7 @@ import { AsignacionService } from "../services/asignacion.service";
 import { AuxiliaresService } from "../services/auxiliares.service";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-activos-asignados",
 	standalone: false,
 	templateUrl: "./activos-asignados.component.html",
@@ -39,6 +40,7 @@ export class ActivosAsignadosComponent implements OnInit, OnDestroy {
 	errorMessage: string = "";
 
 	constructor(
+		private cdr: ChangeDetectorRef,
 		private asignacionService: AsignacionService,
 		private enrutador: Router,
 		private auxiliaresService: AuxiliaresService,
@@ -69,6 +71,7 @@ export class ActivosAsignadosComponent implements OnInit, OnDestroy {
 					console.log("Respuesta del backend recibida:", response);
 					this.listaAsignaciones = response.data;
 					this.pagination = response.pagination;
+					this.cdr.markForCheck();
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Erro al crear activo" }
@@ -121,6 +124,7 @@ export class ActivosAsignadosComponent implements OnInit, OnDestroy {
 					console.log("Respuesta del backend recibida:", response);
 					this.listaAsignaciones = response.data;
 					this.pagination = response.pagination;
+					this.cdr.markForCheck();
 					console.groupEnd();
 
 					// Verificar si no hay resultados
@@ -164,6 +168,7 @@ export class ActivosAsignadosComponent implements OnInit, OnDestroy {
 				next: (response) => {
 					console.log("Datos auxiliares recibidos:", response);
 					this.datosAuxiliares = response.data;
+					this.cdr.markForCheck();
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Error al obtener datos auxiliares" }

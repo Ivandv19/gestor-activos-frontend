@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
@@ -8,8 +8,10 @@ import {
 } from "../../models/datos-auxiliares.interface";
 import { HistorialEntry } from "../../models/historial.interface";
 import { HistorialService } from "../service/historial.service";
+import Swal from "sweetalert2";
 
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: "app-historial-activo",
 	standalone: false,
 	templateUrl: "./historial-activo.component.html",
@@ -44,6 +46,7 @@ export class HistorialActivoComponent implements OnInit, OnDestroy {
 	constructor(
 		private route: ActivatedRoute,
 		private historialService: HistorialService,
+		private cdr: ChangeDetectorRef,
 	) {}
 
 	// Helper para determinar la clase del badge según la acción
@@ -109,6 +112,7 @@ export class HistorialActivoComponent implements OnInit, OnDestroy {
 					console.log("Respuesta del backend recibida:", response);
 					this.historial = response.data; // Actualiza la lista de activos
 					this.pagination = response.pagination; // Actualiza la paginación
+					this.cdr.markForCheck();
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Error al obtener historial" }
@@ -118,7 +122,7 @@ export class HistorialActivoComponent implements OnInit, OnDestroy {
 					// Mostrar el mensaje
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+				Swal.fire({ icon: "error", text: errorMessage, confirmButtonColor: "#1e293b" });
 				},
 			});
 	}
@@ -149,22 +153,18 @@ export class HistorialActivoComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: (response) => {
 					console.log("Respuesta del backend:", response);
-					// Asignar los datos del historial
 					this.historial = response.data;
-					// Actualizar la información de paginación
 					this.pagination = response.pagination;
+					this.cdr.markForCheck();
 					console.log("Historial cargado:", this.historial);
 					console.groupEnd();
 				},
 				error: (error) => {
-					// Ejem. Si el backend devuelve { error: "Error al obtener historial" }
 					const errorMessage =
 						error.error?.error || "Error al obtener historial";
-
-					// Mostrar el mensaje
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+					Swal.fire({ icon: "error", text: errorMessage, confirmButtonColor: "#1e293b" });
 				},
 			});
 	}
@@ -180,6 +180,7 @@ export class HistorialActivoComponent implements OnInit, OnDestroy {
 				next: (response) => {
 					console.log("Datos auxiliares cargados:", response);
 					this.datosAuxiliares = response.data;
+					this.cdr.markForCheck();
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Error al obtener datos auxiliares" }
@@ -189,7 +190,7 @@ export class HistorialActivoComponent implements OnInit, OnDestroy {
 					// Mostrar el mensaje
 					this.errorMessage = errorMessage;
 					console.error("Error del backend:", errorMessage);
-					alert(errorMessage);
+					Swal.fire({ icon: "error", text: errorMessage, confirmButtonColor: "#1e293b" });
 				},
 			});
 	}
