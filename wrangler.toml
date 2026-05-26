@@ -1,6 +1,6 @@
-name = "gestor-activos"
+name = "nemi"
 compatibility_date = "2026-05-02"
-pages_build_output_dir = "dist/gestor-activos-frontend/browser"
+pages_build_output_dir = "dist/nemi/browser"
 
 [vars]
 NODE_VERSION = "24.14.1"
