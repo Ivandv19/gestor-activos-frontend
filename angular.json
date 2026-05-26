@@ -3,7 +3,7 @@
 	"version": 1,
 	"newProjectRoot": "projects",
 	"projects": {
-		"gestor-activos-frontend": {
+		"nemi": {
 			"projectType": "application",
 			"schematics": {
 				"@schematics/angular:component": {
@@ -23,7 +23,7 @@
 				"build": {
 					"builder": "@angular-devkit/build-angular:application",
 					"options": {
-						"outputPath": "dist/gestor-activos-frontend",
+						"outputPath": "dist/nemi",
 						"index": "src/index.html",
 						"browser": "src/main.ts",
 						"polyfills": ["zone.js"],
@@ -76,10 +76,10 @@
 					"builder": "@angular-devkit/build-angular:dev-server",
 					"configurations": {
 						"production": {
-							"buildTarget": "gestor-activos-frontend:build:production"
+							"buildTarget": "nemi:build:production"
 						},
 						"development": {
-							"buildTarget": "gestor-activos-frontend:build:development"
+							"buildTarget": "nemi:build:development"
 						}
 					},
 					"defaultConfiguration": "development"

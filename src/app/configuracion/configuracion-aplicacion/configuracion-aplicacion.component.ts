@@ -96,7 +96,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
-					this.configuracionForm.patchValue(response);
+					this.configuracionForm.patchValue(response.data);
 					console.log("Configuración cargada:", response);
 				},
 				error: (error) => {
@@ -133,11 +133,11 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: (response) => {
 					// Priorizar datos locales si existen, de lo contrario usar los del backend
-					const nombre = localUserData?.nombre || response.nombre;
-					const email = localUserData?.email || response.email;
+					const nombre = localUserData?.nombre || response.data.nombre;
+					const email = localUserData?.email || response.data.email;
 					const departamento =
-						localUserData?.departamento || response.departamento;
-					const foto = localUserData?.foto_url || response.foto_url;
+						localUserData?.departamento || response.data.departamento;
+					const foto = localUserData?.foto_url || response.data.foto_url;
 
 					this.imagenActual = foto || "";
 

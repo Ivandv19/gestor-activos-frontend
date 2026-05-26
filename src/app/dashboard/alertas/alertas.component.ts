@@ -43,12 +43,12 @@ export class AlertasComponent implements OnInit, OnDestroy {
 
 					// Asignar los datos recibidos a las variables
 					this.licenciasProximasAVencer =
-						response.licencias_proximas_a_vencer || 0;
+						response.data.licencias_proximas_a_vencer || 0;
 					this.garantiasProximasAExpirar =
-						response.garantias_proximas_a_expirar || 0;
-					this.activosEnMantenimiento = response.activos_en_mantenimiento || 0;
+						response.data.garantias_proximas_a_expirar || 0;
+					this.activosEnMantenimiento = response.data.activos_en_mantenimiento || 0;
 					this.activosProximosADevolver =
-						response.activos_proximos_a_devolver || 0;
+						response.data.activos_proximos_a_devolver || 0;
 
 					// Log para confirmar que los datos se han asignado correctamente
 					console.log("Datos asignados:", {

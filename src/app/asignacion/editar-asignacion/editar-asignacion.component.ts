@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import Swal from "sweetalert2";
 import {
+	AsignacionData,
 	AsignacionPayload,
 	AsignacionResponse,
 } from "../../models/asignacion.interface";
@@ -24,7 +25,7 @@ export class EditarAsignacionComponent implements OnInit, OnDestroy {
 	nombreActivo: string = "";
 	usuarios: { id: number; nombre: string }[] = [];
 	ubicaciones: { id: number; nombre: string }[] = [];
-	asignacionData: AsignacionResponse | null = null;
+		asignacionData: AsignacionData | null = null;
 
 	// FormGroup para el formulario
 	asignacionForm!: FormGroup;
@@ -73,7 +74,7 @@ export class EditarAsignacionComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
-					this.asignacionData = response;
+					this.asignacionData = response.data;
 					console.log("Datos de la asignación cargados:", this.asignacionData);
 					this.fotoActivo = this.asignacionData.foto_url;
 					this.idAsignacion = this.asignacionData.id;
@@ -120,12 +121,12 @@ export class EditarAsignacionComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: (response) => {
 					this.usuarios =
-						(response.usuarios as unknown as {
+						(response.data.usuarios as unknown as {
 							id: number;
 							nombre: string;
 						}[]) || [];
 					this.ubicaciones =
-						(response.ubicaciones as unknown as {
+						(response.data.ubicaciones as unknown as {
 							id: number;
 							nombre: string;
 						}[]) || [];

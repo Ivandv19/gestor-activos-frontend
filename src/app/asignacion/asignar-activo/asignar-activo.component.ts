@@ -69,11 +69,11 @@ export class AsignarActivoComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
-					this.usuarios = response.usuarios || [];
-					this.ubicaciones = response.ubicaciones || [];
-					this.foto_url = response.foto_url || null;
+					this.usuarios = response.data.usuarios || [];
+					this.ubicaciones = response.data.ubicaciones || [];
+					this.foto_url = response.data.foto_url || null;
 
-					const nombre = response.nombre || "Nombre no disponible";
+					const nombre = response.data.nombre || "Nombre no disponible";
 					this.asignacionForm.get("nombre")?.setValue(nombre);
 
 					console.log("Datos cargados:", response);

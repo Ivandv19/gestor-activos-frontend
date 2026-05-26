@@ -41,9 +41,7 @@ export class ReporteComponent implements OnInit, AfterViewInit, OnDestroy {
 	errorMessage: string | null = null;
 	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
 
-	reporte: ReporteResponse = {
-		success: false,
-		message: "",
+	reporte = {
 		tipo_reporte: "",
 		descripcion: "",
 		filtros: {
@@ -51,12 +49,12 @@ export class ReporteComponent implements OnInit, AfterViewInit, OnDestroy {
 			usuario: "",
 			ubicacion: "",
 			proveedor: "",
-			fecha_inicio: null,
-			fecha_fin: null,
+			fecha_inicio: null as string | null,
+			fecha_fin: null as string | null,
 		},
 		resultados: {
-			detalles: [],
-			resumen: {},
+			detalles: [] as Record<string, string | number>[],
+			resumen: {} as Record<string, number>,
 		},
 	};
 
@@ -102,7 +100,7 @@ export class ReporteComponent implements OnInit, AfterViewInit, OnDestroy {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response: TiposReporteResponse) => {
-					this.tiposReporte = response.tiposReporte || [];
+					this.tiposReporte = response.data.tiposReporte || [];
 				},
 				error: (error) => {
 					const errorMessage =
@@ -122,10 +120,10 @@ export class ReporteComponent implements OnInit, AfterViewInit, OnDestroy {
 				next: (response: DatosAuxiliaresResponse) => {
 					console.log("[DEBUG] Datos auxiliares recibidos:", response);
 
-					this.tiposActivo = response.tiposActivo || [];
-					this.usuarios = response.usuarios || [];
-					this.ubicaciones = response.ubicaciones || [];
-					this.proveedores = response.proveedores || [];
+					this.tiposActivo = response.data.tiposActivo || [];
+					this.usuarios = response.data.usuarios || [];
+					this.ubicaciones = response.data.ubicaciones || [];
+					this.proveedores = response.data.proveedores || [];
 
 					console.log("[INFO] Datos auxiliares asignados correctamente.");
 				},
@@ -160,7 +158,7 @@ export class ReporteComponent implements OnInit, AfterViewInit, OnDestroy {
 			.subscribe({
 				next: (response: ReporteResponse) => {
 					console.log("[INFO] Datos del reporte generados:", response);
-					this.reporte = response;
+					this.reporte = { ...this.reporte, ...response.data };
 					this.cdr.detectChanges();
 					this.initGraficaPastel();
 					this.initGraficaBarras();

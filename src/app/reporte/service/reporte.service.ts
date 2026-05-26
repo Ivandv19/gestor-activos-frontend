@@ -18,7 +18,7 @@ export class ReporteService {
 	constructor(private http: HttpClient) {}
 
 	getTiposReporte(): Observable<TiposReporteResponse> {
-		return this.http.get(`${this.apiUrl}/tipos`);
+		return this.http.get<TiposReporteResponse>(`${this.apiUrl}/tipos`);
 	}
 
 	generarReporte(

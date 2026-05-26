@@ -7,7 +7,7 @@ export interface AsignacionPayload {
 	comentarios?: string;
 }
 
-export interface AsignacionResponse {
+export interface AsignacionData {
 	id: number;
 	activo: string;
 	tipo_activo: string;
@@ -20,4 +20,9 @@ export interface AsignacionResponse {
 	fecha_asignacion: string;
 	fecha_devolucion: string | null;
 	comentarios: string;
+}
+
+export interface AsignacionResponse {
+	data: AsignacionData;
+	message?: string;
 }

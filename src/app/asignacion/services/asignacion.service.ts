@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
 import {
+	AsignacionData,
 	AsignacionPayload,
 	AsignacionResponse,
 } from "../../models/asignacion.interface";
@@ -23,7 +24,7 @@ export class AsignacionService {
 		filtroSeleccionado?: string,
 		opcionSeleccionada?: string,
 		orden?: string,
-	): Observable<Pagination<AsignacionResponse>> {
+	): Observable<Pagination<AsignacionData>> {
 		// Construir parámetros dinámicamente
 		let params = new HttpParams()
 			.set("page", page.toString())
@@ -43,7 +44,7 @@ export class AsignacionService {
 		}
 
 		console.log("[SERVICE] Parámetros enviados al backend:", params.toString());
-		return this.http.get<Pagination<AsignacionResponse>>(this.apiUrl, {
+		return this.http.get<Pagination<AsignacionData>>(this.apiUrl, {
 			params,
 		});
 	}

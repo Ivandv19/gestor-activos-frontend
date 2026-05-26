@@ -5,15 +5,17 @@ export interface SelectItem {
 }
 
 export interface DatosAuxiliares {
-	tipos?: SelectItem[];
-	proveedores?: SelectItem[];
-	ubicaciones?: SelectItem[];
-	proveedoresGarantia?: SelectItem[];
-	duenos?: SelectItem[];
-	estados?: SelectItem[];
-	tiposActivos?: SelectItem[];
-	usuarios?: SelectItem[];
-	acciones?: SelectItem[];
-	nombre?: string;
-	foto_url?: string;
+	data: {
+		tipos?: SelectItem[];
+		proveedores?: SelectItem[];
+		ubicaciones?: SelectItem[];
+		proveedoresGarantia?: SelectItem[];
+		duenos?: SelectItem[];
+		estados?: SelectItem[];
+		tiposActivos?: SelectItem[];
+		usuarios?: SelectItem[];
+		acciones?: SelectItem[];
+		nombre?: string;
+		foto_url?: string;
+	};
 }

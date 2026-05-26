@@ -116,12 +116,12 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: (response) => {
 					console.log(response);
-					this.tiposActivos = response.tipos || [];
-					this.proveedores = response.proveedores || [];
-					this.ubicaciones = response.ubicaciones || [];
-					this.proveedorGarantia = response.proveedoresGarantia || [];
-					this.duenos = response.duenos || [];
-					this.estados = response.estados || [];
+					this.tiposActivos = response.data.tipos || [];
+					this.proveedores = response.data.proveedores || [];
+					this.ubicaciones = response.data.ubicaciones || [];
+					this.proveedorGarantia = response.data.proveedoresGarantia || [];
+					this.duenos = response.data.duenos || [];
+					this.estados = response.data.estados || [];
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { mensaje: "Error al obtener datos auxiliares" }
@@ -188,40 +188,40 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 			.getActivoById(this.activoId)
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
-				next: (response) => {
+			next: (response) => {
 					console.log("Datos del activo:", response);
 					// Guarda la imagen actual y la original para comparaciones
-					this.imagenActual = response.foto_url || null;
-					this.imagenOriginal = response.foto_url || null;
+					this.imagenActual = response.data.foto_url || null;
+					this.imagenOriginal = response.data.foto_url || null;
 
 					// Si hay imagen actual, prepara la vista previa (esto es opcional ahora que usamos haCambiadoImagen)
 					this.previewUrl = null;
 
 					// Manejo SEGURO de garantía (si es null o undefined)
 					const garantia: GarantiaItem =
-						response.garantia?.[0] ?? ({} as GarantiaItem); // Si no hay garantía, usa objeto vacío
+						response.data.garantia?.[0] ?? ({} as GarantiaItem); // Si no hay garantía, usa objeto vacío
 					const datosFormulario = {
-						nombre: response.nombre || undefined,
-						dueno_id: response.dueno?.id || undefined,
-						tipo_id: response.tipo?.id || undefined,
-						fecha_adquisicion: response.fecha_adquisicion
-							? response.fecha_adquisicion.split("T")[0]
+						nombre: response.data.nombre || undefined,
+						dueno_id: response.data.dueno?.id || undefined,
+						tipo_id: response.data.tipo?.id || undefined,
+						fecha_adquisicion: response.data.fecha_adquisicion
+							? response.data.fecha_adquisicion.split("T")[0]
 							: undefined,
-						valor_compra: response.valor_compra,
-						proveedor_id: response.proveedor?.id || undefined,
-						modelo: response.modelo || undefined,
-						version_software: response.version_software || undefined,
-						tipo_licencia: response.tipo_licencia || undefined,
-						condicion_fisica: response.condicion_fisica || undefined,
-						etiqueta_serial: response.etiqueta_serial || undefined,
-						descripcion: response.descripcion || undefined,
-						estado: response.estado || undefined,
-						ubicacion_id: response.ubicacion?.id || undefined,
-						fecha_vencimiento_licencia: response.fecha_vencimiento_licencia
-							? response.fecha_vencimiento_licencia.split("T")[0]
+						valor_compra: response.data.valor_compra,
+						proveedor_id: response.data.proveedor?.id || undefined,
+						modelo: response.data.modelo || undefined,
+						version_software: response.data.version_software || undefined,
+						tipo_licencia: response.data.tipo_licencia || undefined,
+						condicion_fisica: response.data.condicion_fisica || undefined,
+						etiqueta_serial: response.data.etiqueta_serial || undefined,
+						descripcion: response.data.descripcion || undefined,
+						estado: response.data.estado || undefined,
+						ubicacion_id: response.data.ubicacion?.id || undefined,
+						fecha_vencimiento_licencia: response.data.fecha_vencimiento_licencia
+							? response.data.fecha_vencimiento_licencia.split("T")[0]
 							: undefined,
-						costo_mensual: response.costo_mensual || undefined,
-						recursos_asignados: response.recursos_asignados || undefined,
+						costo_mensual: response.data.costo_mensual || undefined,
+						recursos_asignados: response.data.recursos_asignados || undefined,
 						nombre_garantia: garantia.nombre_garantia || undefined,
 						proveedor_garantia_id: garantia.proveedor?.id || undefined,
 						fecha_inicio: garantia.fecha_inicio

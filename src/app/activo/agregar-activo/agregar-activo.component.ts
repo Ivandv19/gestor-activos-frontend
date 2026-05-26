@@ -107,12 +107,12 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: (response) => {
 					// Asigna los datos recibidos a las propiedades correspondientes
-					this.tiposActivos = response.tipos || [];
-					this.proveedores = response.proveedores || [];
-					this.ubicaciones = response.ubicaciones || [];
-					this.proveedorGarantia = response.proveedoresGarantia || [];
-					this.duenos = response.duenos || [];
-					this.estados = response.estados || [];
+					this.tiposActivos = response.data.tipos || [];
+					this.proveedores = response.data.proveedores || [];
+					this.ubicaciones = response.data.ubicaciones || [];
+					this.proveedorGarantia = response.data.proveedoresGarantia || [];
+					this.duenos = response.data.duenos || [];
+					this.estados = response.data.estados || [];
 
 					console.log("Datos auxiliares cargados:", response);
 				},

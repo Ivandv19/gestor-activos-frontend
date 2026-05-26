@@ -21,7 +21,7 @@ Esta es la interfaz gráfica del Gestor de Activos IT, una plataforma web donde 
 
 ## Uso
 
-- **Visualización del Proyecto:** El proyecto ya se encuentra en funcionamiento. Puedes explorarlo aquí: [Gestor de Activos](https://gestor.mgdc.site/).
+- **Visualización del Proyecto:** El proyecto ya se encuentra en funcionamiento. Puedes explorarlo aquí: [Gestor de Activos](https://nemi.mgdc.site/).
 - **Inicio Rápido**: Inicia sesión mediante tus credenciales para acceder a la herramienta completa.
 - **Visualización y Búsqueda**: Usa el buscador interno o los filtros en la lista de gestión para aislar información (ej. buscar "laptops disponibles").
 - **Flujo de Asignación**: Da clic en asignar activo y selecciona a qué empleado o departamento va dirigido el equipo en cuestión.
@@ -40,7 +40,7 @@ Esta es la interfaz gráfica del Gestor de Activos IT, una plataforma web donde 
 1. **Clonar el Repositorio**: Descarga el código de este proyecto a tu máquina usando Git.
 
 ```bash
-git clone https://github.com/Ivandv19/gestor-activos-frontend.git
+git clone https://github.com/Ivandv19/nemi.git
 ```
 
 2. **Instalar Dependencias**: Abre una terminal en la carpeta principal del proyecto y ejecuta:
@@ -66,7 +66,7 @@ Este proyecto administra la cara visual de las herramientas empresariales del ec
 
 ## Despliegue
 
-El sitio web está desplegado en Cloudflare Pages. Puedes visitarlo directamente aquí: [gestor.mgdc.site](https://gestor.mgdc.site/).
+El sitio web está desplegado en Cloudflare Pages. Puedes visitarlo directamente aquí: [nemi.mgdc.site](https://nemi.mgdc.site/).
 
 ## Licencia
 

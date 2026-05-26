@@ -1,5 +1,4 @@
 export interface SubirImagenResponse {
-	url: string;
-	filename: string;
+	data: { url: string; filename: string };
 	message?: string;
 }

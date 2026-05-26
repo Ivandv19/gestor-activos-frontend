@@ -69,22 +69,22 @@ export class ResumenActivosComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
-					this.totalActivos = Number(response.total_activos) || 0;
-					this.activosAsignados = Number(response.activos_asignados) || 0;
-					this.activosDisponibles = Number(response.activos_disponibles) || 0;
+					this.totalActivos = Number(response.data.total_activos) || 0;
+					this.activosAsignados = Number(response.data.activos_asignados) || 0;
+					this.activosDisponibles = Number(response.data.activos_disponibles) || 0;
 					this.activosEnMantenimiento =
-						Number(response.activos_en_mantenimiento) || 0;
-					this.activosDadosDeBaja = Number(response.activos_dados_de_baja) || 0;
+						Number(response.data.activos_en_mantenimiento) || 0;
+					this.activosDadosDeBaja = Number(response.data.activos_dados_de_baja) || 0;
 
-					if (response.tendencia_mensual) {
+					if (response.data.tendencia_mensual) {
 						this.tendenciaMensualData = {
-							labels: response.tendencia_mensual.labels || [],
-							data: response.tendencia_mensual.data || [],
+							labels: response.data.tendencia_mensual.labels || [],
+							data: response.data.tendencia_mensual.data || [],
 						};
 					}
 
 					this.anoTendencia =
-						response.ano_tendencia || new Date().getFullYear();
+						response.data.ano_tendencia || new Date().getFullYear();
 
 					// Inicializar o actualizar gráficas
 					this.initGraficoActivosVsDisponibles();

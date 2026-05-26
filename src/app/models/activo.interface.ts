@@ -27,7 +27,7 @@ export interface ActivoPayload {
 }
 
 export interface ActivoResponse {
-	id: number;
+	data: { id: number };
 	message: string;
 }
 
@@ -45,32 +45,34 @@ export interface GarantiaItem {
 }
 
 export interface ActivoDetalleResponse {
-	id: number;
-	nombre: string;
-	tipo: { id: number; nombre: string };
-	estado: string;
-	fecha_adquisicion: string;
-	valor_compra: number;
-	valor_actual: number;
-	descripcion: string;
-	foto_url: string;
-	ubicacion: { id: number; nombre: string };
-	ubicacion_id?: number;
-	usuario_asignado_id: number | null;
-	fecha_creacion: string;
-	fecha_actualizacion: string;
-	fecha_registro: string;
-	dueno: { id: number; nombre: string };
-	proveedor: { id: number; nombre: string };
-	modelo?: string;
-	version_software?: string;
-	tipo_licencia?: string;
-	condicion_fisica?: string;
-	etiqueta_serial?: string;
-	fecha_vencimiento_licencia?: string;
-	costo_mensual?: number;
-	recursos_asignados?: string;
-	garantia: GarantiaItem[];
+	data: {
+		id: number;
+		nombre: string;
+		tipo: { id: number; nombre: string };
+		estado: string;
+		fecha_adquisicion: string;
+		valor_compra: number;
+		valor_actual: number;
+		descripcion: string;
+		foto_url: string;
+		ubicacion: { id: number; nombre: string };
+		ubicacion_id?: number;
+		usuario_asignado_id: number | null;
+		fecha_creacion: string;
+		fecha_actualizacion: string;
+		fecha_registro: string;
+		dueno: { id: number; nombre: string };
+		proveedor: { id: number; nombre: string };
+		modelo?: string;
+		version_software?: string;
+		tipo_licencia?: string;
+		condicion_fisica?: string;
+		etiqueta_serial?: string;
+		fecha_vencimiento_licencia?: string;
+		costo_mensual?: number;
+		recursos_asignados?: string;
+		garantia: GarantiaItem[];
+	};
 }
 
 export interface ActivoListItem {

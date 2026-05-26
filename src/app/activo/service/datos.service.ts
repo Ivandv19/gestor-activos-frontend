@@ -18,8 +18,8 @@ export class DatosService {
 
 	validarEtiquetaSerial(
 		etiquetaSerial: string,
-	): Observable<{ disponible: boolean; message?: string }> {
-		return this.http.post<{ disponible: boolean; message?: string }>(
+	): Observable<{ data: { disponible: boolean }; message?: string }> {
+		return this.http.post<{ data: { disponible: boolean }; message?: string }>(
 			`${this.apiUrl}/validar-etiqueta-serial`,
 			{
 				etiqueta_serial: etiquetaSerial,

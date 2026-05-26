@@ -82,8 +82,8 @@ export class ActivoService {
 
 	darDeBajaActivo(
 		id: number,
-	): Observable<{ success: boolean; message: string }> {
-		return this.http.patch<{ success: boolean; message: string }>(
+	): Observable<{ data: { success: boolean }; message: string }> {
+		return this.http.patch<{ data: { success: boolean }; message: string }>(
 			`${this.apiUrl}/baja/${id}`,
 			{},
 		);
@@ -92,10 +92,10 @@ export class ActivoService {
 	//  método para subir imágenes
 	subirImagen(
 		formData: FormData,
-	): Observable<{ url: string; filename: string }> {
-		return this.http.post<{ url: string; filename: string }>(
-			`${this.apiUrl}/upload`,
-			formData,
-		);
+	): Observable<{ data: { url: string; filename: string }; message?: string }> {
+		return this.http.post<{
+			data: { url: string; filename: string };
+			message?: string;
+		}>(`${this.apiUrl}/upload`, formData);
 	}
 }

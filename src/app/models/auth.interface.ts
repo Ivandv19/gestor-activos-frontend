@@ -8,8 +8,7 @@ export interface UserData {
 }
 
 export interface LoginResponse {
-	token: string;
-	userData: UserData;
+	data: { token: string; userData: UserData };
 	message: string;
 }
 

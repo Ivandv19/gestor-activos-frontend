@@ -13,6 +13,6 @@ export class DatosAuxiliaresService {
 	constructor(private http: HttpClient) {}
 
 	getDatosAuxiliares(): Observable<DatosAuxiliaresResponse> {
-		return this.http.get(this.apiUrl);
+		return this.http.get<DatosAuxiliaresResponse>(this.apiUrl);
 	}
 }

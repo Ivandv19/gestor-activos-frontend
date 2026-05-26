@@ -4,7 +4,7 @@ import { Subject, takeUntil } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
 import Swal from "sweetalert2";
 import { AuthService } from "../../login/services/auth.service";
-import { AsignacionResponse } from "../../models/asignacion.interface";
+import { AsignacionData } from "../../models/asignacion.interface";
 import {
 	DatosAuxiliares,
 	SelectItem,
@@ -23,7 +23,7 @@ export class ActivosAsignadosComponent implements OnInit, OnDestroy {
 	filtroSeleccionado: string = "";
 	opcionSeleccionada: string = "";
 	ordenSeleccionado: string = "asc";
-	listaAsignaciones: AsignacionResponse[] = [];
+	listaAsignaciones: AsignacionData[] = [];
 	pagination: {
 		total: number;
 		totalPages: number;
@@ -35,7 +35,7 @@ export class ActivosAsignadosComponent implements OnInit, OnDestroy {
 	private searchSubject = new Subject<string>();
 	private destroy$ = new Subject<void>();
 	terminoBusqueda: string = "";
-	datosAuxiliares: DatosAuxiliares | null = null;
+	datosAuxiliares: DatosAuxiliares["data"] | null = null;
 	errorMessage: string = "";
 
 	constructor(
@@ -163,7 +163,7 @@ export class ActivosAsignadosComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: (response) => {
 					console.log("Datos auxiliares recibidos:", response);
-					this.datosAuxiliares = response;
+					this.datosAuxiliares = response.data;
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Error al obtener datos auxiliares" }
@@ -409,7 +409,7 @@ export class ActivosAsignadosComponent implements OnInit, OnDestroy {
 		return getCloudflareImage(fotoUrl, { width: 150 });
 	}
 
-	trackById(_index: number, item: AsignacionResponse): number {
+	trackById(_index: number, item: AsignacionData): number {
 		return item.id;
 	}
 

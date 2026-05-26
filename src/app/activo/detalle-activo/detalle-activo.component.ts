@@ -14,7 +14,7 @@ import { ActivoService } from "../service/activo.service";
 	styleUrl: "./detalle-activo.component.css",
 })
 export class DetalleActivoComponent implements OnInit {
-	activo: ActivoDetalleResponse | null = null;
+	activo: ActivoDetalleResponse["data"] | null = null;
 	errorMessage: string = "";
 
 	activoId!: number; // ID del activo
@@ -42,7 +42,7 @@ export class DetalleActivoComponent implements OnInit {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
-					this.activo = { ...response, garantia: response.garantia ?? [] };
+					this.activo = { ...response.data, garantia: response.data.garantia ?? [] };
 					console.log("Activo cargado correctamente:", this.activo);
 				},
 				error: (error) => {

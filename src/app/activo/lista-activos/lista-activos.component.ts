@@ -36,7 +36,7 @@ export class ListaActivosComponent implements OnInit, OnDestroy {
 	searchTerm: string = "";
 	private searchSubject = new Subject<string>();
 	private destroy$ = new Subject<void>();
-	datosAuxiliares: DatosAuxiliares | null = null;
+	datosAuxiliares: DatosAuxiliares["data"] | null = null;
 	errorMessage: string = "";
 
 	constructor(
@@ -188,7 +188,7 @@ export class ListaActivosComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: (response) => {
 					console.log("Datos auxiliares cargados:", response);
-					this.datosAuxiliares = response;
+					this.datosAuxiliares = response.data;
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Error al cargar datos auxiliares" }

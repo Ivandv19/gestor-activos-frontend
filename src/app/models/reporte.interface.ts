@@ -13,29 +13,27 @@ export interface GenerarReporteRequest {
 }
 
 export interface ReporteResponse {
-	success?: boolean;
+	data: {
+		tipo_reporte?: string;
+		descripcion?: string;
+		filtros?: {
+			tipo_activo: string;
+			usuario: string;
+			ubicacion: string;
+			proveedor: string;
+			fecha_inicio: string | null;
+			fecha_fin: string | null;
+		};
+		resultados?: {
+			resumen: Record<string, number>;
+			detalles: Record<string, string | number>[];
+		};
+	};
 	message?: string;
-	tipo_reporte?: string;
-	descripcion?: string;
-	filtros?: {
-		tipo_activo: string;
-		usuario: string;
-		ubicacion: string;
-		proveedor: string;
-		fecha_inicio: string | null;
-		fecha_fin: string | null;
-	};
-	resultados?: {
-		resumen: Record<string, number>;
-		detalles: Record<string, string | number>[];
-	};
-	error?: string;
 }
 
 export interface TiposReporteResponse {
-	success?: boolean;
-	tiposReporte?: TipoReporte[];
-	error?: string;
+	data: { tiposReporte?: TipoReporte[] };
 }
 
 export interface TipoReporte {
@@ -46,8 +44,10 @@ export interface TipoReporte {
 }
 
 export interface DatosAuxiliaresResponse {
-	tiposActivo?: { id: number; nombre: string }[];
-	usuarios?: { id: number; nombre: string }[];
-	ubicaciones?: { id: number; nombre: string }[];
-	proveedores?: { id: number; nombre: string }[];
+	data: {
+		tiposActivo?: { id: number; nombre: string }[];
+		usuarios?: { id: number; nombre: string }[];
+		ubicaciones?: { id: number; nombre: string }[];
+		proveedores?: { id: number; nombre: string }[];
+	};
 }

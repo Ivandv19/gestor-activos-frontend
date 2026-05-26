@@ -85,7 +85,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 						console.log("Login response:", response);
 						this.isLoading = false;
 						// Guarda el token y datos del usuario
-						this.authService.saveToken(response.token, response.userData);
+						this.authService.saveToken(response.data.token, response.data.userData);
 						this.router.navigate(["/dashboard"]); // Redirige a dashboard
 					},
 					error: (error) => {

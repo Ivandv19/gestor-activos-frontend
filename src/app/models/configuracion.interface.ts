@@ -8,18 +8,22 @@ export interface ConfiguracionResponse {
 }
 
 export interface PerfilResponse {
-	id: number;
-	email: string;
-	nombre: string;
-	foto_url?: string;
-	rol: string;
-	departamento?: string;
-	fecha_creacion: string;
+	data: {
+		id: number;
+		email: string;
+		nombre: string;
+		foto_url?: string;
+		rol: string;
+		departamento?: string;
+		fecha_creacion: string;
+	};
 }
 
 export interface ConfiguracionAplicacionResponse {
-	idioma: string;
-	zona_horaria: string;
-	formato_fecha: string;
-	formato_moneda: string;
+	data: {
+		idioma: string;
+		zona_horaria: string;
+		formato_fecha: string;
+		formato_moneda: string;
+	};
 }

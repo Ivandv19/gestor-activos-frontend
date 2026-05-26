@@ -36,7 +36,7 @@ export class ActivosDisponiblesComponent implements OnInit, OnDestroy {
 	private searchSubject = new Subject<string>();
 	private destroy$ = new Subject<void>();
 	terminoBusqueda: string = "";
-	datosAuxiliares: DatosAuxiliares | null = null;
+	datosAuxiliares: DatosAuxiliares["data"] | null = null;
 	errorMessage: string = "";
 
 	constructor(
@@ -157,7 +157,7 @@ export class ActivosDisponiblesComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: (response) => {
 					console.log("Datos auxiliares recibidos:", response);
-					this.datosAuxiliares = response; // Almacena los datos auxiliares
+					this.datosAuxiliares = response.data; // Almacena los datos auxiliares
 				},
 				error: (error) => {
 					// Ejem. Si el backend devuelve { error: "Error al obtener los datos auxiliares" }
