@@ -39,7 +39,7 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 	imagenOriginal: string | null | undefined = null; // Guardar la imagen inicial del backend
 	imagenLocalStorageKey: string | null = null; // Clave de la imagen en localStorage
 	isUploading = false;
-	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+	private destroy$ = new Subject<void>();
 
 	get haCambiadoImagen(): boolean {
 		// Ha cambiado si hay un preview nuevo O si la imagen actual es nula pero la original no lo era (borrado)
@@ -70,7 +70,6 @@ export class EditarActivoComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit(): void {
-		// Obtener el ID del activo desde la ruta
 		this.activoId = +(this.route.snapshot.paramMap.get("id") || 0);
 		this.inicializarFormulario();
 		this.cargarDatosActivo();

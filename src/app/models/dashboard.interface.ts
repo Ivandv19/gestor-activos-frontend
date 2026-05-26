@@ -23,10 +23,10 @@ export interface DashboardAlertasResponse {
 }
 
 export interface AlertaResponse {
-	id: number;
+	readonly id: number;
 	titulo: string;
 	mensaje: string;
 	tipo: "info" | "warning" | "error" | "success";
-	fecha: string;
+	readonly fecha: string;
 	leida: boolean;
 }

@@ -34,7 +34,7 @@ export class EditarAsignacionComponent implements OnInit, OnDestroy {
 	fotoActivo: string | null = null;
 
 	idAsignacion: number = 0; // ID de la asignación
-	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+	private destroy$ = new Subject<void>();
 
 	constructor(
 		private route: ActivatedRoute,
@@ -46,7 +46,6 @@ export class EditarAsignacionComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit(): void {
-		// Obtener el ID del activo desde la ruta
 		this.activoId = +(this.route.snapshot.paramMap.get("id") || 0);
 
 		this.inicializarFormulario();
@@ -119,16 +118,8 @@ export class EditarAsignacionComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response) => {
-					this.usuarios =
-						(response.data.usuarios as unknown as {
-							id: number;
-							nombre: string;
-						}[]) || [];
-					this.ubicaciones =
-						(response.data.ubicaciones as unknown as {
-							id: number;
-							nombre: string;
-						}[]) || [];
+					this.usuarios = response.data.usuarios || [];
+					this.ubicaciones = response.data.ubicaciones || [];
 					console.log("Datos auxiliares cargados:", response);
 				},
 				error: (error) => {

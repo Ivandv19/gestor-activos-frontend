@@ -49,7 +49,7 @@ export class ResumenActivosComponent implements OnInit, OnDestroy {
 	}; // Datos de la tendencia mensual
 	anoTendencia: number = new Date().getFullYear(); // Año que abarca la tendencia
 	errorMessage = ""; // Mensaje de error en caso de fallo
-	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+	private destroy$ = new Subject<void>();
 
 	@ViewChild("activosVsDisponibles") activosVsDisponibles!: ElementRef;
 	@ViewChild("tendenciaMensual") tendenciaMensual!: ElementRef;

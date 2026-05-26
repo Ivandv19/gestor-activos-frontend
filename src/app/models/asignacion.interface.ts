@@ -8,7 +8,7 @@ export interface AsignacionPayload {
 }
 
 export interface AsignacionData {
-	id: number;
+	readonly id: number;
 	activo: string;
 	tipo_activo: string;
 	estado_activo: string;
@@ -17,7 +17,7 @@ export interface AsignacionData {
 	foto_url: string | null;
 	usuario_id: number;
 	ubicacion_id: number;
-	fecha_asignacion: string;
+	readonly fecha_asignacion: string;
 	fecha_devolucion: string | null;
 	comentarios: string;
 }

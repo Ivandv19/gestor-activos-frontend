@@ -39,7 +39,7 @@ export class ReporteComponent implements OnInit, AfterViewInit, OnDestroy {
 	proveedores: SelectItem[] = [];
 	tiposReporte: TipoReporte[] = [];
 	errorMessage: string | null = null;
-	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+	private destroy$ = new Subject<void>();
 
 	reporte = {
 		tipo_reporte: "",
@@ -184,10 +184,10 @@ export class ReporteComponent implements OnInit, AfterViewInit, OnDestroy {
 			const formValues = this.reportForm.value;
 			const { tipo_reporte, ...filtrosRaw } = formValues;
 
-			const filtros: ReporteFiltros & Record<string, unknown> = {};
+			const filtros: ReporteFiltros = {};
 			for (const key in filtrosRaw) {
 				if (filtrosRaw[key] !== null && filtrosRaw[key] !== "") {
-					filtros[key] = filtrosRaw[key];
+					(filtros as Record<string, unknown>)[key] = filtrosRaw[key];
 				}
 			}
 

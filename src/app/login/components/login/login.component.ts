@@ -18,24 +18,19 @@ import { AuthService } from "../../services/auth.service";
 	styleUrl: "./login.component.css",
 })
 export class LoginComponent implements OnInit, OnDestroy {
-	// Formulario reactivo
 	loginForm: FormGroup;
-	// Mensaje de error para credenciales
 	errorMessage: string = "";
-	// Control de visibilidad de contraseña
 	isPasswordVisible: boolean = false;
 	timeoutRef: ReturnType<typeof setTimeout> | null = null;
-	// Estado de carga del botón
 	isLoading: boolean = false;
-	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+	private destroy$ = new Subject<void>();
 
-	// Referencia al input de contraseña
 	@ViewChild("passwordInput") passwordInput!: ElementRef;
 
 	constructor(
-		private fb: FormBuilder, // Creador de formularios
+		private fb: FormBuilder,
 		private authService: AuthService, // Servicio de autenticación
-		private router: Router, // Navegación
+		private router: Router,
 		private renderer: Renderer2, // Manipulación segura del DOM
 	) {
 		// Inicialización del formulario con validaciones

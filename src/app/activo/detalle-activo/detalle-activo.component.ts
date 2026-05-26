@@ -18,7 +18,7 @@ export class DetalleActivoComponent implements OnInit {
 	errorMessage: string = "";
 
 	activoId!: number; // ID del activo
-	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+	private destroy$ = new Subject<void>();
 
 	constructor(
 		private route: ActivatedRoute,

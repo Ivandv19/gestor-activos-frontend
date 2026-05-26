@@ -1,6 +1,6 @@
 export interface UserData {
-	id: number;
-	email: string;
+	readonly id: number;
+	readonly email: string;
 	nombre: string;
 	rol: string;
 	foto_url?: string;
@@ -8,14 +8,14 @@ export interface UserData {
 }
 
 export interface LoginResponse {
-	data: { token: string; userData: UserData };
+	data: { readonly token: string; userData: UserData };
 	message: string;
 }
 
 export interface TokenPayload {
-	id: number;
-	email: string;
+	readonly id: number;
+	readonly email: string;
 	rol: string;
-	exp: number;
-	iat: number;
+	readonly exp: number;
+	readonly iat: number;
 }

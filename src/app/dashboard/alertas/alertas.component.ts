@@ -17,7 +17,7 @@ export class AlertasComponent implements OnInit, OnDestroy {
 	activosEnMantenimiento: number = 0;
 	activosProximosADevolver: number = 0;
 	errorMessage = "";
-	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+	private destroy$ = new Subject<void>();
 
 	constructor(
 		private dashboardService: DashboardService,

@@ -21,7 +21,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 	imagenActual: string | null = null; // URL de la imagen actual del activo
 	imagenLocalStorageKey: string | null = null; // Clave de la imagen en localStorage
 	isUploading = false;
-	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+	private destroy$ = new Subject<void>();
 
 	// Datos para NgSelect
 	idiomasDisponibles = [
@@ -46,7 +46,7 @@ export class ConfiguracionAplicacionComponent implements OnInit, OnDestroy {
 		{ codigo: "YYYY-MM-DD", nombre: "YYYY-MM-DD" },
 	];
 
-	error: string | null = null; // Para manejar errores
+	error: string | null = null;
 
 	constructor(
 		private fb: FormBuilder,

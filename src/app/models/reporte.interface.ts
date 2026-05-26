@@ -37,7 +37,7 @@ export interface TiposReporteResponse {
 }
 
 export interface TipoReporte {
-	id: number;
+	readonly id: number;
 	nombre: string;
 	descripcion: string;
 	activo: boolean;

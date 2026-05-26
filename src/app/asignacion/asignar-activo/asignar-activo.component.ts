@@ -28,7 +28,7 @@ export class AsignarActivoComponent implements OnInit, OnDestroy {
 	// Variable para manejar mensajes de error
 	errorMessage: string = "";
 	foto_url: string | null = null;
-	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+	private destroy$ = new Subject<void>();
 
 	constructor(
 		private route: ActivatedRoute,

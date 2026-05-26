@@ -29,7 +29,7 @@ export class AgregarActivoComponent implements OnInit, OnDestroy {
 	imagenLocalStorageKey: string | null = null; // Clave de la imagen en localStorage
 	imagenActual: string | null = null; // Imagen actual del activo (si existe)
 	isUploading = false;
-	private destroy$ = new Subject<void>(); // Sujeto para manejar el unsubscribe
+	private destroy$ = new Subject<void>();
 	tiposActivos: SelectItem[] = [];
 	proveedores: SelectItem[] = [];
 	ubicaciones: SelectItem[] = [];

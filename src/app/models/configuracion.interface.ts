@@ -1,21 +1,21 @@
 export interface ConfiguracionResponse {
-	id: number;
+	readonly id: number;
 	clave: string;
 	valor: string | number | boolean;
 	descripcion: string;
 	tipo: "string" | "number" | "boolean";
-	fecha_actualizacion: string;
+	readonly fecha_actualizacion: string;
 }
 
 export interface PerfilResponse {
 	data: {
-		id: number;
-		email: string;
+		readonly id: number;
+		readonly email: string;
 		nombre: string;
 		foto_url?: string;
 		rol: string;
 		departamento?: string;
-		fecha_creacion: string;
+		readonly fecha_creacion: string;
 	};
 }
 

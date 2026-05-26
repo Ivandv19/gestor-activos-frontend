@@ -1,9 +1,9 @@
 export interface Pagination<T> {
 	data: T[];
 	pagination: {
-		total: number;
-		totalPages: number;
-		page: number;
-		limit: number;
+		readonly total: number;
+		readonly totalPages: number;
+		readonly page: number;
+		readonly limit: number;
 	};
 }

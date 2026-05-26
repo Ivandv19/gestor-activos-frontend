@@ -27,14 +27,16 @@ export interface ActivoPayload {
 }
 
 export interface ActivoResponse {
-	data: { id: number };
+	data: { readonly id: number };
 	message: string;
 }
 
+export type ActivoDetalle = ActivoDetalleResponse["data"];
+
 export interface GarantiaItem {
-	id: number;
+	readonly id: number;
 	nombre_garantia: string;
-	proveedor?: { id: number; nombre: string };
+	proveedor?: { readonly id: number; nombre: string };
 	fecha_inicio: string;
 	fecha_fin: string;
 	estado_garantia: string;
@@ -46,23 +48,23 @@ export interface GarantiaItem {
 
 export interface ActivoDetalleResponse {
 	data: {
-		id: number;
+		readonly id: number;
 		nombre: string;
-		tipo: { id: number; nombre: string };
+		tipo: { readonly id: number; nombre: string };
 		estado: string;
 		fecha_adquisicion: string;
 		valor_compra: number;
 		valor_actual: number;
 		descripcion: string;
 		foto_url: string;
-		ubicacion: { id: number; nombre: string };
+		ubicacion: { readonly id: number; nombre: string };
 		ubicacion_id?: number;
 		usuario_asignado_id: number | null;
-		fecha_creacion: string;
-		fecha_actualizacion: string;
-		fecha_registro: string;
-		dueno: { id: number; nombre: string };
-		proveedor: { id: number; nombre: string };
+		readonly fecha_creacion: string;
+		readonly fecha_actualizacion: string;
+		readonly fecha_registro: string;
+		dueno: { readonly id: number; nombre: string };
+		proveedor: { readonly id: number; nombre: string };
 		modelo?: string;
 		version_software?: string;
 		tipo_licencia?: string;
@@ -76,7 +78,7 @@ export interface ActivoDetalleResponse {
 }
 
 export interface ActivoListItem {
-	id: number;
+	readonly id: number;
 	nombre: string;
 	foto_url: string;
 	estado: string;
@@ -86,7 +88,7 @@ export interface ActivoListItem {
 }
 
 export interface ActivoDisponibleResponse {
-	id: number;
+	readonly id: number;
 	activo: string;
 	foto_url: string;
 	tipo_activo: string;
