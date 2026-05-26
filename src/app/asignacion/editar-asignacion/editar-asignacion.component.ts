@@ -7,7 +7,6 @@ import Swal from "sweetalert2";
 import {
 	AsignacionData,
 	AsignacionPayload,
-	AsignacionResponse,
 } from "../../models/asignacion.interface";
 import { getCloudflareImage } from "../../utils/images";
 import { AsignacionService } from "../services/asignacion.service";

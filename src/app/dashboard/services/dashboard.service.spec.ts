@@ -12,7 +12,7 @@ import { DashboardService } from "./dashboard.service";
 describe("DashboardService", () => {
 	let service: DashboardService;
 	let httpMock: HttpTestingController;
-	const apiUrl = "http://localhost:3000/api";
+	const apiUrl = "http://localhost:3030/api";
 
 	beforeEach(() => {
 		TestBed.configureTestingModule({
@@ -34,22 +34,24 @@ describe("DashboardService", () => {
 	describe("getResumen", () => {
 		it("should return DashboardResumen", (done) => {
 			const mockResponse: DashboardResumen = {
-				total_activos: 10,
-				activos_disponibles: 4,
-				activos_asignados: 3,
-				activos_en_mantenimiento: 2,
-				activos_dados_de_baja: 1,
-				tendencia_mensual: {
-					labels: ["Ene", "Feb", "Mar"],
-					data: [1, 2, 3],
+				data: {
+					total_activos: 10,
+					activos_disponibles: 4,
+					activos_asignados: 3,
+					activos_en_mantenimiento: 2,
+					activos_dados_de_baja: 1,
+					tendencia_mensual: {
+						labels: ["Ene", "Feb", "Mar"],
+						data: [1, 2, 3],
+					},
+					ano_tendencia: 2025,
 				},
-				ano_tendencia: 2025,
 			};
 
 			service.getResumen().subscribe((response) => {
 				expect(response).toEqual(mockResponse);
-				expect(response.total_activos).toBe(10);
-				expect(response.activos_disponibles).toBe(4);
+				expect(response.data.total_activos).toBe(10);
+				expect(response.data.activos_disponibles).toBe(4);
 				done();
 			});
 
@@ -60,18 +62,20 @@ describe("DashboardService", () => {
 
 		it("should return zeros when no activos", (done) => {
 			const mockResponse: DashboardResumen = {
-				total_activos: 0,
-				activos_disponibles: 0,
-				activos_asignados: 0,
-				activos_en_mantenimiento: 0,
-				activos_dados_de_baja: 0,
-				tendencia_mensual: { labels: [], data: [] },
-				ano_tendencia: 2025,
+				data: {
+					total_activos: 0,
+					activos_disponibles: 0,
+					activos_asignados: 0,
+					activos_en_mantenimiento: 0,
+					activos_dados_de_baja: 0,
+					tendencia_mensual: { labels: [], data: [] },
+					ano_tendencia: 2025,
+				},
 			};
 
 			service.getResumen().subscribe((response) => {
-				expect(response.total_activos).toBe(0);
-				expect(response.tendencia_mensual?.labels).toEqual([]);
+				expect(response.data.total_activos).toBe(0);
+				expect(response.data.tendencia_mensual?.labels).toEqual([]);
 				done();
 			});
 
@@ -84,16 +88,18 @@ describe("DashboardService", () => {
 	describe("getAlertas", () => {
 		it("should return DashboardAlertasResponse", (done) => {
 			const mockResponse: DashboardAlertasResponse = {
-				licencias_proximas_a_vencer: 3,
-				garantias_proximas_a_expirar: 5,
-				activos_en_mantenimiento: 2,
-				activos_proximos_a_devolver: 4,
+				data: {
+					licencias_proximas_a_vencer: 3,
+					garantias_proximas_a_expirar: 5,
+					activos_en_mantenimiento: 2,
+					activos_proximos_a_devolver: 4,
+				},
 			};
 
 			service.getAlertas().subscribe((response) => {
 				expect(response).toEqual(mockResponse);
-				expect(response.licencias_proximas_a_vencer).toBe(3);
-				expect(response.garantias_proximas_a_expirar).toBe(5);
+				expect(response.data.licencias_proximas_a_vencer).toBe(3);
+				expect(response.data.garantias_proximas_a_expirar).toBe(5);
 				done();
 			});
 
@@ -104,14 +110,16 @@ describe("DashboardService", () => {
 
 		it("should return zeros when all counts are null", (done) => {
 			const mockResponse: DashboardAlertasResponse = {
-				licencias_proximas_a_vencer: 0,
-				garantias_proximas_a_expirar: 0,
-				activos_en_mantenimiento: 0,
-				activos_proximos_a_devolver: 0,
+				data: {
+					licencias_proximas_a_vencer: 0,
+					garantias_proximas_a_expirar: 0,
+					activos_en_mantenimiento: 0,
+					activos_proximos_a_devolver: 0,
+				},
 			};
 
 			service.getAlertas().subscribe((response) => {
-				expect(response.licencias_proximas_a_vencer).toBe(0);
+				expect(response.data.licencias_proximas_a_vencer).toBe(0);
 				done();
 			});
 

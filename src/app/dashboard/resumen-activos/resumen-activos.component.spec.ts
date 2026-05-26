@@ -40,13 +40,15 @@ describe("ResumenActivosComponent", () => {
 
 	it("should populate all 5 counters from service", () => {
 		const mockResponse: DashboardResumen = {
-			total_activos: 10,
-			activos_asignados: 4,
-			activos_disponibles: 3,
-			activos_en_mantenimiento: 2,
-			activos_dados_de_baja: 1,
-			tendencia_mensual: { labels: ["Ene", "Feb"], data: [5, 5] },
-			ano_tendencia: 2025,
+			data: {
+				total_activos: 10,
+				activos_asignados: 4,
+				activos_disponibles: 3,
+				activos_en_mantenimiento: 2,
+				activos_dados_de_baja: 1,
+				tendencia_mensual: { labels: ["Ene", "Feb"], data: [5, 5] },
+				ano_tendencia: 2025,
+			},
 		};
 
 		(dashboardService.getResumen as jest.Mock).mockReturnValue(
@@ -64,13 +66,15 @@ describe("ResumenActivosComponent", () => {
 
 	it("should render 5 badges in the template", () => {
 		const mockResponse: DashboardResumen = {
-			total_activos: 5,
-			activos_asignados: 2,
-			activos_disponibles: 2,
-			activos_en_mantenimiento: 1,
-			activos_dados_de_baja: 0,
-			tendencia_mensual: { labels: [], data: [] },
-			ano_tendencia: 2025,
+			data: {
+				total_activos: 5,
+				activos_asignados: 2,
+				activos_disponibles: 2,
+				activos_en_mantenimiento: 1,
+				activos_dados_de_baja: 0,
+				tendencia_mensual: { labels: [], data: [] },
+				ano_tendencia: 2025,
+			},
 		};
 
 		(dashboardService.getResumen as jest.Mock).mockReturnValue(
@@ -85,13 +89,15 @@ describe("ResumenActivosComponent", () => {
 
 	it("should display correct values in badge--numero elements", () => {
 		const mockResponse: DashboardResumen = {
-			total_activos: 15,
-			activos_asignados: 7,
-			activos_disponibles: 5,
-			activos_en_mantenimiento: 2,
-			activos_dados_de_baja: 1,
-			tendencia_mensual: { labels: [], data: [] },
-			ano_tendencia: 2025,
+			data: {
+				total_activos: 15,
+				activos_asignados: 7,
+				activos_disponibles: 5,
+				activos_en_mantenimiento: 2,
+				activos_dados_de_baja: 1,
+				tendencia_mensual: { labels: [], data: [] },
+				ano_tendencia: 2025,
+			},
 		};
 
 		(dashboardService.getResumen as jest.Mock).mockReturnValue(
@@ -111,13 +117,15 @@ describe("ResumenActivosComponent", () => {
 
 	it("should display correct titles in badge--titulo elements", () => {
 		const mockResponse: DashboardResumen = {
-			total_activos: 0,
-			activos_asignados: 0,
-			activos_disponibles: 0,
-			activos_en_mantenimiento: 0,
-			activos_dados_de_baja: 0,
-			tendencia_mensual: { labels: [], data: [] },
-			ano_tendencia: 2025,
+			data: {
+				total_activos: 0,
+				activos_asignados: 0,
+				activos_disponibles: 0,
+				activos_en_mantenimiento: 0,
+				activos_dados_de_baja: 0,
+				tendencia_mensual: { labels: [], data: [] },
+				ano_tendencia: 2025,
+			},
 		};
 
 		(dashboardService.getResumen as jest.Mock).mockReturnValue(
@@ -137,13 +145,15 @@ describe("ResumenActivosComponent", () => {
 
 	it("should handle zeros when response has null values", () => {
 		const mockResponse: DashboardResumen = {
-			total_activos: 0,
-			activos_asignados: 0,
-			activos_disponibles: 0,
-			activos_en_mantenimiento: 0,
-			activos_dados_de_baja: 0,
-			tendencia_mensual: undefined,
-			ano_tendencia: undefined,
+			data: {
+				total_activos: 0,
+				activos_asignados: 0,
+				activos_disponibles: 0,
+				activos_en_mantenimiento: 0,
+				activos_dados_de_baja: 0,
+				tendencia_mensual: undefined,
+				ano_tendencia: undefined,
+			},
 		};
 
 		(dashboardService.getResumen as jest.Mock).mockReturnValue(

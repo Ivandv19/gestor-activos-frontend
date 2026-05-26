@@ -54,10 +54,12 @@ describe("AlertasComponent", () => {
 
 	it("should populate counters from service", () => {
 		const mockAlertas = {
-			licencias_proximas_a_vencer: 3,
-			garantias_proximas_a_expirar: 5,
-			activos_en_mantenimiento: 2,
-			activos_proximos_a_devolver: 4,
+			data: {
+				licencias_proximas_a_vencer: 3,
+				garantias_proximas_a_expirar: 5,
+				activos_en_mantenimiento: 2,
+				activos_proximos_a_devolver: 4,
+			},
 		};
 
 		(dashboardService.getAlertas as jest.Mock).mockReturnValue(of(mockAlertas));
@@ -122,10 +124,12 @@ describe("AlertasComponent", () => {
 
 	it("should have buttons disabled when counters are 0", () => {
 		const mockAlertas = {
-			licencias_proximas_a_vencer: 0,
-			garantias_proximas_a_expirar: 0,
-			activos_en_mantenimiento: 0,
-			activos_proximos_a_devolver: 0,
+			data: {
+				licencias_proximas_a_vencer: 0,
+				garantias_proximas_a_expirar: 0,
+				activos_en_mantenimiento: 0,
+				activos_proximos_a_devolver: 0,
+			},
 		};
 
 		(dashboardService.getAlertas as jest.Mock).mockReturnValue(of(mockAlertas));
@@ -140,10 +144,12 @@ describe("AlertasComponent", () => {
 
 	it("should have buttons enabled when counters are greater than 0", () => {
 		const mockAlertas = {
-			licencias_proximas_a_vencer: 1,
-			garantias_proximas_a_expirar: 1,
-			activos_en_mantenimiento: 1,
-			activos_proximos_a_devolver: 1,
+			data: {
+				licencias_proximas_a_vencer: 1,
+				garantias_proximas_a_expirar: 1,
+				activos_en_mantenimiento: 1,
+				activos_proximos_a_devolver: 1,
+			},
 		};
 
 		(dashboardService.getAlertas as jest.Mock).mockReturnValue(of(mockAlertas));
@@ -158,10 +164,12 @@ describe("AlertasComponent", () => {
 
 	it("should display counter values in count-badge elements", () => {
 		const mockAlertas = {
-			licencias_proximas_a_vencer: 3,
-			garantias_proximas_a_expirar: 5,
-			activos_en_mantenimiento: 2,
-			activos_proximos_a_devolver: 4,
+			data: {
+				licencias_proximas_a_vencer: 3,
+				garantias_proximas_a_expirar: 5,
+				activos_en_mantenimiento: 2,
+				activos_proximos_a_devolver: 4,
+			},
 		};
 
 		(dashboardService.getAlertas as jest.Mock).mockReturnValue(of(mockAlertas));
