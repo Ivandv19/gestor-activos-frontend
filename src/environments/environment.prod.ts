@@ -1,4 +1,4 @@
 export const environment = {
-	production: true,
-	apiUrl: "https://nemi-backend.fluxdv.icu/api",
+  production: true,
+  apiUrl: "https://nemi-api.fluxdv.icu/api",
 };
