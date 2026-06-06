@@ -1,8 +1,19 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, ChangeDetectionStrategy } from "@angular/core";
+import {
+	Component,
+	CUSTOM_ELEMENTS_SCHEMA,
+	OnDestroy,
+	ChangeDetectionStrategy,
+	HostListener,
+} from "@angular/core";
 import { Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AuthService } from "../../login/services/auth.service";
+import {
+	AlertaItem,
+	NotificationService,
+} from "../services/notification.service";
+import { ThemeService } from "../services/theme.service";
 import { getCloudflareImage } from "../../utils/images";
 
 @Component({
@@ -16,53 +27,115 @@ import { getCloudflareImage } from "../../utils/images";
 export class HeaderComponent implements OnDestroy {
 	apiUrl = environment.apiUrl;
 
-	// Propiedades para manejar el estado de la aplicación
 	private destroy$ = new Subject<void>();
 	fotoUrl: string = "";
+	showNotifications = false;
+	alertasList: AlertaItem[] = [];
+	totalAlertas = 0;
+
+	themeService: ThemeService;
 
 	constructor(
 		private router: Router,
 		private authService: AuthService,
+		private notificationService: NotificationService,
+		private themeSvc: ThemeService,
 	) {
-		// Escuchar eventos de logout
+		this.themeService = themeSvc;
 		this.authService
 			.onLogout()
 			.pipe(takeUntil(this.destroy$))
-			.subscribe(() => {
-				// No hace falta limpiar cache porque lo eliminaremos
+			.subscribe(() => {});
+
+		if (this.authService.isLoggedIn()) {
+			this.notificationService.load();
+		}
+
+		this.notificationService.alertasList$
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((list) => {
+				this.alertasList = list;
 			});
+
+		this.notificationService.totalAlerts$
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((total) => {
+				this.totalAlertas = total;
+			});
+	}
+
+	@HostListener("document:click", ["$event"])
+	onDocumentClick(event: Event): void {
+		const target = event.target as HTMLElement;
+		if (this.showNotifications && !target.closest(".notification-wrapper")) {
+			this.showNotifications = false;
+		}
 	}
 
 	isLoginRoute(): boolean {
 		return this.router.url === "/login";
 	}
 
-	// Nueva función para verificar autenticación
 	isLoggedIn(): boolean {
 		return this.authService.isLoggedIn();
 	}
 
-	// Funcion para obtener la foto de usuario
 	getUserPhoto(): string {
 		const userData = this.authService.getUserData();
 		const fotoUrl = userData?.foto_url || "";
 
-		// Usamos el optimizador (50px para el avatar del header)
 		return (
 			getCloudflareImage(fotoUrl, { width: 50 }) ||
 			"https://gestor-assets.mgdc.site/img-perfil.jpg"
 		);
 	}
 
+	toggleNotifications(): void {
+		this.showNotifications = !this.showNotifications;
+	}
+
+	navigateTo(filtro: string): void {
+		this.showNotifications = false;
+
+		if (filtro === "licencia_proxima") {
+			this.router.navigate(["/gestion-activos"], {
+				queryParams: { licencia_proxima: "true" },
+			});
+		} else if (filtro === "garantia_proxima") {
+			this.router.navigate(["/gestion-activos"], {
+				queryParams: { garantia_proxima: "true" },
+			});
+		} else if (filtro === "estado") {
+			this.router.navigate(["/gestion-activos"], {
+				queryParams: { estado: "En mantenimiento" },
+			});
+		} else if (filtro === "fecha_devolucion_proxima") {
+			this.router.navigate(["/gestion-activos"], {
+				queryParams: { fecha_devolucion_proxima: "true" },
+			});
+		}
+	}
+
+	irAlDashboard(): void {
+		this.showNotifications = false;
+		this.router.navigate(["/dashboard"]);
+	}
+
+	toggleTheme(): void {
+		this.themeSvc.toggle();
+	}
+
+	get themeIcon(): string {
+		return this.themeSvc.current === "dark" ? "ph:sun" : "ph:moon";
+	}
+
 	ngOnDestroy(): void {
-		// Completar la limpieza de recursos al destruir el componente
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-	// Función para obtener el título según la ruta
 	getTitle(): string {
-		const currentRoute = this.router.url; // Obtiene la ruta actual directamente
+		const currentRoute = this.router.url;
 
 		switch (currentRoute) {
 			case "/login":
@@ -78,7 +151,7 @@ export class HeaderComponent implements OnDestroy {
 			case "/configuracion":
 				return "Configuración";
 			default:
-				return "Gestor de Activos"; // Título predeterminado
+				return "Gestor de Activos";
 		}
 	}
 }

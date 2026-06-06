@@ -9,11 +9,56 @@
 
     @if (!isLoginRoute() && isLoggedIn()) {
     <div class="header-actions">
-      <!-- Ícono de notificaciones -->
+      <!-- Notificaciones -->
+      <div class="notification-wrapper">
+        <iconify-icon 
+          icon="ph:bell-light" 
+          class="icon-notification"
+          (click)="toggleNotifications()"
+          title="Notificaciones">
+        </iconify-icon>
+
+        @if (totalAlertas > 0) {
+          <span class="notification-badge">{{ totalAlertas }}</span>
+        }
+
+        @if (showNotifications) {
+        <div class="notification-dropdown" (click)="$event.stopPropagation()">
+          <div class="dropdown-header">
+            Notificaciones
+          </div>
+
+          <div class="dropdown-body">
+            @if (totalAlertas === 0) {
+              <div class="empty-state">No hay notificaciones</div>
+            } @else {
+              @for (alerta of alertasList; track alerta.key) {
+                @if (alerta.count > 0) {
+                <div class="notification-item" (click)="navigateTo(alerta.filtro)">
+                  <iconify-icon [icon]="alerta.icon" class="notification-item-icon"></iconify-icon>
+                  <span class="notification-item-title">{{ alerta.label }}</span>
+                  <span class="notification-item-count">{{ alerta.count }}</span>
+                </div>
+                }
+              }
+            }
+          </div>
+
+          @if (totalAlertas > 0) {
+          <div class="dropdown-footer">
+            <button (click)="irAlDashboard()">Ir al Dashboard</button>
+          </div>
+          }
+        </div>
+        }
+      </div>
+
+      <!-- Selector de tema -->
       <iconify-icon 
-        icon="ph:bell-light" 
-        class="icon-notification" 
-        title="Notificaciones">
+        [icon]="themeIcon"
+        class="icon-theme-toggle"
+        (click)="toggleTheme()"
+        [title]="themeService.current === 'dark' ? 'Modo claro' : 'Modo oscuro'">
       </iconify-icon>
 
       <!-- Foto de perfil con datos del usuario -->
