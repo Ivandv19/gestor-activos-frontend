@@ -1,6 +1,6 @@
 main {
 	padding: 40px 20px;
-	background-color: #f8f9fa;
+	background-color: var(--color-bg-alt);
 	min-height: calc(100vh - 70px);
 	display: flex;
 	justify-content: center;
@@ -12,11 +12,11 @@ main {
 }
 
 .form-card {
-	background: white;
+	background: var(--color-surface);
 	border-radius: var(--radius-lg);
 	padding: 40px;
 	box-shadow: var(--shadow-md);
-	border: 1px solid rgba(0, 0, 0, 0.05);
+	border: 1px solid var(--color-border-light);
 }
 
 /* Hero de Edición */
@@ -27,7 +27,7 @@ main {
 	gap: 30px;
 	margin-bottom: 40px;
 	padding-bottom: 30px;
-	border-bottom: 1px solid #edf2f7;
+	border-bottom: 1px solid var(--color-border-light);
 }
 
 .hero-image-wrapper {
@@ -36,9 +36,9 @@ main {
 	height: 100px;
 	border-radius: 18px;
 	overflow: hidden;
-	background: #f1f5f9;
-	border: 2px solid #e2e8f0;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+	background: var(--color-surface-hover);
+	border: 2px solid var(--color-border);
+	box-shadow: 0 4px 10px var(--color-border-light);
 }
 
 .hero-image-wrapper img {
@@ -50,14 +50,14 @@ main {
 .hero-text h1 {
 	font-size: 24px;
 	font-weight: 800;
-	color: #141b4d;
+	color: var(--color-primary);
 	margin: 5px 0 0 0;
 }
 
 .hero-text span {
 	font-size: 11px;
 	font-weight: 700;
-	color: #a0aec0;
+	color: var(--color-text-placeholder);
 	text-transform: uppercase;
 	letter-spacing: 1.2px;
 }
@@ -89,7 +89,7 @@ main {
 .form-group label {
 	font-size: 13px;
 	font-weight: 700;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	margin-left: 2px;
 }
 
@@ -100,10 +100,10 @@ textarea {
 	height: 48px;
 	padding: 0 15px;
 	border-radius: var(--radius-md);
-	border: 1px solid #e2e8f0;
+	border: 1px solid var(--color-border);
 	font-size: 14px;
-	color: #2d3748;
-	background: #fff;
+	color: var(--color-text-body);
+	background: var(--color-surface);
 	transition: all 0.3s ease;
 }
 
@@ -115,29 +115,54 @@ textarea {
 
 input:focus,
 textarea:focus {
-	border-color: #141b4d;
-	box-shadow: 0 0 0 3px rgba(20, 27, 77, 0.05);
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px var(--color-primary-alpha-5);
 	outline: none;
+}
+
+:host-context(body.dark-mode) input[type="date"] {
+	color-scheme: dark;
 }
 
 /* ng-select premium mapping */
 :host ::ng-deep .ng-select .ng-select-container {
-	border: 1px solid #e2e8f0 !important;
+	border: 1px solid var(--color-border) !important;
 	border-radius: var(--radius-md) !important;
 	height: 48px !important;
 	min-height: 48px !important;
 	align-items: center !important;
+	background: var(--color-surface) !important;
+	color: var(--color-text-body);
 }
 
 :host ::ng-deep .ng-select.ng-select-focused .ng-select-container {
-	border-color: #141b4d !important;
-	box-shadow: 0 0 0 3px rgba(20, 27, 77, 0.05) !important;
+	border-color: var(--color-primary) !important;
+	box-shadow: 0 0 0 3px var(--color-primary-alpha-5) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel {
+	background: var(--color-surface) !important;
+	border: 1px solid var(--color-border) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option {
+	color: var(--color-text-body) !important;
+	background: var(--color-surface) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option:hover {
+	background: var(--color-surface-hover) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option.ng-option-marked {
+	background: var(--color-primary-alpha-5) !important;
+	color: var(--color-primary) !important;
 }
 
 /* Botones de Imagen */
 .btn-file {
-	background: #141b4d;
-	color: white;
+	background: var(--color-primary);
+	color: var(--color-white);
 	padding: 10px 20px;
 	height: 48px;
 	border-radius: var(--radius-md);
@@ -156,9 +181,9 @@ textarea:focus {
 }
 
 .btn-danger-light {
-	background: #fff5f5;
-	color: #c53030;
-	border: 1px solid #feb2b2;
+	background: var(--color-error-light);
+	color: var(--color-error-dark);
+	border: 1px solid var(--color-error-light);
 	padding: 10px 20px;
 	height: 48px;
 	border-radius: var(--radius-md);
@@ -170,9 +195,9 @@ textarea:focus {
 }
 
 .btn-restore {
-	background: white;
-	color: #4a5568;
-	border: 1px solid #e2e8f0;
+	background: var(--color-surface);
+	color: var(--color-text-secondary);
+	border: 1px solid var(--color-border);
 	padding: 10px 20px;
 	height: 48px;
 	border-radius: var(--radius-md);
@@ -184,28 +209,28 @@ textarea:focus {
 }
 
 .btn-danger-light {
-	background: #fff5f5;
-	color: #c53030;
-	border: 1px solid #feb2b2;
+	background: var(--color-error-light);
+	color: var(--color-error-dark);
+	border: 1px solid var(--color-error-light);
 	padding: 10px 20px;
 	border-radius: 10px;
 	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
-	width: 160px; /* Mismo ancho */
+	width: 160px;
 	text-align: center;
 }
 
 .btn-restore {
-	background: white;
-	color: #4a5568;
-	border: 1px solid #e2e8f0;
+	background: var(--color-surface);
+	color: var(--color-text-secondary);
+	border: 1px solid var(--color-border);
 	padding: 10px 20px;
 	border-radius: 10px;
 	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
-	width: 160px; /* Mismo ancho */
+	width: 160px;
 	text-align: center;
 }
 
@@ -213,13 +238,13 @@ textarea:focus {
 .warranty-section {
 	margin-top: 40px;
 	padding-top: 40px;
-	border-top: 2px solid #f1f5f9;
+	border-top: 2px solid var(--color-border-light);
 }
 
 .warranty-section h2 {
 	font-size: 18px;
 	font-weight: 700;
-	color: #141b4d;
+	color: var(--color-primary);
 	margin-bottom: 25px;
 	display: flex;
 	align-items: center;
@@ -233,13 +258,13 @@ textarea:focus {
 	gap: 15px;
 	margin-top: 50px;
 	padding-top: 30px;
-	border-top: 1px solid #edf2f7;
+	border-top: 1px solid var(--color-border-light);
 }
 
 .btn-cancelar {
-	background: white;
-	color: #718096;
-	border: 1px solid #e2e8f0;
+	background: var(--color-surface);
+	color: var(--color-text-muted);
+	border: 1px solid var(--color-border);
 	padding: 12px 30px;
 	height: 48px;
 	border-radius: var(--radius-md);
@@ -250,8 +275,8 @@ textarea:focus {
 }
 
 .btn-guardar {
-	background: #141b4d;
-	color: white;
+	background: var(--color-primary);
+	color: var(--color-white);
 	border: none;
 	padding: 12px 40px;
 	height: 48px;
@@ -259,14 +284,14 @@ textarea:focus {
 	font-size: 14px;
 	font-weight: 700;
 	cursor: pointer;
-	box-shadow: 0 4px 12px rgba(20, 27, 77, 0.2);
+	box-shadow: 0 4px 12px var(--color-primary-shadow);
 	transition: all 0.3s ease;
 }
 
 .btn-guardar:hover:not(:disabled) {
-	background: #1a2366;
+	background: var(--color-primary-hover);
 	transform: translateY(-2px);
-	box-shadow: 0 6px 15px rgba(20, 27, 77, 0.3);
+	box-shadow: 0 6px 15px var(--color-primary-shadow-strong);
 }
 
 button:disabled {

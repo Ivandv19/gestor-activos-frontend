@@ -1,6 +1,6 @@
 main {
 	padding: 40px 20px;
-	background-color: #f8f9fa;
+	background-color: var(--color-bg-alt);
 	min-height: calc(100vh - 70px);
 	display: flex;
 	justify-content: center;
@@ -20,11 +20,11 @@ main {
 
 /* Tarjetas de Configuración */
 .config-card {
-	background: white;
+	background: var(--color-surface);
 	border-radius: 25px;
 	padding: 35px;
-	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
-	border: 1px solid rgba(0, 0, 0, 0.05);
+	box-shadow: var(--shadow-sm);
+	border: 1px solid var(--color-border-light);
 }
 
 .card-header {
@@ -33,19 +33,19 @@ main {
 	gap: 12px;
 	margin-bottom: 30px;
 	padding-bottom: 15px;
-	border-bottom: 1px solid #f1f5f9;
+	border-bottom: 1px solid var(--color-border-light);
 }
 
 .card-header h3 {
 	font-size: 20px;
 	font-weight: 800;
-	color: #141b4d;
+	color: var(--color-primary);
 	margin: 0;
 }
 
 .card-header iconify-icon {
 	font-size: 24px;
-	color: #141b4d;
+	color: var(--color-primary);
 }
 
 /* Form Groups */
@@ -69,7 +69,7 @@ main {
 .form-group label {
 	font-size: 12px;
 	font-weight: 700;
-	color: #718096;
+	color: var(--color-text-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
 }
@@ -79,16 +79,17 @@ input {
 	height: 45px;
 	padding: 0 15px;
 	border-radius: 12px;
-	border: 1px solid #e2e8f0;
-	background: #f8fafc;
+	border: 1px solid var(--color-border);
+	background: var(--color-bg-alt);
+	color: var(--color-text-body);
 	font-size: 14px;
 	transition: all 0.3s ease;
 }
 
 input:focus {
-	border-color: #141b4d;
-	background: white;
-	box-shadow: 0 0 0 3px rgba(20, 27, 77, 0.05);
+	border-color: var(--color-primary);
+	background: var(--color-surface);
+	box-shadow: 0 0 0 3px var(--color-primary-alpha-5);
 	outline: none;
 }
 
@@ -110,17 +111,17 @@ input:focus {
 	height: 130px;
 	border-radius: 50%;
 	position: relative;
-	border: 4px solid white;
-	box-shadow: 0 15px 35px rgba(20, 27, 77, 0.1);
+	border: 4px solid var(--color-white);
+	box-shadow: 0 15px 35px var(--color-primary-alpha-10);
 	overflow: hidden;
-	background: #f1f5f9;
+	background: var(--color-surface-hover);
 	cursor: pointer;
 	transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .avatar-container:hover {
 	transform: scale(1.05);
-	box-shadow: 0 20px 45px rgba(20, 27, 77, 0.15);
+	box-shadow: 0 20px 45px var(--color-primary-alpha-10);
 }
 
 .avatar-container img {
@@ -135,7 +136,7 @@ input:focus {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: #f8fafc;
+	background: var(--color-bg-alt);
 }
 
 .avatar-overlay {
@@ -144,12 +145,12 @@ input:focus {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: rgba(20, 27, 77, 0.6);
+	background: color-mix(in srgb, var(--color-primary) 60%, transparent);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	color: white;
+	color: var(--color-white);
 	opacity: 0;
 	transition: opacity 0.3s ease;
 	backdrop-filter: blur(2px);
@@ -171,8 +172,8 @@ input:focus {
 	position: absolute;
 	bottom: 5px;
 	right: 5px;
-	background: #141b4d;
-	color: white;
+	background: var(--color-primary);
+	color: var(--color-white);
 	width: 32px;
 	height: 32px;
 	border-radius: 50%;
@@ -180,27 +181,27 @@ input:focus {
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	border: 3px solid white;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	border: 3px solid var(--color-white);
+	box-shadow: 0 4px 12px var(--color-primary-shadow);
 	transition: all 0.3s;
 	z-index: 2;
 }
 
 .avatar-edit-badge:hover {
-	background: #2b357e;
+	background: var(--color-primary-hover);
 	transform: rotate(90deg);
 }
 
 .avatar-hint {
 	font-size: 11px;
-	color: #94a3b8;
+	color: var(--color-text-placeholder);
 	font-weight: 500;
 }
 
 /* Seguridad / Contraseña */
 .security-box {
-	background: #fcfcfd;
-	border: 1px dashed #e2e8f0;
+	background: var(--color-surface);
+	border: 1px dashed var(--color-border);
 	border-radius: 15px;
 	padding: 20px;
 	margin-top: 20px;
@@ -209,7 +210,7 @@ input:focus {
 .security-box h4 {
 	font-size: 14px;
 	font-weight: 700;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	margin-bottom: 15px;
 	display: flex;
 	align-items: center;
@@ -225,8 +226,8 @@ input:focus {
 }
 
 .btn-guardar {
-	background: #141b4d;
-	color: white;
+	background: var(--color-primary);
+	color: var(--color-white);
 	padding: 12px 30px;
 	border-radius: 12px;
 	font-weight: 700;
@@ -237,14 +238,14 @@ input:focus {
 }
 
 .btn-guardar:hover {
-	background: #1e2a78;
+	background: var(--color-primary-light);
 	transform: translateY(-2px);
 }
 
 .btn-cancelar {
-	background: white;
-	color: #718096;
-	border: 1px solid #e2e8f0;
+	background: var(--color-surface);
+	color: var(--color-text-muted);
+	border: 1px solid var(--color-border);
 	padding: 12px 25px;
 	border-radius: 12px;
 	font-weight: 600;
@@ -252,14 +253,34 @@ input:focus {
 }
 
 /* ng-select override */
-::ng-deep .ng-select .ng-select-container {
+:host ::ng-deep .ng-select .ng-select-container {
+	color: var(--color-text-body);
 	border-radius: 12px !important;
-	border: 1px solid #e2e8f0 !important;
-	background: #f8fafc !important;
+	border: 1px solid var(--color-border) !important;
+	background: var(--color-surface) !important;
 	min-height: 45px !important;
 }
 
-::ng-deep .ng-select.ng-select-focused .ng-select-container {
-	border-color: #141b4d !important;
-	background: white !important;
+:host ::ng-deep .ng-select.ng-select-focused .ng-select-container {
+	border-color: var(--color-primary) !important;
+	background: var(--color-surface) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel {
+	background: var(--color-surface) !important;
+	border: 1px solid var(--color-border) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option {
+	color: var(--color-text-body) !important;
+	background: var(--color-surface) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option:hover {
+	background: var(--color-surface-hover) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option.ng-option-marked {
+	background: var(--color-primary-alpha-5) !important;
+	color: var(--color-primary) !important;
 }

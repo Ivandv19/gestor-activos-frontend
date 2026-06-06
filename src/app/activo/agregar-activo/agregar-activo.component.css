@@ -1,6 +1,6 @@
 main {
 	padding: 30px;
-	background-color: #f8f9fa;
+	background-color: var(--color-bg-alt);
 	min-height: calc(100vh - 70px);
 }
 
@@ -19,7 +19,7 @@ form {
 h2 {
 	font-size: 18px;
 	font-weight: 700;
-	color: #141b4d;
+	color: var(--color-primary);
 	margin-bottom: 20px;
 	display: flex;
 	align-items: center;
@@ -30,17 +30,17 @@ h2::before {
 	content: "";
 	width: 4px;
 	height: 18px;
-	background-color: #141b4d;
+	background-color: var(--color-primary);
 	border-radius: 2px;
 }
 
 /* Tarjetas de Formulario */
 .form-card {
-	background-color: white;
+	background-color: var(--color-surface);
 	border-radius: var(--radius-lg);
 	padding: 25px;
 	box-shadow: var(--shadow-md);
-	border: 1px solid rgba(0, 0, 0, 0.05);
+	border: 1px solid var(--color-border-light);
 }
 
 /* Grid de Layout */
@@ -60,7 +60,7 @@ h2::before {
 label {
 	font-size: 13px;
 	font-weight: 700;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	margin-left: 2px;
 }
 
@@ -70,11 +70,11 @@ textarea {
 	height: 48px;
 	padding: 0 15px;
 	border-radius: var(--radius-md);
-	border: 1px solid #e2e8f0;
+	border: 1px solid var(--color-border);
 	font-size: 14px;
-	color: #2d3748;
+	color: var(--color-text-body);
 	transition: all 0.3s ease;
-	background-color: #fff;
+	background-color: var(--color-surface);
 }
 
 ng-select {
@@ -91,28 +91,53 @@ textarea {
 
 input:focus,
 textarea:focus {
-	border-color: #141b4d;
-	box-shadow: 0 0 0 3px rgba(20, 27, 77, 0.05);
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px var(--color-primary-alpha-5);
 	outline: none;
+}
+
+:host-context(body.dark-mode) input[type="date"] {
+	color-scheme: dark;
 }
 
 /* Estilos para ng-select personalizado */
 :host ::ng-deep .ng-select .ng-select-container {
-	border: 1px solid #e2e8f0 !important;
+	border: 1px solid var(--color-border) !important;
 	border-radius: var(--radius-md) !important;
 	height: 48px !important;
 	min-height: 48px !important;
 	align-items: center !important;
 	box-shadow: none !important;
+	background: var(--color-surface) !important;
+	color: var(--color-text-body);
 }
 
 :host ::ng-deep .ng-select.ng-select-focused .ng-select-container {
-	border-color: #141b4d !important;
-	box-shadow: 0 0 0 3px rgba(20, 27, 77, 0.05) !important;
+	border-color: var(--color-primary) !important;
+	box-shadow: 0 0 0 3px var(--color-primary-alpha-5) !important;
 }
 
 :host ::ng-deep .ng-select .ng-select-container .ng-value-container {
 	padding-left: 15px !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel {
+	background: var(--color-surface) !important;
+	border: 1px solid var(--color-border) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option {
+	color: var(--color-text-body) !important;
+	background: var(--color-surface) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option:hover {
+	background: var(--color-surface-hover) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option.ng-option-marked {
+	background: var(--color-primary-alpha-5) !important;
+	color: var(--color-primary) !important;
 }
 
 /* Sección de Imagen Premium */
@@ -129,19 +154,19 @@ textarea:focus {
 	width: 200px;
 	height: 200px;
 	border-radius: var(--radius-lg);
-	border: 2px dashed #e2e8f0;
+	border: 2px dashed var(--color-border);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
-	background-color: #f8f9fa;
+	background-color: var(--color-bg-alt);
 	position: relative;
 	transition: all 0.3s ease;
 }
 
 .image-preview-container:hover {
-	border-color: #141b4d;
-	background-color: #f0f4f8;
+	border-color: var(--color-primary);
+	background-color: var(--color-surface-hover);
 }
 
 .image-preview-container img {
@@ -157,9 +182,9 @@ textarea:focus {
 }
 
 .btn-upload {
-	background-color: #f8f9fa;
-	color: #4a5568;
-	border: 1px solid #e2e8f0;
+	background-color: var(--color-bg-alt);
+	color: var(--color-text-secondary);
+	border: 1px solid var(--color-border);
 	padding: 8px 20px;
 	border-radius: var(--radius-md);
 	font-size: 13px;
@@ -185,12 +210,12 @@ textarea:focus {
 	gap: 15px;
 	padding: 20px 0;
 	margin-top: 20px;
-	border-top: 1px solid #e2e8f0;
+	border-top: 1px solid var(--color-border);
 }
 
 .btn-guardar {
-	background-color: #141b4d;
-	color: white;
+	background-color: var(--color-primary);
+	color: var(--color-white);
 	border: none;
 	padding: 12px 35px;
 	height: 48px;
@@ -199,19 +224,19 @@ textarea:focus {
 	font-weight: 700;
 	cursor: pointer;
 	transition: all 0.3s ease;
-	box-shadow: 0 4px 10px rgba(20, 27, 77, 0.2);
+	box-shadow: 0 4px 10px var(--color-primary-shadow);
 }
 
 .btn-guardar:hover {
-	background-color: #1a2366;
+	background-color: var(--color-primary-hover);
 	transform: translateY(-2px);
-	box-shadow: 0 6px 15px rgba(20, 27, 77, 0.3);
+	box-shadow: 0 6px 15px var(--color-primary-shadow-strong);
 }
 
 .btn-cancelar {
-	background-color: white;
-	color: #718096;
-	border: 1px solid #e2e8f0;
+	background-color: var(--color-surface);
+	color: var(--color-text-muted);
+	border: 1px solid var(--color-border);
 	padding: 12px 25px;
 	height: 48px;
 	border-radius: var(--radius-md);
@@ -222,13 +247,13 @@ textarea:focus {
 }
 
 .btn-cancelar:hover {
-	background-color: #f8f9fa;
-	color: #2d3748;
+	background-color: var(--color-bg-alt);
+	color: var(--color-text-body);
 }
 
 /* Errores */
 .error-text {
-	color: #e53e3e;
+	color: var(--color-error);
 	font-size: 11px;
 	font-weight: 600;
 	margin-top: 4px;
@@ -236,5 +261,5 @@ textarea:focus {
 
 /* Garantía (Diferenciada) */
 .section-garantia {
-	border-left: 4px solid #3182ce;
+	border-left: 4px solid var(--color-info);
 }

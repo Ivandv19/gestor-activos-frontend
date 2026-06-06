@@ -1,6 +1,6 @@
 main {
 	padding: 40px 20px;
-	background-color: #f8f9fa;
+	background-color: var(--color-bg-alt);
 	min-height: calc(100vh - 70px);
 	display: flex;
 	justify-content: center;
@@ -16,14 +16,14 @@ main {
 
 /* Encabezado Hero */
 .reports-hero {
-	background: linear-gradient(135deg, #141b4d 0%, #1e2a78 100%);
+	background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
 	padding: 40px;
 	border-radius: 25px;
-	color: white;
+	color: var(--color-white);
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	box-shadow: 0 15px 35px rgba(20, 27, 77, 0.15);
+	box-shadow: var(--shadow-lg);
 	margin-bottom: 20px;
 }
 
@@ -47,11 +47,11 @@ main {
 
 /* Tarjeta de Filtros */
 .filter-card {
-	background: white;
+	background: var(--color-surface);
 	border-radius: 25px;
 	padding: 35px;
-	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
-	border: 1px solid rgba(0, 0, 0, 0.05);
+	box-shadow: var(--shadow-sm);
+	border: 1px solid var(--color-border-light);
 }
 
 .filter-grid {
@@ -68,14 +68,14 @@ main {
 }
 
 .form-group label {
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	display: flex;
 	align-items: center;
 	gap: 8px;
 }
 
 .form-group label iconify-icon {
-	color: #141b4d;
+	color: var(--color-primary);
 	font-size: 18px;
 }
 
@@ -86,8 +86,9 @@ textarea {
 	height: 42px;
 	padding: 0 15px;
 	border-radius: 12px;
-	border: 1px solid #e2e8f0;
-	background: #fff;
+	border: 1px solid var(--color-border);
+	background: var(--color-surface);
+	color: var(--color-text-body);
 	transition: all 0.3s ease;
 }
 
@@ -95,13 +96,34 @@ textarea {
 	height: 80px;
 	padding: 12px 15px;
 	resize: none;
-	background: #f8fafc;
+	background: var(--color-bg-alt);
 }
 
-::ng-deep .ng-select .ng-select-container {
-	border: 1px solid #e2e8f0 !important;
+:host ::ng-deep .ng-select .ng-select-container {
+	color: var(--color-text-body);
+	border: 1px solid var(--color-border) !important;
 	border-radius: 12px !important;
 	min-height: 42px !important;
+	background: var(--color-surface) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel {
+	background: var(--color-surface) !important;
+	border: 1px solid var(--color-border) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option {
+	color: var(--color-text-body) !important;
+	background: var(--color-surface) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option:hover {
+	background: var(--color-surface-hover) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-option.ng-option-marked {
+	background: var(--color-primary-alpha-5) !important;
+	color: var(--color-primary) !important;
 }
 
 /* Botones */
@@ -110,12 +132,12 @@ textarea {
 	justify-content: flex-end;
 	gap: 15px;
 	padding-top: 25px;
-	border-top: 1px solid #edf2f7;
+	border-top: 1px solid var(--color-border-light);
 }
 
 .btn-generar {
-	background: #141b4d;
-	color: white;
+	background: var(--color-primary);
+	color: var(--color-white);
 	padding: 12px 40px;
 	border-radius: 12px;
 	font-weight: 700;
@@ -126,18 +148,18 @@ textarea {
 	align-items: center;
 	gap: 10px;
 	transition: all 0.3s ease;
-	box-shadow: 0 4px 12px rgba(20, 27, 77, 0.2);
+	box-shadow: 0 4px 12px var(--color-primary-shadow);
 }
 
 .btn-generar:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 6px 20px rgba(20, 27, 77, 0.3);
+	box-shadow: 0 6px 20px var(--color-primary-shadow-strong);
 }
 
 .btn-limpiar {
-	background: white;
-	color: #718096;
-	border: 1px solid #e2e8f0;
+	background: var(--color-surface);
+	color: var(--color-text-muted);
+	border: 1px solid var(--color-border);
 	padding: 12px 25px;
 	border-radius: 12px;
 	font-weight: 600;
@@ -149,17 +171,17 @@ textarea {
 
 /* Contenedor de Resultados */
 .results-card {
-	background: white;
+	background: var(--color-surface);
 	border-radius: 25px;
 	padding: 40px;
-	box-shadow: 0 15px 50px rgba(0, 0, 0, 0.05);
-	border: 1px solid #edf2f7;
+	box-shadow: var(--shadow-md);
+	border: 1px solid var(--color-border-light);
 	margin-top: 20px;
 	width: 100%;
 }
 
 .results-header {
-	border-bottom: 2px solid #f1f5f9;
+	border-bottom: 2px solid var(--color-border-light);
 	margin-bottom: 35px;
 	padding-bottom: 20px;
 	display: flex;
@@ -170,7 +192,7 @@ textarea {
 .results-header h2 {
 	font-size: 22px;
 	font-weight: 800;
-	color: #141b4d;
+	color: var(--color-primary);
 	margin: 0;
 }
 
@@ -183,15 +205,15 @@ textarea {
 }
 
 .chart-item {
-	background: #fcfcfd;
-	border: 1px solid #f1f5f9;
+	background: var(--color-surface);
+	border: 1px solid var(--color-border-light);
 	border-radius: 20px;
 	padding: 25px;
 }
 
 .chart-item h3 {
 	font-size: 16px;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	margin-bottom: 20px;
 	text-align: center;
 }
@@ -200,7 +222,7 @@ textarea {
 .table-wrapper {
 	overflow-x: auto;
 	border-radius: 15px;
-	border: 1px solid #edf2f7;
+	border: 1px solid var(--color-border-light);
 }
 
 table {
@@ -209,26 +231,26 @@ table {
 }
 
 th {
-	background: #f8fafc;
+	background: var(--color-bg-alt);
 	padding: 15px;
 	text-align: left;
 	font-size: 12px;
 	font-weight: 700;
-	color: #718096;
+	color: var(--color-text-muted);
 	text-transform: uppercase;
 }
 
 td {
 	padding: 15px;
 	font-size: 14px;
-	color: #2d3748;
-	border-bottom: 1px solid #f1f5f9;
+	color: var(--color-text-body);
+	border-bottom: 1px solid var(--color-border-light);
 }
 
 /* Export Button */
 .btn-exportar {
-	background: #27ae60;
-	color: white;
+	background: var(--color-success);
+	color: var(--color-white);
 	padding: 12px 25px;
 	border-radius: 12px;
 	font-weight: 700;
@@ -242,12 +264,12 @@ td {
 }
 
 .btn-exportar:hover {
-	background: #219150;
+	background: var(--color-success-dark);
 }
 
 /* Info del reporte generado */
 .report-meta {
-	background: #f8fafc;
+	background: var(--color-bg-alt);
 	border-radius: 15px;
 	padding: 20px;
 	margin-bottom: 30px;
@@ -265,12 +287,12 @@ td {
 .meta-item span:first-child {
 	font-size: 11px;
 	font-weight: 700;
-	color: #a0aec0;
+	color: var(--color-text-placeholder);
 	text-transform: uppercase;
 }
 
 .meta-item span:last-child {
 	font-size: 14px;
 	font-weight: 600;
-	color: #2d3748;
+	color: var(--color-text-body);
 }

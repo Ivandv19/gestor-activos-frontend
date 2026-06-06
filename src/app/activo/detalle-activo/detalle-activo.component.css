@@ -1,6 +1,6 @@
 main {
 	padding: 30px;
-	background-color: #f8f9fa;
+	background-color: var(--color-bg-alt);
 	min-height: calc(100vh - 70px);
 }
 
@@ -11,27 +11,27 @@ main {
 
 /* Hero Section */
 .asset-hero {
-	background: white;
+	background: var(--color-surface);
 	border-radius: 20px;
 	padding: 30px;
 	display: flex;
 	align-items: center;
 	gap: 40px;
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+	box-shadow: 0 10px 30px var(--shadow-sm);
 	margin-bottom: 30px;
-	border: 1px solid rgba(0, 0, 0, 0.05);
+	border: 1px solid var(--color-border-light);
 }
 
 .hero-image-container {
 	width: 200px;
 	height: 200px;
-	background: #f1f5f9;
+	background: var(--color-surface-hover);
 	border-radius: 15px;
 	overflow: hidden;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border: 1px solid #e2e8f0;
+	border: 1px solid var(--color-border);
 }
 
 .hero-image-container img {
@@ -47,7 +47,7 @@ main {
 .hero-content .asset-type {
 	font-size: 12px;
 	font-weight: 700;
-	color: #a0aec0;
+	color: var(--color-text-placeholder);
 	text-transform: uppercase;
 	letter-spacing: 1.5px;
 	margin-bottom: 5px;
@@ -57,9 +57,11 @@ main {
 .hero-content h1 {
 	font-size: 32px;
 	font-weight: 800;
-	color: #141b4d;
+	color: var(--color-primary);
 	margin: 0 0 15px 0;
 }
+
+
 
 .hero-badges {
 	display: flex;
@@ -76,14 +78,14 @@ main {
 }
 
 .badge-status {
-	background: #ebf8ff;
-	color: #3182ce;
+	background: var(--color-info-light);
+	color: var(--color-info);
 }
 
 .badge-id {
-	background: #f7fafc;
-	color: #4a5568;
-	border: 1px solid #e2e8f0;
+	background: var(--color-bg-alt);
+	color: var(--color-text-secondary);
+	border: 1px solid var(--color-border);
 }
 
 .hero-actions {
@@ -102,25 +104,25 @@ main {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	border: 1px solid #e2e8f0;
-	background: white;
-	color: #4a5568;
+	border: 1px solid var(--color-border);
+	background: var(--color-surface);
+	color: var(--color-text-secondary);
 }
 
 .btn-action:hover {
-	background: #f8f9fa;
+	background: var(--color-bg-alt);
 	transform: translateY(-2px);
 }
 
 .btn-edit {
-	background: #141b4d;
-	color: white;
+	background: var(--color-primary);
+	color: var(--color-white);
 	border: none;
 }
 
 .btn-edit:hover {
-	background: #1a2366;
-	box-shadow: 0 4px 12px rgba(20, 27, 77, 0.2);
+	background: var(--color-primary-hover);
+	box-shadow: 0 4px 12px var(--color-primary-shadow);
 }
 
 /* Grid de Información */
@@ -131,11 +133,11 @@ main {
 }
 
 .detail-card {
-	background: white;
+	background: var(--color-surface);
 	border-radius: 20px;
 	padding: 25px;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-	border: 1px solid rgba(0, 0, 0, 0.05);
+	box-shadow: 0 4px 6px var(--shadow-sm);
+	border: 1px solid var(--color-border-light);
 }
 
 .card-header {
@@ -144,21 +146,51 @@ main {
 	gap: 12px;
 	margin-bottom: 20px;
 	padding-bottom: 15px;
-	border-bottom: 1px solid #f1f5f9;
+	border-bottom: 1px solid var(--color-border-light);
+}
+
+.card-header-icon {
+	font-size: 24px;
+	color: var(--color-primary);
+}
+
+:host-context(body.dark-mode) .card-header-icon {
+	color: #ffffff;
+}
+
+.placeholder-icon {
+	font-size: 40px;
+	color: var(--color-text-placeholder);
+	margin-bottom: 10px;
+}
+
+:host-context(body.dark-mode) .placeholder-icon {
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.no-image-placeholder .placeholder-icon {
+	font-size: 48px;
+	margin-bottom: 8px;
 }
 
 .card-header h3 {
 	font-size: 16px;
 	font-weight: 800;
-	color: #141b4d;
+	color: var(--color-primary);
 	margin: 0;
 }
+
+
 
 .info-row {
 	display: flex;
 	justify-content: space-between;
 	padding: 12px 0;
-	border-bottom: 1px solid #f8fafc;
+	border-bottom: 1px solid var(--color-border);
+}
+
+:host-context(body.dark-mode) .info-row {
+	border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
 .info-row:last-child {
@@ -168,32 +200,32 @@ main {
 .info-label {
 	font-size: 13px;
 	font-weight: 600;
-	color: #718096;
+	color: var(--color-text-muted);
 }
 
 .info-value {
 	font-size: 13px;
 	font-weight: 700;
-	color: #2d3748;
+	color: var(--color-text-body);
 	text-align: right;
 }
 
 /* Estilo especial para Garantía */
 .warranty-active {
-	background: #f0fff4;
-	border-color: #c6f6d5;
+	background: var(--color-create-light);
+	border-color: var(--color-success-light);
 }
 
 .warranty-header {
-	color: #2f855a;
+	color: var(--color-success-dark);
 }
 
 .description-box {
-	background: #f8fafc;
+	background: var(--color-bg-alt);
 	padding: 15px;
 	border-radius: 12px;
 	margin-top: 10px;
 	font-size: 13px;
 	line-height: 1.6;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 }

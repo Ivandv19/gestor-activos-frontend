@@ -1,6 +1,6 @@
 main {
 	padding: 40px 20px;
-	background-color: #f8f9fa;
+	background-color: var(--color-bg-alt);
 	min-height: calc(100vh - 70px);
 	display: flex;
 	flex-direction: column;
@@ -14,11 +14,11 @@ main {
 
 /* Tarjeta Principal */
 .history-card {
-	background: white;
+	background: var(--color-surface);
 	border-radius: 25px;
 	padding: 35px;
-	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
-	border: 1px solid rgba(0, 0, 0, 0.05);
+	box-shadow: 0 10px 40px var(--shadow-sm);
+	border: 1px solid var(--color-border-light);
 	width: 100%;
 }
 
@@ -32,7 +32,7 @@ main {
 .card-header h2 {
 	font-size: 24px;
 	font-weight: 800;
-	color: #141b4d;
+	color: var(--color-primary);
 	margin: 0;
 }
 
@@ -42,10 +42,10 @@ main {
 	flex-wrap: wrap;
 	gap: 20px;
 	margin-bottom: 30px;
-	background: #fcfcfd;
+	background: var(--color-surface);
 	padding: 20px;
 	border-radius: 20px;
-	border: 1px solid #f1f5f9;
+	border: 1px solid var(--color-border-light);
 	align-items: flex-end;
 }
 
@@ -63,7 +63,7 @@ main {
 	display: block;
 	font-size: 12px;
 	font-weight: 700;
-	color: #718096;
+	color: var(--color-text-muted);
 	margin-bottom: 8px;
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
@@ -78,7 +78,7 @@ main {
 	left: 15px;
 	top: 50%;
 	transform: translateY(-50%);
-	color: #a0aec0;
+	color: var(--color-text-placeholder);
 	font-size: 20px;
 }
 
@@ -86,9 +86,10 @@ main {
 	width: 100%;
 	padding: 12px 15px 12px 45px;
 	border-radius: 12px;
-	border: 1px solid #e2e8f0;
-	background: white;
+	border: 1px solid var(--color-border);
+	background: var(--color-surface);
 	font-size: 14px;
+	color: var(--color-text-body);
 	transition: all 0.3s ease;
 }
 
@@ -96,23 +97,24 @@ select {
 	width: 100%;
 	padding: 12px 15px;
 	border-radius: 12px;
-	border: 1px solid #e2e8f0;
-	background: white;
+	border: 1px solid var(--color-border);
+	background: var(--color-surface);
 	font-size: 14px;
+	color: var(--color-text-body);
 	cursor: pointer;
 }
 
 input:focus,
 select:focus {
-	border-color: #141b4d;
-	box-shadow: 0 0 0 3px rgba(20, 27, 77, 0.05);
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px var(--color-primary-alpha-5);
 	outline: none;
 }
 
 .btn-limpiar {
-	background: white;
-	color: #4a5568;
-	border: 1px solid #e2e8f0;
+	background: var(--color-surface);
+	color: var(--color-text-secondary);
+	border: 1px solid var(--color-border);
 	padding: 12px 20px;
 	border-radius: 12px;
 	font-weight: 700;
@@ -126,15 +128,15 @@ select:focus {
 }
 
 .btn-limpiar:hover {
-	background: #f7fafc;
-	border-color: #cbd5e0;
+	background: var(--color-bg-alt);
+	border-color: var(--color-border-hover);
 }
 
 /* Tabla Premium */
 .table-container {
 	overflow-x: auto;
 	border-radius: 15px;
-	border: 1px solid #edf2f7;
+	border: 1px solid var(--color-border-light);
 }
 
 table {
@@ -144,25 +146,67 @@ table {
 }
 
 thead {
-	background: #f8fafc;
+	background: var(--color-bg-alt);
 }
 
 th {
 	padding: 15px 20px;
 	font-size: 13px;
 	font-weight: 700;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
-	border-bottom: 2px solid #edf2f7;
+	border-bottom: 2px solid var(--color-border-light);
 }
 
 td {
 	padding: 18px 20px;
 	font-size: 14px;
-	color: #2d3748;
-	border-bottom: 1px solid #edf2f7;
+	color: var(--color-text-body);
+	border-bottom: 1px solid var(--color-border-light);
 	vertical-align: middle;
+}
+
+:host-context(body.dark-mode) td {
+	color: #ffffff;
+}
+
+.user-avatar {
+	width: 32px;
+	height: 32px;
+	background: var(--color-border-light);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--color-primary);
+	font-weight: 800;
+	font-size: 11px;
+}
+
+:host-context(body.dark-mode) .user-avatar {
+	background: var(--color-surface-hover);
+	color: #ffffff;
+}
+
+.user-name {
+	font-weight: 700;
+	color: var(--color-text-body);
+}
+
+:host-context(body.dark-mode) .user-name {
+	color: #ffffff;
+}
+
+.hora-texto {
+	font-size: 12px;
+	font-weight: 400;
+	margin-top: 2px;
+	color: var(--color-text-muted);
+}
+
+:host-context(body.dark-mode) .hora-texto {
+	color: #ffffff;
 }
 
 tr:last-child td {
@@ -170,7 +214,7 @@ tr:last-child td {
 }
 
 tr:hover td {
-	background-color: #fcfcfd;
+	background-color: var(--color-surface);
 }
 
 /* Badges para Acciones */
@@ -185,24 +229,24 @@ tr:hover td {
 }
 
 .badge-assign {
-	background: #ebf8ff;
-	color: #2b6cb0;
+	background: var(--color-info-light);
+	color: var(--color-info);
 }
 .badge-unassign {
-	background: #fff5f5;
-	color: #c53030;
+	background: var(--color-error-light);
+	color: var(--color-error-dark);
 }
 .badge-create {
-	background: #f0fff4;
-	color: #2f855a;
+	background: var(--color-create-light);
+	color: var(--color-success-dark);
 }
 .badge-update {
-	background: #fefcbf;
-	color: #975a16;
+	background: var(--color-update-light);
+	color: var(--color-warning-dark);
 }
 .badge-default {
-	background: #edf2f7;
-	color: #4a5568;
+	background: var(--color-border-light);
+	color: var(--color-text-secondary);
 }
 
 /* Paginación */
@@ -215,7 +259,7 @@ tr:hover td {
 
 .pagination-info p {
 	font-size: 14px;
-	color: #718096;
+	color: var(--color-text-muted);
 	margin: 0;
 }
 
@@ -232,9 +276,9 @@ tr:hover td {
 	align-items: center;
 	justify-content: center;
 	border-radius: 10px;
-	border: 1px solid #e2e8f0;
-	background: white;
-	color: #4a5568;
+	border: 1px solid var(--color-border);
+	background: var(--color-surface);
+	color: var(--color-text-secondary);
 	font-size: 14px;
 	font-weight: 600;
 	cursor: pointer;
@@ -242,15 +286,15 @@ tr:hover td {
 }
 
 .pagination-controls button:hover:not(:disabled) {
-	border-color: #141b4d;
-	color: #141b4d;
-	background: #f8fafc;
+	border-color: var(--color-primary);
+	color: var(--color-primary);
+	background: var(--color-bg-alt);
 }
 
 .pagination-controls button.active {
-	background: #141b4d;
-	color: white;
-	border-color: #141b4d;
+	background: var(--color-primary);
+	color: var(--color-white);
+	border-color: var(--color-primary);
 }
 
 .pagination-controls button:disabled {
@@ -267,10 +311,11 @@ tr:hover td {
 .page-limit select {
 	width: 80px;
 	padding: 8px;
+	color: var(--color-text-body);
 }
 
 .highlight {
-	background-color: #fefcbf;
+	background-color: var(--color-update-light);
 	font-weight: 700;
 	padding: 0 2px;
 	border-radius: 3px;

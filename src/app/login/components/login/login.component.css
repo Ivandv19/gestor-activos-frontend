@@ -1,19 +1,10 @@
-:host {
-	--primary-color: #141b4d;
-	--accent-color: #3b82f6;
-	--text-main: #1e293b;
-	--text-muted: #64748b;
-	--bg-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-	--white: #ffffff;
-}
-
 .login-page {
 	display: grid;
 	grid-template-columns: 1.2fr 0.8fr;
 	height: 100vh;
 	width: 100%;
 	overflow: hidden;
-	background-color: var(--white);
+	background-color: var(--color-bg);
 	/* font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; */
 }
 
@@ -21,12 +12,12 @@
 .login-visual {
 	position: relative;
 	background:
-		var(--primary-color) url("/login-bg.png") no-repeat center / cover;
+		var(--color-primary) url("/login-bg.png") no-repeat center / cover;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	padding: 60px;
-	color: var(--white);
+	color: var(--color-white);
 }
 
 .login-visual::after {
@@ -74,7 +65,7 @@
 	font-weight: 800;
 	line-height: 1.1;
 	margin-bottom: 20px;
-	background: linear-gradient(to right, #ffffff, #94a3b8);
+	background: linear-gradient(to right, var(--color-white), var(--color-text-placeholder));
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
@@ -91,7 +82,7 @@
 	align-items: center;
 	justify-content: center;
 	padding: 40px;
-	background-color: #f8fafc;
+	background-color: var(--color-surface-hover);
 }
 
 .login-card {
@@ -107,13 +98,13 @@
 .card-header h1 {
 	font-size: 32px;
 	font-weight: 800;
-	color: var(--primary-color);
+	color: var(--color-primary);
 	margin-bottom: 12px;
 	letter-spacing: -1px;
 }
 
 .card-header p {
-	color: var(--text-muted);
+	color: var(--color-text-muted);
 	font-size: 15px;
 	line-height: 1.5;
 }
@@ -133,7 +124,7 @@
 .form-group label {
 	font-size: 14px;
 	font-weight: 600;
-	color: var(--text-main);
+	color: var(--color-heading);
 	background-color: transparent !important;
 }
 
@@ -148,7 +139,7 @@
 	position: absolute;
 	left: 16px;
 	font-size: 20px;
-	color: var(--text-muted);
+	color: var(--color-text-muted);
 	transition: color 0.3s ease;
 }
 
@@ -156,22 +147,22 @@ input {
 	width: 100%;
 	height: 48px;
 	padding: 0 16px 0 48px;
-	background-color: var(--white) !important;
-	border: 1.5px solid #e2e8f0;
+	background-color: var(--color-bg-alt) !important;
+	border: 1.5px solid var(--color-border);
 	border-radius: var(--radius-md);
 	font-size: 14px;
-	color: var(--text-main);
+	color: var(--color-heading);
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 input:focus {
 	outline: none;
-	border-color: var(--accent-color);
-	box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+	border-color: var(--color-primary-light);
+	box-shadow: 0 0 0 4px var(--color-primary-alpha-10);
 }
 
 input:focus + .input-icon {
-	color: var(--accent-color);
+	color: var(--color-primary-light);
 }
 
 .toggle-password {
@@ -179,7 +170,7 @@ input:focus + .input-icon {
 	right: 12px;
 	background: none;
 	border: none;
-	color: var(--text-muted);
+	color: var(--color-text-muted);
 	font-size: 20px;
 	cursor: pointer;
 	padding: 8px;
@@ -191,8 +182,8 @@ input:focus + .input-icon {
 }
 
 .toggle-password:hover {
-	background-color: #f1f5f9;
-	color: var(--primary-color);
+	background-color: var(--color-surface-hover);
+	color: var(--color-primary);
 }
 
 /* Errores */
@@ -201,9 +192,9 @@ input:focus + .input-icon {
 	align-items: center;
 	gap: 10px;
 	padding: 12px 16px;
-	background-color: #fef2f2;
-	border-left: 4px solid #ef4444;
-	color: #b91c1c;
+	background-color: var(--color-error-light);
+	border-left: 4px solid var(--color-error);
+	color: var(--color-error);
 	font-size: 14px;
 	border-radius: 8px;
 	animation: shake 0.4s ease-in-out;
@@ -213,8 +204,8 @@ input:focus + .input-icon {
 .btn-submit {
 	width: 100%;
 	height: 48px;
-	background-color: var(--primary-color);
-	color: var(--white);
+	background-color: var(--color-primary);
+	color: var(--color-white);
 	border: none;
 	border-radius: var(--radius-md);
 	font-size: 14px;
@@ -228,9 +219,9 @@ input:focus + .input-icon {
 }
 
 .btn-submit:hover:not(:disabled) {
-	background-color: #1e293b;
+	background-color: var(--color-primary-hover);
 	transform: translateY(-2px);
-	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 10px 15px -3px var(--color-primary-shadow);
 }
 
 .btn-submit:disabled {
@@ -244,7 +235,7 @@ input:focus + .input-icon {
 	height: 24px;
 	border: 3px solid rgba(255, 255, 255, 0.3);
 	border-radius: 50%;
-	border-top-color: #fff;
+	border-top-color: var(--color-white);
 	animation: spin 1s ease-in-out infinite;
 }
 
@@ -255,7 +246,7 @@ input:focus + .input-icon {
 
 .login-footer p {
 	font-size: 13px;
-	color: var(--text-muted);
+	color: var(--color-text-muted);
 }
 
 /* Animaciones de Entrada (Inspiradas en FluxDev Blog) */
@@ -313,6 +304,6 @@ input:focus + .input-icon {
 		display: none;
 	}
 	.login-form-section {
-		background-color: var(--white);
+		background-color: var(--color-surface);
 	}
 }

@@ -8,22 +8,22 @@
 
 .alert-row {
 	width: 100%;
-	background-color: white;
+	background-color: var(--color-surface);
 	border-radius: 12px;
 	padding: 12px 20px;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
-	box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.03);
-	border: 1px solid rgba(0, 0, 0, 0.05);
+	box-shadow: var(--shadow-sm);
+	border: 1px solid var(--color-border-light);
 	transition: all 0.2s ease;
 }
 
 .alert-row:hover {
 	transform: translateX(5px);
-	border-color: rgba(20, 27, 77, 0.1);
-	box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.05);
+	border-color: var(--color-primary-alpha-10);
+	box-shadow: var(--shadow-md);
 }
 
 .alert-left-section {
@@ -36,7 +36,7 @@
 .alert-icon-container {
 	width: 45px;
 	height: 45px;
-	background-color: #f8f9fa;
+	background-color: var(--color-bg-alt);
 	border-radius: 10px;
 	display: flex;
 	align-items: center;
@@ -49,6 +49,10 @@
 	height: auto;
 }
 
+:host-context(body.dark-mode) .alert-icon-container img {
+	filter: brightness(0) invert(1);
+}
+
 .alert-info {
 	display: flex;
 	flex-direction: column;
@@ -58,7 +62,7 @@
 .alert-description {
 	font-size: 14px;
 	font-weight: 600;
-	color: #2d3748;
+	color: var(--color-text-body);
 }
 
 .alert-status-text {
@@ -70,16 +74,16 @@
 
 /* Colores de estado por texto */
 .text-naranja {
-	color: #f6ad55;
+	color: var(--color-warning);
 }
 .text-amarillo {
-	color: #d69e2e;
+	color: var(--color-warning);
 }
 .text-gris {
-	color: #718096;
+	color: var(--color-text-muted);
 }
 .text-verde {
-	color: #38a169;
+	color: var(--color-success);
 }
 
 .alert-right-section {
@@ -92,8 +96,8 @@
 .count-badge {
 	width: 32px;
 	height: 32px;
-	background-color: #edf2f7;
-	color: #141b4d;
+	background-color: var(--color-border-light);
+	color: var(--color-primary);
 	border-radius: 50%;
 	display: flex;
 	align-items: center;
@@ -103,16 +107,16 @@
 }
 
 .count-badge.has-items {
-	background-color: #141b4d;
-	color: white;
+	background-color: var(--color-primary);
+	color: var(--color-white);
 }
 
 .btn-alert-action {
 	padding: 8px 16px;
 	border-radius: 8px;
-	background-color: white;
-	color: #141b4d;
-	border: 1px solid #141b4d;
+	background-color: var(--color-surface);
+	color: var(--color-primary);
+	border: 1px solid var(--color-primary);
 	font-size: 12px;
 	font-weight: 700;
 	cursor: pointer;
@@ -121,13 +125,13 @@
 }
 
 .btn-alert-action:hover:not(:disabled) {
-	background-color: #141b4d;
-	color: white;
+	background-color: var(--color-primary);
+	color: var(--color-white);
 }
 
 .btn-alert-action:disabled {
 	opacity: 0.3;
-	border-color: #cbd5e0;
-	color: #cbd5e0;
+	border-color: var(--color-border-hover);
+	color: var(--color-text-placeholder);
 	cursor: not-allowed;
 }
