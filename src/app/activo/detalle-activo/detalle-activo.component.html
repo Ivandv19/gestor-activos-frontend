@@ -6,7 +6,7 @@
       <div class="hero-image-container">
         <img *ngIf="activo.foto_url" [src]="getAssetPhoto(activo.foto_url)" alt="Foto del Activo" />
         <div *ngIf="!activo.foto_url" class="no-image-placeholder">
-          <iconify-icon icon="lucide:image-off" style="font-size: 48px; color: #cbd5e0;"></iconify-icon>
+          <iconify-icon icon="lucide:image-off" class="placeholder-icon"></iconify-icon>
           <span>N/A</span>
         </div>
       </div>
@@ -42,7 +42,7 @@
       <!-- Card: Especificaciones Técnicas -->
       <div class="detail-card">
         <div class="card-header">
-          <iconify-icon icon="lucide:cpu" style="font-size: 24px; color: #141b4d;"></iconify-icon>
+          <iconify-icon icon="lucide:cpu" class="card-header-icon"></iconify-icon>
           <h3>Especificaciones Técnicas</h3>
         </div>
         <div class="info-row">
@@ -74,7 +74,7 @@
       <!-- Card: Gestión y Ubicación -->
       <div class="detail-card">
         <div class="card-header">
-          <iconify-icon icon="lucide:map-pin" style="font-size: 24px; color: #141b4d;"></iconify-icon>
+          <iconify-icon icon="lucide:map-pin" class="card-header-icon"></iconify-icon>
           <h3>Gestión y Ubicación</h3>
         </div>
         <div class="info-row">
@@ -106,7 +106,7 @@
       <!-- Card: Finanzas -->
       <div class="detail-card">
         <div class="card-header">
-          <iconify-icon icon="lucide:banknote" style="font-size: 24px; color: #141b4d;"></iconify-icon>
+          <iconify-icon icon="lucide:banknote" class="card-header-icon"></iconify-icon>
           <h3>Información Financiera</h3>
         </div>
         <div class="info-row">
@@ -126,7 +126,7 @@
       <!-- Card: Garantía (Dinámica) -->
       <div class="detail-card" [class.warranty-active]="activo.garantia.length > 0">
         <div class="card-header">
-          <iconify-icon icon="lucide:shield-check" style="font-size: 24px; color: #141b4d;"></iconify-icon>
+          <iconify-icon icon="lucide:shield-check" class="card-header-icon"></iconify-icon>
           <h3 [class.warranty-header]="activo.garantia.length > 0">Información de Garantía</h3>
         </div>
         
@@ -157,7 +157,7 @@
         
         <ng-template #noGarantia>
           <div class="description-box" style="text-align: center; padding: 30px;">
-            <iconify-icon icon="lucide:shield-off" style="font-size: 40px; color: #cbd5e0; margin-bottom: 10px;"></iconify-icon>
+            <iconify-icon icon="lucide:shield-off" class="placeholder-icon"></iconify-icon>
             <p>No hay garantías registradas para este activo.</p>
           </div>
         </ng-template>
