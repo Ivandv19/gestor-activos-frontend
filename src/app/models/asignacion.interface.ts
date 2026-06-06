@@ -9,7 +9,7 @@ export interface AsignacionPayload {
 
 export interface AsignacionData {
 	readonly id: number;
-	activo: string;
+	nombre: string;
 	tipo_activo: string;
 	estado_activo: string;
 	usuario: string;

@@ -79,7 +79,7 @@ export class EditarAsignacionComponent implements OnInit, OnDestroy {
 					this.fotoActivo = this.asignacionData.foto_url;
 					this.idAsignacion = this.asignacionData.id;
 					this.asignacionForm.patchValue({
-						nombre: this.asignacionData.activo,
+						nombre: this.asignacionData.nombre,
 						usuario_id: this.asignacionData.usuario_id,
 						ubicacion_id: this.asignacionData.ubicacion_id,
 						fecha_asignacion: this.asignacionData.fecha_asignacion

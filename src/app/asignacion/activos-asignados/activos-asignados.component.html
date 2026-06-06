@@ -70,7 +70,7 @@
             <div *ngIf="!activo.foto_url" class="texto-na">N/A</div>
           </td>
           <td>
-            <span *ngFor="let parte of dividirTexto(activo.activo)">
+            <span *ngFor="let parte of dividirTexto(activo.nombre)">
               <span [class.highlight]="esParteResaltada(parte)">{{ parte }}</span>
             </span>
           </td>
